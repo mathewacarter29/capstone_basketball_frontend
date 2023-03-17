@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+} from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
 
 function SignIn() {
@@ -58,59 +64,70 @@ function SignIn() {
 
   return (
     // This is gonna be the sign up form
-    <View style={styles.container}>
-      <Text style={styles.text}>Let's help you play some basketball!</Text>
-      <TextInput
-        style={styles.input}
-        value={name}
-        placeholder="Enter your full name"
-        onChangeText={(text) => setName(text)}
-      ></TextInput>
-      <TextInput
-        style={styles.input}
-        value={email}
-        placeholder="Enter your email"
-        onChangeText={(text) => setEmail(text)}
-      ></TextInput>
-      <TextInput
-        style={styles.input}
-        value={phone}
-        placeholder="Enter your phone number"
-        onChangeText={(text) => setPhone(text)}
-      ></TextInput>
-      <TextInput
-        style={styles.input}
-        value={password}
-        placeholder="Enter your password"
-        onChangeText={(text) => setPassword(text)}
-        secureTextEntry
-      ></TextInput>
-      <TextInput
-        style={styles.input}
-        value={confirm}
-        placeholder="Confirm your password"
-        onChangeText={(text) => setConfirm(text)}
-        secureTextEntry
-      ></TextInput>
-      <TouchableOpacity onPress={() => signup()} style={styles.button}>
-        <Text style={styles.buttonText}>Sign Up!</Text>
-      </TouchableOpacity>
-      {showError && (
-        <View style={styles.errorBackground}>
-          <Text style={styles.errorText}>{errorMessage}</Text>
-        </View>
-      )}
-    </View>
+    <KeyboardAvoidingView
+      behavior={Platform.OS == "ios" ? "padding" : "height"}
+      style={styles.scroll_container}
+    >
+      <View style={styles.container}>
+        <Text style={styles.text}>Let's help you play some basketball!</Text>
+        <TextInput
+          style={styles.input}
+          value={name}
+          placeholder="Enter your full name"
+          onChangeText={(text) => setName(text)}
+        ></TextInput>
+        <TextInput
+          style={styles.input}
+          value={email}
+          placeholder="Enter your email"
+          onChangeText={(text) => setEmail(text)}
+        ></TextInput>
+        <TextInput
+          style={styles.input}
+          value={phone}
+          keyboardType="numeric"
+          placeholder="Enter your phone number"
+          onChangeText={(text) => setPhone(text)}
+        ></TextInput>
+        <TextInput
+          style={styles.input}
+          value={password}
+          placeholder="Enter your password"
+          onChangeText={(text) => setPassword(text)}
+          secureTextEntry
+        ></TextInput>
+        <TextInput
+          style={styles.input}
+          value={confirm}
+          placeholder="Confirm your password"
+          onChangeText={(text) => setConfirm(text)}
+          secureTextEntry
+        ></TextInput>
+        <TouchableOpacity onPress={() => signup()} style={styles.button}>
+          <Text style={styles.buttonText}>Sign Up!</Text>
+        </TouchableOpacity>
+        {showError && (
+          <View style={styles.errorBackground}>
+            <Text style={styles.errorText}>{errorMessage}</Text>
+          </View>
+        )}
+      </View>
+      <View style={{ flex: 1, backgroundColor: "lightgray" }}></View>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = EStyleSheet.create({
-  container: {
+  scroll_container: {
+    flex: 1,
     height: "100%",
-    backgroundColor: "lightgray",
     width: "100%",
+  },
+  container: {
+    backgroundColor: "lightgray",
     alignItems: "center",
     paddingTop: "10rem",
+    justifyContent: "flex-end",
   },
   text: {
     margin: "1rem",
