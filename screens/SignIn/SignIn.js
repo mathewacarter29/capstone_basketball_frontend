@@ -17,11 +17,19 @@ function SignIn() {
   const [errorMessage, setErrorMessage] = useState("");
 
   function signup() {
+    // make sure no fields are empty
     if ([phone, email, phone, password, confirm].includes("")) {
       setShowError(true);
       setErrorMessage("Please fill out all fields");
       return;
     }
+    // validate email address
+    if (!/\w+\@\w+(\.com|\.edu)/.test(email)) {
+      setShowError(true);
+      setErrorMessage("Please enter a valid email address");
+      return;
+    }
+
     // Make sure that the phone number is valid (all numbers)
     if (isNaN(phone)) {
       setShowError(true);
@@ -80,12 +88,14 @@ function SignIn() {
         value={password}
         placeholder="Enter your password"
         onChangeText={(text) => setPassword(text)}
+        secureTextEntry
       ></TextInput>
       <TextInput
         style={styles.input}
         value={confirm}
         placeholder="Confirm your password"
         onChangeText={(text) => setConfirm(text)}
+        secureTextEntry
       ></TextInput>
       <TouchableOpacity onPress={() => signup()} style={styles.button}>
         <Text style={styles.buttonText}>Sign Up!</Text>
