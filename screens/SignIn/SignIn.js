@@ -1,11 +1,6 @@
 import React, { useState } from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import EStyleSheet from "react-native-extended-stylesheet";
 
 function SignIn() {
   const [name, setName] = useState("");
@@ -109,7 +104,7 @@ function SignIn() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = EStyleSheet.create({
   container: {
     height: "100%",
     backgroundColor: "lightgray",
@@ -126,12 +121,11 @@ const styles = StyleSheet.create({
   input: {
     height: "3rem",
     width: "80%",
-    border: "solid",
     borderRadius: "1rem",
     backgroundColor: "white",
     margin: "1rem",
     color: "#333",
-    padding: "10px",
+    padding: "1rem",
     shadowColor: "#171717",
     shadowRadius: 3,
     shadowOpacity: 0.2,
@@ -141,7 +135,6 @@ const styles = StyleSheet.create({
     width: "80%",
     height: "3rem",
     backgroundColor: "orange",
-    textAlign: "center",
     justifyContent: "center",
     margin: "1rem",
     borderRadius: "1rem",
@@ -151,8 +144,8 @@ const styles = StyleSheet.create({
     shadowOffset: { width: -2, height: 4 },
   },
   buttonText: {
-    margin: "1rem",
-    fontSize: 30,
+    fontSize: 20,
+    textAlign: "center",
   },
   errorBackground: {
     backgroundColor: "#FAA0A0",

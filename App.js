@@ -1,6 +1,7 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { View } from "react-native";
 import SignIn from "./screens/SignIn/SignIn";
+import EStyleSheet from "react-native-extended-stylesheet";
 
 export default function App() {
   return (
@@ -10,7 +11,7 @@ export default function App() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = EStyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
@@ -18,3 +19,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+
+EStyleSheet.build();
