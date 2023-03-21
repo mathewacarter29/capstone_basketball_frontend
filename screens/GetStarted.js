@@ -2,10 +2,10 @@ import React from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
 
-function GetStarted() {
+function GetStarted({ navigation }) {
   return (
     <View style={styles.container}>
-      <Image source={require("../../assets/basketballPlayer.png")}></Image>
+      <Image source={require("../assets/basketballPlayer.png")}></Image>
       <Text style={styles.topText}>
         Plan your next basketball game with CampusCourts
       </Text>
@@ -13,7 +13,10 @@ function GetStarted() {
         An easy way to plan pickup basketball games and join a whole new
         community
       </Text>
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate("SignUp")}
+      >
         <Text style={styles.buttonText}>Get Started</Text>
       </TouchableOpacity>
     </View>

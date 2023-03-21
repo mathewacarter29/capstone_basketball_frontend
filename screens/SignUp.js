@@ -5,10 +5,11 @@ import {
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
+  Touchable,
 } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
 
-function SignIn() {
+function SignIn({ navigation }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -106,6 +107,12 @@ function SignIn() {
         <TouchableOpacity onPress={() => signup()} style={styles.button}>
           <Text style={styles.buttonText}>Sign Up!</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate("GetStarted")}
+        >
+          <Text style={styles.buttonText}>Go Back</Text>
+        </TouchableOpacity>
         {showError && (
           <View style={styles.errorBackground}>
             <Text style={styles.errorText}>{errorMessage}</Text>
@@ -126,7 +133,7 @@ const styles = EStyleSheet.create({
   container: {
     backgroundColor: "lightgray",
     alignItems: "center",
-    paddingTop: "10rem",
+    paddingTop: "7rem",
     justifyContent: "flex-end",
   },
   text: {
