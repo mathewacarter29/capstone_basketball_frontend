@@ -1,6 +1,7 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Text, Image } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
+import Button from "../common/Button";
 
 function GetStarted({ navigation }) {
   return (
@@ -13,12 +14,10 @@ function GetStarted({ navigation }) {
         An easy way to plan pickup basketball games and join a whole new
         community
       </Text>
-      <TouchableOpacity
-        style={styles.button}
+      <Button
         onPress={() => navigation.navigate("SignUp")}
-      >
-        <Text style={styles.buttonText}>Get Started</Text>
-      </TouchableOpacity>
+        title="Get Started"
+      />
     </View>
   );
 }
@@ -43,22 +42,6 @@ const styles = EStyleSheet.create({
     paddingTop: "10rem",
     height: "100%",
     width: "100%",
-  },
-  button: {
-    width: "80%",
-    height: "3rem",
-    backgroundColor: "orange",
-    justifyContent: "center",
-    margin: "1rem",
-    borderRadius: "1rem",
-    shadowColor: "#171717",
-    shadowRadius: 3,
-    shadowOpacity: 0.2,
-    shadowOffset: { width: -2, height: 4 },
-  },
-  buttonText: {
-    fontSize: 20,
-    textAlign: "center",
   },
 });
 

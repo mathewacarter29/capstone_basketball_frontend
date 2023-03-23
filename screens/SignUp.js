@@ -1,13 +1,7 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Touchable,
-} from "react-native";
+import { View, Text, TextInput, KeyboardAvoidingView } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
+import Button from "../common/Button";
 
 function SignIn({ navigation }) {
   const [name, setName] = useState("");
@@ -104,15 +98,15 @@ function SignIn({ navigation }) {
           onChangeText={(text) => setConfirm(text)}
           secureTextEntry
         ></TextInput>
-        <TouchableOpacity onPress={() => signup()} style={styles.button}>
-          <Text style={styles.buttonText}>Sign Up!</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
+        <Button
+          onPress={() => signup()}
           style={styles.button}
+          title="Sign Up!"
+        />
+        <Button
           onPress={() => navigation.navigate("GetStarted")}
-        >
-          <Text style={styles.buttonText}>Go Back</Text>
-        </TouchableOpacity>
+          title="Go Back"
+        />
         {showError && (
           <View style={styles.errorBackground}>
             <Text style={styles.errorText}>{errorMessage}</Text>
@@ -154,22 +148,6 @@ const styles = EStyleSheet.create({
     shadowRadius: 3,
     shadowOpacity: 0.2,
     shadowOffset: { width: -2, height: 4 },
-  },
-  button: {
-    width: "80%",
-    height: "3rem",
-    backgroundColor: "orange",
-    justifyContent: "center",
-    margin: "1rem",
-    borderRadius: "1rem",
-    shadowColor: "#171717",
-    shadowRadius: 3,
-    shadowOpacity: 0.2,
-    shadowOffset: { width: -2, height: 4 },
-  },
-  buttonText: {
-    fontSize: 20,
-    textAlign: "center",
   },
   errorBackground: {
     backgroundColor: "#FAA0A0",
