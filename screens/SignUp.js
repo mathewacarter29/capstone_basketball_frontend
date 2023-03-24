@@ -3,11 +3,12 @@ import {
   View,
   Text,
   TextInput,
-  TouchableOpacity,
   KeyboardAvoidingView,
-  Touchable,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
+import Button from "../common/Button";
 
 function SignIn({ navigation }) {
   const [name, setName] = useState("");
@@ -65,62 +66,64 @@ function SignIn({ navigation }) {
 
   return (
     // This is gonna be the sign up form
-    <KeyboardAvoidingView
-      behavior={Platform.OS == "ios" ? "padding" : "height"}
-      style={styles.scroll_container}
-    >
-      <View style={styles.container}>
-        <Text style={styles.text}>Let's help you play some basketball!</Text>
-        <TextInput
-          style={styles.input}
-          value={name}
-          placeholder="Enter your full name"
-          onChangeText={(text) => setName(text)}
-        ></TextInput>
-        <TextInput
-          style={styles.input}
-          value={email}
-          placeholder="Enter your email"
-          onChangeText={(text) => setEmail(text)}
-        ></TextInput>
-        <TextInput
-          style={styles.input}
-          value={phone}
-          keyboardType="numeric"
-          placeholder="Enter your phone number"
-          onChangeText={(text) => setPhone(text)}
-        ></TextInput>
-        <TextInput
-          style={styles.input}
-          value={password}
-          placeholder="Enter your password"
-          onChangeText={(text) => setPassword(text)}
-          secureTextEntry
-        ></TextInput>
-        <TextInput
-          style={styles.input}
-          value={confirm}
-          placeholder="Confirm your password"
-          onChangeText={(text) => setConfirm(text)}
-          secureTextEntry
-        ></TextInput>
-        <TouchableOpacity onPress={() => signup()} style={styles.button}>
-          <Text style={styles.buttonText}>Sign Up!</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate("GetStarted")}
-        >
-          <Text style={styles.buttonText}>Go Back</Text>
-        </TouchableOpacity>
-        {showError && (
-          <View style={styles.errorBackground}>
-            <Text style={styles.errorText}>{errorMessage}</Text>
-          </View>
-        )}
-      </View>
-      <View style={{ flex: 1, backgroundColor: "lightgray" }}></View>
-    </KeyboardAvoidingView>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS == "ios" ? "padding" : "height"}
+        style={styles.scroll_container}
+      >
+        <View style={styles.container}>
+          <Text style={styles.text}>Let's help you play some basketball!</Text>
+          <TextInput
+            style={styles.input}
+            value={name}
+            placeholder="Enter your full name"
+            onChangeText={(text) => setName(text)}
+          ></TextInput>
+          <TextInput
+            style={styles.input}
+            value={email}
+            placeholder="Enter your email"
+            onChangeText={(text) => setEmail(text)}
+          ></TextInput>
+          <TextInput
+            style={styles.input}
+            value={phone}
+            keyboardType="numeric"
+            placeholder="Enter your phone number"
+            onChangeText={(text) => setPhone(text)}
+          ></TextInput>
+          <TextInput
+            style={styles.input}
+            value={password}
+            placeholder="Enter your password"
+            onChangeText={(text) => setPassword(text)}
+            secureTextEntry
+          ></TextInput>
+          <TextInput
+            style={styles.input}
+            value={confirm}
+            placeholder="Confirm your password"
+            onChangeText={(text) => setConfirm(text)}
+            secureTextEntry
+          ></TextInput>
+          <Button
+            onPress={() => signup()}
+            style={styles.button}
+            title="Sign Up!"
+          />
+          <Button
+            onPress={() => navigation.navigate("GetStarted")}
+            title="Go Back"
+          />
+          {showError && (
+            <View style={styles.errorBackground}>
+              <Text style={styles.errorText}>{errorMessage}</Text>
+            </View>
+          )}
+        </View>
+        <View style={{ flex: 1, backgroundColor: "lightgray" }}></View>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -154,22 +157,6 @@ const styles = EStyleSheet.create({
     shadowRadius: 3,
     shadowOpacity: 0.2,
     shadowOffset: { width: -2, height: 4 },
-  },
-  button: {
-    width: "80%",
-    height: "3rem",
-    backgroundColor: "orange",
-    justifyContent: "center",
-    margin: "1rem",
-    borderRadius: "1rem",
-    shadowColor: "#171717",
-    shadowRadius: 3,
-    shadowOpacity: 0.2,
-    shadowOffset: { width: -2, height: 4 },
-  },
-  buttonText: {
-    fontSize: 20,
-    textAlign: "center",
   },
   errorBackground: {
     backgroundColor: "#FAA0A0",
