@@ -1,6 +1,14 @@
 import { React, useState } from "react";
 import EStyleSheet from "react-native-extended-stylesheet";
-import { Keyboard, View, Text, TextInput } from "react-native";
+import {
+  Keyboard,
+  View,
+  Text,
+  TextInput,
+  Image,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+} from "react-native";
 import Button from "../common/Button";
 import LoadingScreen from "../common/LoadingScreen";
 
@@ -53,41 +61,56 @@ function LogIn({ navigation }) {
   }
 
   return (
-    <View style={styles.container}>
-      {loading && <LoadingScreen />}
-      <Text style={styles.text}>Log In</Text>
-      <TextInput
-        style={styles.input}
-        value={username}
-        placeholder="Enter your username"
-        onChangeText={(text) => setUsername(text)}
-      ></TextInput>
-      <TextInput
-        style={styles.input}
-        value={password}
-        placeholder="Enter your password"
-        onChangeText={(text) => setPassword(text)}
-        secureTextEntry
-      ></TextInput>
-      <Button title="Log In" onPress={() => login()} />
-      <Button
-        title="Go Back"
-        onPress={() => navigation.navigate("GetStarted")}
-      />
-      {showError && (
-        <View style={styles.errorBackground}>
-          <Text style={styles.errorText}>{errorMessage}</Text>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS == "ios" ? "padding" : "height"}
+        style={styles.scroll_container}
+      >
+        {loading && <LoadingScreen />}
+        <View style={styles.container}>
+          <Text style={styles.text}>Welcome Back!</Text>
+          <Image source={require("../assets/basketballPlayerArms.png")} />
+          <TextInput
+            style={styles.input}
+            value={username}
+            placeholder="Enter your username"
+            onChangeText={(text) => setUsername(text)}
+          ></TextInput>
+          <TextInput
+            style={styles.input}
+            value={password}
+            placeholder="Enter your password"
+            onChangeText={(text) => setPassword(text)}
+            secureTextEntry
+          ></TextInput>
+          <Button title="Log In" onPress={() => login()} />
+          <Button
+            title="Go Back"
+            onPress={() => navigation.navigate("GetStarted")}
+          />
+          {showError && (
+            <View style={styles.errorBackground}>
+              <Text style={styles.errorText}>{errorMessage}</Text>
+            </View>
+          )}
         </View>
-      )}
-    </View>
+        <View style={{ flex: 1, backgroundColor: "lightgray" }}></View>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 }
 
 const styles = EStyleSheet.create({
+  scroll_container: {
+    flex: 1,
+    height: "100%",
+    width: "100%",
+  },
   container: {
     backgroundColor: "lightgray",
     alignItems: "center",
-    height: "100%",
+    paddingTop: "2rem",
+    justifyContent: "flex-end",
   },
   text: {
     margin: "1rem",
