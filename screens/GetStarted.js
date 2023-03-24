@@ -14,10 +14,13 @@ function GetStarted({ navigation }) {
         An easy way to plan pickup basketball games and join a whole new
         community
       </Text>
-      <Button
+      <Button onPress={() => navigation.navigate("LogIn")} title="Log In" />
+      <Text
+        style={styles.clickableText}
         onPress={() => navigation.navigate("SignUp")}
-        title="Get Started"
-      />
+      >
+        Don't have an account? Sign Up here
+      </Text>
     </View>
   );
 }
@@ -42,6 +45,11 @@ const styles = EStyleSheet.create({
     paddingTop: "10rem",
     height: "100%",
     width: "100%",
+  },
+  clickableText: {
+    color: "darkorange",
+    fontSize: 15,
+    textDecorationLine: "underline",
   },
 });
 
