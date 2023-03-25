@@ -6,9 +6,11 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
+  ScrollView,
 } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
 import Button from "../common/Button";
+import { Auth } from "aws-amplify";
 
 function SignIn({ navigation }) {
   const [name, setName] = useState("");
@@ -19,7 +21,7 @@ function SignIn({ navigation }) {
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  function signup() {
+  async function signup() {
     // make sure no fields are empty
     if ([phone, email, phone, password, confirm].includes("")) {
       setShowError(true);
@@ -51,17 +53,24 @@ function SignIn({ navigation }) {
       setErrorMessage("Passwords do not match - please re-enter");
       return;
     }
+    try {
+      const { user } = await Auth.signUp({
+        username: email,
+        password: password,
+        attributes: { phone_number: `+1${phone}`, name },
+        autoSignIn: { enabled: true }, // enables auto sign in after user is confirmed
+      });
+      navigation.navigate("EmailVerifcation");
+    } catch (e) {
+      setShowError(true);
+      setErrorMessage(e.message);
+      return;
+    }
 
     setShowError(false);
-    const result = {
-      name: name,
-      email: email,
-      phone: phone,
-      password: password,
-    };
+
     // This is temparary
     // we will do a database POST request here for creating a new user
-    console.log(result);
   }
 
   return (
@@ -71,57 +80,63 @@ function SignIn({ navigation }) {
         behavior={Platform.OS == "ios" ? "padding" : "height"}
         style={styles.scroll_container}
       >
-        <View style={styles.container}>
-          <Text style={styles.text}>Let's help you play some basketball!</Text>
-          <TextInput
-            style={styles.input}
-            value={name}
-            placeholder="Enter your full name"
-            onChangeText={(text) => setName(text)}
-          ></TextInput>
-          <TextInput
-            style={styles.input}
-            value={email}
-            placeholder="Enter your email"
-            onChangeText={(text) => setEmail(text)}
-          ></TextInput>
-          <TextInput
-            style={styles.input}
-            value={phone}
-            keyboardType="numeric"
-            placeholder="Enter your phone number"
-            onChangeText={(text) => setPhone(text)}
-          ></TextInput>
-          <TextInput
-            style={styles.input}
-            value={password}
-            placeholder="Enter your password"
-            onChangeText={(text) => setPassword(text)}
-            secureTextEntry
-          ></TextInput>
-          <TextInput
-            style={styles.input}
-            value={confirm}
-            placeholder="Confirm your password"
-            onChangeText={(text) => setConfirm(text)}
-            secureTextEntry
-          ></TextInput>
-          <Button
-            onPress={() => signup()}
-            style={styles.button}
-            title="Sign Up!"
-          />
-          <Button
-            onPress={() => navigation.navigate("GetStarted")}
-            title="Go Back"
-          />
-          {showError && (
-            <View style={styles.errorBackground}>
-              <Text style={styles.errorText}>{errorMessage}</Text>
-            </View>
-          )}
-        </View>
-        <View style={{ flex: 1, backgroundColor: "lightgray" }}></View>
+        <ScrollView>
+          <View style={styles.container}>
+            <Text style={styles.text}>
+              Let's help you play some basketball!
+            </Text>
+            <TextInput
+              style={styles.input}
+              value={name}
+              placeholder="Enter your full name"
+              onChangeText={(text) => setName(text)}
+            ></TextInput>
+            <TextInput
+              style={styles.input}
+              value={email}
+              placeholder="Enter your email"
+              onChangeText={(text) => setEmail(text)}
+            ></TextInput>
+            <TextInput
+              style={styles.input}
+              value={phone}
+              keyboardType="numeric"
+              placeholder="Enter your phone number"
+              onChangeText={(text) => setPhone(text)}
+            ></TextInput>
+            <TextInput
+              style={styles.input}
+              value={password}
+              placeholder="Enter your password"
+              onChangeText={(text) => setPassword(text)}
+              secureTextEntry
+            ></TextInput>
+            <TextInput
+              style={styles.input}
+              value={confirm}
+              placeholder="Confirm your password"
+              onChangeText={(text) => setConfirm(text)}
+              secureTextEntry
+            ></TextInput>
+            <Button onPress={() => signup()} title="Sign Up!" />
+            <Button
+              onPress={() => navigation.navigate("GetStarted")}
+              title="Go Back"
+            />
+            {showError && (
+              <View style={styles.errorBackground}>
+                <Text style={styles.errorText}>{errorMessage}</Text>
+              </View>
+            )}
+            <Text
+              style={styles.clickableText}
+              onPress={() => navigation.navigate("EmailVerification")}
+            >
+              Verify account
+            </Text>
+          </View>
+          <View style={{ flex: 1, backgroundColor: "lightgray" }}></View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   );
@@ -168,6 +183,11 @@ const styles = EStyleSheet.create({
   },
   errorText: {
     color: "red",
+  },
+  clickableText: {
+    color: "darkorange",
+    fontSize: 15,
+    textDecorationLine: "underline",
   },
 });
 

@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import Button from "../common/Button";
 import LoadingScreen from "../common/LoadingScreen";
+import { Auth } from "aws-amplify";
 
 function LogIn({ navigation }) {
   const [username, setUsername] = useState("");
@@ -19,24 +20,6 @@ function LogIn({ navigation }) {
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const DUMMY_USERNAME = "admin";
-  const DUMMY_PASSWORD = "admin";
-
-  // This function will make the database call to validate the user's username and password
-  // It should be an asnyc function so it waits for a response from the backend
-  async function validateUser(loginData) {
-    // this is just dummy logic for now
-    await new Promise((r) => setTimeout(r, 3000));
-    if (
-      loginData.username == DUMMY_USERNAME &&
-      loginData.password == DUMMY_PASSWORD
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   async function login() {
     Keyboard.dismiss();
     const loginData = {
@@ -44,19 +27,24 @@ function LogIn({ navigation }) {
       password: password,
     };
     setLoading(true);
-    // write database logic inside validateUser function
-    if (!(await validateUser(loginData))) {
-      // make error message pop up
+    // using amplify API call to validate user
+    try {
+      const response = await Auth.signIn(
+        loginData.username,
+        loginData.password
+      );
+      console.log(response);
+      // navigate here?
+    } catch (e) {
       setLoading(false);
       setShowError(true);
       setErrorMessage("Log in failed - please try again");
       return;
     }
     // if we make it here, we have a correct username and password
-    setLoading(false);
-    setShowError(false);
-    console.log("success");
 
+    setShowError(false);
+    setLoading(false);
     // navigate to the main screen below
   }
 
