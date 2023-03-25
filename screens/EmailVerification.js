@@ -1,37 +1,119 @@
 import { React, useState } from "react";
-import { View, TextInput, Text } from "react-native";
+import {
+  View,
+  TextInput,
+  Text,
+  Alert,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
+  ScrollView,
+} from "react-native";
 import Button from "../common/Button";
 import EStyleSheet from "react-native-extended-stylesheet";
+import { Auth } from "aws-amplify";
+import LoadingScreen from "../common/LoadingScreen";
 
-function EmailVerification() {
-  const [email, setEmail] = useState("");
+function EmailVerification({ route, navigation }) {
+  let startEmailValue = "";
+  if (route.params != undefined && route.params.email != undefined) {
+    startEmailValue = route.params.email;
+  }
+  const [email, setEmail] = useState(startEmailValue);
   const [code, setCode] = useState("");
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function verify() {
+    try {
+      const response = await Auth.confirmSignUp(email, code);
+    } catch (e) {
+      setShowError(true);
+      setErrorMessage(e.message);
+      return;
+    }
+    // If we make it here, we are successful, navigate to the sign in screen
+    navigation.navigate("LogIn");
+  }
+
+  async function resendCode() {
+    if (email == "") {
+      setShowError(true);
+      setErrorMessage("Enter valid email address");
+      return;
+    }
+    if (code == "") {
+      setShowError(true);
+      setErrorMessage("Verification code is missing");
+      return;
+    }
+    try {
+      setLoading(true);
+      const response = await Auth.resendSignUp(email);
+    } catch (e) {
+      setLoading(false);
+      setShowError(true);
+      setErrorMessage(e.message);
+      return;
+    }
+    setLoading(false);
+    setShowError(false);
+    Alert.alert("Success", "Code was resent to your email");
+  }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Verify your account</Text>
-      <TextInput
-        style={styles.input}
-        value={email}
-        placeholder="Enter your email address"
-        onChangeText={(text) => setEmail(text)}
-      ></TextInput>
-      <TextInput
-        style={styles.input}
-        value={code}
-        placeholder="Enter your verifaction code"
-        onChangeText={(text) => setCode(text)}
-      ></TextInput>
-      <Button title="Verify"></Button>
-    </View>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS == "ios" ? "padding" : "height"}
+        style={styles.scroll_container}
+      >
+        {loading && <LoadingScreen />}
+        <ScrollView style={{ backgroundColor: "lightgray" }}>
+          <View style={styles.container}>
+            <Text style={styles.text}>Verify your account</Text>
+            <TextInput
+              style={styles.input}
+              value={email}
+              placeholder="Enter your email address"
+              onChangeText={(text) => setEmail(text)}
+            ></TextInput>
+            <TextInput
+              style={styles.input}
+              value={code}
+              keyboardType="numeric"
+              placeholder="Enter your verifaction code"
+              onChangeText={(text) => setCode(text)}
+            ></TextInput>
+            <Button title="Verify" onPress={() => verify()}></Button>
+            <Button title="Resend Code" onPress={() => resendCode()}></Button>
+            <Button
+              title="Go Back"
+              onPress={() => navigation.navigate("SignUp")}
+            ></Button>
+            {showError && (
+              <View style={styles.errorBackground}>
+                <Text style={styles.errorText}>{errorMessage}</Text>
+              </View>
+            )}
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 }
 
 const styles = EStyleSheet.create({
+  scroll_container: {
+    flex: 1,
+    height: "100%",
+    width: "100%",
+  },
   container: {
     backgroundColor: "lightgray",
     alignItems: "center",
     paddingTop: "7rem",
+    height: "100%",
   },
   text: {
     margin: "1rem",

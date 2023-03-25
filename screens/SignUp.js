@@ -11,6 +11,7 @@ import {
 import EStyleSheet from "react-native-extended-stylesheet";
 import Button from "../common/Button";
 import { Auth } from "aws-amplify";
+import LoadingScreen from "../common/LoadingScreen";
 
 function SignIn({ navigation }) {
   const [name, setName] = useState("");
@@ -20,6 +21,7 @@ function SignIn({ navigation }) {
   const [confirm, setConfirm] = useState("");
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function signup() {
     // make sure no fields are empty
@@ -54,23 +56,22 @@ function SignIn({ navigation }) {
       return;
     }
     try {
+      setLoading(true);
       const { user } = await Auth.signUp({
         username: email,
         password: password,
         attributes: { phone_number: `+1${phone}`, name },
         autoSignIn: { enabled: true }, // enables auto sign in after user is confirmed
       });
-      navigation.navigate("EmailVerifcation");
     } catch (e) {
+      setLoading(false);
       setShowError(true);
       setErrorMessage(e.message);
       return;
     }
-
+    setLoading(false);
     setShowError(false);
-
-    // This is temparary
-    // we will do a database POST request here for creating a new user
+    navigation.navigate("EmailVerification", { email: email });
   }
 
   return (
@@ -80,7 +81,8 @@ function SignIn({ navigation }) {
         behavior={Platform.OS == "ios" ? "padding" : "height"}
         style={styles.scroll_container}
       >
-        <ScrollView>
+        {loading && <LoadingScreen />}
+        <ScrollView style={{ backgroundColor: "lightgray" }}>
           <View style={styles.container}>
             <Text style={styles.text}>
               Let's help you play some basketball!
@@ -132,7 +134,7 @@ function SignIn({ navigation }) {
               style={styles.clickableText}
               onPress={() => navigation.navigate("EmailVerification")}
             >
-              Verify account
+              I was sent a verification code - verify my account
             </Text>
           </View>
           <View style={{ flex: 1, backgroundColor: "lightgray" }}></View>
@@ -151,7 +153,7 @@ const styles = EStyleSheet.create({
   container: {
     backgroundColor: "lightgray",
     alignItems: "center",
-    paddingTop: "7rem",
+    paddingTop: "5rem",
     justifyContent: "flex-end",
   },
   text: {

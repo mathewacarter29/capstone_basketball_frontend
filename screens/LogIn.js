@@ -33,8 +33,6 @@ function LogIn({ navigation }) {
         loginData.username,
         loginData.password
       );
-      console.log(response);
-      // navigate here?
     } catch (e) {
       setLoading(false);
       setShowError(true);
@@ -46,6 +44,7 @@ function LogIn({ navigation }) {
     setShowError(false);
     setLoading(false);
     // navigate to the main screen below
+    console.log(`Logged in as ${username}`);
   }
 
   return (
