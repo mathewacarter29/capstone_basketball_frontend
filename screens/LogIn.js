@@ -73,7 +73,7 @@ function LogIn({ navigation }) {
           <TextInput
             style={styles.input}
             value={username}
-            placeholder="Enter your username"
+            placeholder="Enter your email"
             onChangeText={(text) => setUsername(text)}
           ></TextInput>
           <TextInput
