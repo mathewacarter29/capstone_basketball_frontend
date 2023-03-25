@@ -4,10 +4,16 @@ import GetStarted from "./screens/GetStarted";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LogIn from "./screens/LogIn";
+import { Amplify, Auth } from "aws-amplify";
+import config from "./src/aws-exports";
+import { withAuthenticator } from "aws-amplify-react-native";
+// import signUpConfig from "./config/signUpConfig";
+
+Amplify.configure(config);
 
 const Stack = createNativeStackNavigator();
 
-export default function App() {
+function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -27,9 +33,6 @@ export default function App() {
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
-      {/* <View style={styles.container}>
-        <GetStarted />
-      </View> */}
     </NavigationContainer>
   );
 }
@@ -44,3 +47,40 @@ const styles = EStyleSheet.create({
 });
 
 EStyleSheet.build();
+
+const signUpConfig = {
+  header: "My Customized Sign Up",
+  hideAllDefaults: true,
+  signUpFields: [
+    {
+      label: "Full name",
+      key: "name",
+      required: true,
+      displayOrder: 1,
+      type: "string",
+    },
+    {
+      label: "Email",
+      key: "username",
+      required: true,
+      displayOrder: 2,
+      type: "string",
+    },
+    {
+      label: "Phone Number",
+      key: "phone_number",
+      required: true,
+      displayOrder: 3,
+      type: "string",
+    },
+    {
+      label: "Password",
+      key: "password",
+      required: true,
+      displayOrder: 4,
+      type: "password",
+    },
+  ],
+};
+
+export default withAuthenticator(App, { signUpConfig });
