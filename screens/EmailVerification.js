@@ -1,19 +1,12 @@
 import { React, useState } from "react";
-import {
-  View,
-  Text,
-  Alert,
-  KeyboardAvoidingView,
-  TouchableWithoutFeedback,
-  Keyboard,
-  ScrollView,
-} from "react-native";
+import { View, Text, Alert } from "react-native";
 import Button from "../common/Button";
 import EStyleSheet from "react-native-extended-stylesheet";
 import { Auth } from "aws-amplify";
 import LoadingScreen from "../common/LoadingScreen";
 import ErrorPopup from "../common/ErrorPopup";
 import TextInput from "../common/TextInput";
+import Container from "../common/Container";
 
 function EmailVerification({ route, navigation }) {
   let startEmailValue = "";
@@ -48,6 +41,9 @@ function EmailVerification({ route, navigation }) {
   }
 
   async function resendCode() {
+    setLoading(true);
+    await new Promise((r) => setTimeout(r, 10000));
+    setLoading(false);
     if (fieldsEmpty()) {
       setShowError(true);
       setErrorMessage("Enter all fields before resending code");
@@ -68,48 +64,35 @@ function EmailVerification({ route, navigation }) {
   }
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS == "ios" ? "padding" : "height"}
-        style={styles.scroll_container}
-      >
-        {loading && <LoadingScreen />}
-        <ScrollView style={{ backgroundColor: "lightgray" }}>
-          <View style={styles.container}>
-            <Text style={styles.text}>Verify your account</Text>
-            <TextInput
-              value={email}
-              placeholder="Enter your email address"
-              onChangeText={(text) => setEmail(text)}
-            ></TextInput>
-            <TextInput
-              value={code}
-              keyboardType="numeric"
-              placeholder="Enter your verifaction code"
-              onChangeText={(text) => setCode(text)}
-            ></TextInput>
-            <Button title="Verify" onPress={() => verify()}></Button>
-            <Button title="Resend Code" onPress={() => resendCode()}></Button>
-            <Button
-              title="Go Back"
-              onPress={() => navigation.navigate("SignUp")}
-            ></Button>
-            {showError && <ErrorPopup errorMessage={errorMessage} />}
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </TouchableWithoutFeedback>
+    <Container>
+      {loading && <LoadingScreen />}
+      <View style={styles.container}>
+        <Text style={styles.text}>Verify your account</Text>
+        <TextInput
+          value={email}
+          placeholder="Enter your email address"
+          onChangeText={(text) => setEmail(text)}
+        ></TextInput>
+        <TextInput
+          value={code}
+          keyboardType="numeric"
+          placeholder="Enter your verifaction code"
+          onChangeText={(text) => setCode(text)}
+        ></TextInput>
+        <Button title="Verify" onPress={() => verify()}></Button>
+        <Button title="Resend Code" onPress={() => resendCode()}></Button>
+        <Button
+          title="Go Back"
+          onPress={() => navigation.navigate("SignUp")}
+        ></Button>
+        {showError && <ErrorPopup errorMessage={errorMessage} />}
+      </View>
+    </Container>
   );
 }
 
 const styles = EStyleSheet.create({
-  scroll_container: {
-    flex: 1,
-    height: "100%",
-    width: "100%",
-  },
   container: {
-    backgroundColor: "lightgray",
     alignItems: "center",
     paddingTop: "7rem",
     height: "100%",
