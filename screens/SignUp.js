@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  TextInput,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
@@ -12,6 +11,8 @@ import EStyleSheet from "react-native-extended-stylesheet";
 import Button from "../common/Button";
 import { Auth } from "aws-amplify";
 import LoadingScreen from "../common/LoadingScreen";
+import ErrorPopup from "../common/ErrorPopup";
+import TextInput from "../common/TextInput";
 
 function SignIn({ navigation }) {
   const [name, setName] = useState("");
@@ -88,33 +89,28 @@ function SignIn({ navigation }) {
               Let's help you play some basketball!
             </Text>
             <TextInput
-              style={styles.input}
               value={name}
               placeholder="Enter your full name"
               onChangeText={(text) => setName(text)}
             ></TextInput>
             <TextInput
-              style={styles.input}
               value={email}
               placeholder="Enter your email"
               onChangeText={(text) => setEmail(text)}
             ></TextInput>
             <TextInput
-              style={styles.input}
               value={phone}
               keyboardType="numeric"
               placeholder="Enter your phone number"
               onChangeText={(text) => setPhone(text)}
             ></TextInput>
             <TextInput
-              style={styles.input}
               value={password}
               placeholder="Enter your password"
               onChangeText={(text) => setPassword(text)}
               secureTextEntry
             ></TextInput>
             <TextInput
-              style={styles.input}
               value={confirm}
               placeholder="Confirm your password"
               onChangeText={(text) => setConfirm(text)}
@@ -125,11 +121,7 @@ function SignIn({ navigation }) {
               onPress={() => navigation.navigate("GetStarted")}
               title="Go Back"
             />
-            {showError && (
-              <View style={styles.errorBackground}>
-                <Text style={styles.errorText}>{errorMessage}</Text>
-              </View>
-            )}
+            {showError && <ErrorPopup errorMessage={errorMessage} />}
             <Text
               style={styles.clickableText}
               onPress={() => navigation.navigate("EmailVerification")}
@@ -161,30 +153,6 @@ const styles = EStyleSheet.create({
     fontSize: 30,
     width: "80%",
     textAlign: "center",
-  },
-  input: {
-    height: "3rem",
-    width: "80%",
-    borderRadius: "1rem",
-    backgroundColor: "white",
-    margin: "1rem",
-    color: "#333",
-    padding: "1rem",
-    shadowColor: "#171717",
-    shadowRadius: 3,
-    shadowOpacity: 0.2,
-    shadowOffset: { width: -2, height: 4 },
-  },
-  errorBackground: {
-    backgroundColor: "#FAA0A0",
-    width: "80%",
-    borderRadius: "1rem",
-    textAlign: "center",
-    margin: "1rem",
-    padding: ".5rem",
-  },
-  errorText: {
-    color: "red",
   },
   clickableText: {
     color: "darkorange",

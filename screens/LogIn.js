@@ -4,7 +4,6 @@ import {
   Keyboard,
   View,
   Text,
-  TextInput,
   Image,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
@@ -12,6 +11,8 @@ import {
 import Button from "../common/Button";
 import LoadingScreen from "../common/LoadingScreen";
 import { Auth } from "aws-amplify";
+import ErrorPopup from "../common/ErrorPopup";
+import TextInput from "../common/TextInput";
 
 function LogIn({ navigation }) {
   const [username, setUsername] = useState("");
@@ -21,6 +22,11 @@ function LogIn({ navigation }) {
   const [loading, setLoading] = useState(false);
 
   async function login() {
+    if (username == "") {
+      setShowError(true);
+      setErrorMessage("Enter valid email address");
+      return;
+    }
     Keyboard.dismiss();
     const loginData = {
       username: username,
@@ -58,13 +64,11 @@ function LogIn({ navigation }) {
           <Text style={styles.text}>Welcome Back!</Text>
           <Image source={require("../assets/basketballPlayerArms.png")} />
           <TextInput
-            style={styles.input}
             value={username}
             placeholder="Enter your email"
             onChangeText={(text) => setUsername(text)}
           ></TextInput>
           <TextInput
-            style={styles.input}
             value={password}
             placeholder="Enter your password"
             onChangeText={(text) => setPassword(text)}
@@ -75,11 +79,7 @@ function LogIn({ navigation }) {
             title="Go Back"
             onPress={() => navigation.navigate("GetStarted")}
           />
-          {showError && (
-            <View style={styles.errorBackground}>
-              <Text style={styles.errorText}>{errorMessage}</Text>
-            </View>
-          )}
+          {showError && <ErrorPopup errorMessage={errorMessage} />}
         </View>
         <View style={{ flex: 1, backgroundColor: "lightgray" }}></View>
       </KeyboardAvoidingView>
@@ -105,30 +105,6 @@ const styles = EStyleSheet.create({
     fontSize: 30,
     width: "80%",
     textAlign: "center",
-  },
-  input: {
-    height: "3rem",
-    width: "80%",
-    borderRadius: "1rem",
-    backgroundColor: "white",
-    margin: "1rem",
-    color: "#333",
-    padding: "1rem",
-    shadowColor: "#171717",
-    shadowRadius: 3,
-    shadowOpacity: 0.2,
-    shadowOffset: { width: -2, height: 4 },
-  },
-  errorBackground: {
-    backgroundColor: "#FAA0A0",
-    width: "80%",
-    borderRadius: "1rem",
-    textAlign: "center",
-    margin: "1rem",
-    padding: ".5rem",
-  },
-  errorText: {
-    color: "red",
   },
 });
 

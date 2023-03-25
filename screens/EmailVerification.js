@@ -1,7 +1,6 @@
 import { React, useState } from "react";
 import {
   View,
-  TextInput,
   Text,
   Alert,
   KeyboardAvoidingView,
@@ -13,6 +12,8 @@ import Button from "../common/Button";
 import EStyleSheet from "react-native-extended-stylesheet";
 import { Auth } from "aws-amplify";
 import LoadingScreen from "../common/LoadingScreen";
+import ErrorPopup from "../common/ErrorPopup";
+import TextInput from "../common/TextInput";
 
 function EmailVerification({ route, navigation }) {
   let startEmailValue = "";
@@ -25,7 +26,16 @@ function EmailVerification({ route, navigation }) {
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
+  function fieldsEmpty() {
+    return email == "" || code == "";
+  }
+
   async function verify() {
+    if (fieldsEmpty()) {
+      setShowError(true);
+      setErrorMessage("Enter all fields before verifying");
+      return;
+    }
     try {
       const response = await Auth.confirmSignUp(email, code);
     } catch (e) {
@@ -38,14 +48,9 @@ function EmailVerification({ route, navigation }) {
   }
 
   async function resendCode() {
-    if (email == "") {
+    if (fieldsEmpty()) {
       setShowError(true);
-      setErrorMessage("Enter valid email address");
-      return;
-    }
-    if (code == "") {
-      setShowError(true);
-      setErrorMessage("Verification code is missing");
+      setErrorMessage("Enter all fields before resending code");
       return;
     }
     try {
@@ -73,13 +78,11 @@ function EmailVerification({ route, navigation }) {
           <View style={styles.container}>
             <Text style={styles.text}>Verify your account</Text>
             <TextInput
-              style={styles.input}
               value={email}
               placeholder="Enter your email address"
               onChangeText={(text) => setEmail(text)}
             ></TextInput>
             <TextInput
-              style={styles.input}
               value={code}
               keyboardType="numeric"
               placeholder="Enter your verifaction code"
@@ -91,11 +94,7 @@ function EmailVerification({ route, navigation }) {
               title="Go Back"
               onPress={() => navigation.navigate("SignUp")}
             ></Button>
-            {showError && (
-              <View style={styles.errorBackground}>
-                <Text style={styles.errorText}>{errorMessage}</Text>
-              </View>
-            )}
+            {showError && <ErrorPopup errorMessage={errorMessage} />}
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -120,30 +119,6 @@ const styles = EStyleSheet.create({
     fontSize: 30,
     width: "80%",
     textAlign: "center",
-  },
-  input: {
-    height: "3rem",
-    width: "80%",
-    borderRadius: "1rem",
-    backgroundColor: "white",
-    margin: "1rem",
-    color: "#333",
-    padding: "1rem",
-    shadowColor: "#171717",
-    shadowRadius: 3,
-    shadowOpacity: 0.2,
-    shadowOffset: { width: -2, height: 4 },
-  },
-  errorBackground: {
-    backgroundColor: "#FAA0A0",
-    width: "80%",
-    borderRadius: "1rem",
-    textAlign: "center",
-    margin: "1rem",
-    padding: ".5rem",
-  },
-  errorText: {
-    color: "red",
   },
 });
 
