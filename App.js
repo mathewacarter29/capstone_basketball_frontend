@@ -1,13 +1,16 @@
-import SignUp from "./screens/SignUp";
 import EStyleSheet from "react-native-extended-stylesheet";
 import GetStarted from "./screens/GetStarted";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import LogIn from "./screens/LogIn";
 import { Amplify } from "aws-amplify";
 import config from "./src/aws-exports";
 // import signUpConfig from "./config/signUpConfig";
+
+// navigation screens
 import EmailVerification from "./screens/EmailVerification";
+import LogIn from "./screens/LogIn";
+import SignUp from "./screens/SignUp";
+import HomeScreen from "./screens/HomeScreen"
 
 Amplify.configure(config);
 
@@ -35,6 +38,11 @@ export default function App() {
         <Stack.Screen
           name="EmailVerification"
           component={EmailVerification}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="HomeScreen"
+          component={HomeScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
