@@ -2,21 +2,19 @@ import {React, useState} from "react";
 
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import Container from "../common/Container";
-import EStyleSheet from "react-native-extended-stylesheet";
+import EStyleSheet, { absoluteFill } from "react-native-extended-stylesheet";
 
 
-function HomeScreen({ navigation, route }) {
+function HomeScreen({ navigation }) {
 
     return(
         <Container>
-            <View style={styles.profile}>
-                <TouchableOpacity onPress={() => navigation.navigate("Profile", route.params)}>
+            <View style={styles.container}>
+                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Profile")}>
                     <Image
                         style={styles.image}
                         source={require("../assets/profile_icon.png")} />
                 </TouchableOpacity>
-            </View>
-            <View style={styles.container}>
                 <Text style={styles.text}>Home Screen</Text>
                 <Image source={require("../assets/basketballPlayerArms.png")} />
             </View>
@@ -38,16 +36,15 @@ const styles = EStyleSheet.create({
         width: "80%",
         textAlign: "center",
     },
-    profile: {
-        width: "100%",
-        justifyContent: "flex-end",
-    },
     image: {
-        marginTop: "3rem",
-        marginLeft: "20rem",
         width: 50,
         height: 52,
     },
+    button: {
+        position: "absolute",
+        right: "8%",
+        top: "13%",
+    }
 });
 
 export default HomeScreen;

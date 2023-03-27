@@ -1,28 +1,51 @@
 import EStyleSheet from "react-native-extended-stylesheet";
 import Container from "../common/Container";
 import { View, Text, Image, TouchableOpacity } from "react-native";
+import { Auth } from "aws-amplify"
+import LoadingScreen from "../common/LoadingScreen";
+import { React, useState, useEffect } from "react";
 
 
 
 
-function Profile({ navigation, route }) {
+function Profile({ navigation}) {
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [loading, setLoading] = useState(false);
+    
+    async function getProfileData() {
+        setLoading(true);
+        try {
+            response = await Auth.currentUserInfo()
+            setName(response.attributes.name)
+            setEmail(response.attributes.email)
+            setLoading(false);
+        }
+        catch (e) {
+            setLoading(false);
+            return;
+        }
+    }
+
+    useEffect( () => {
+        getProfileData()
+    }, [])
 
     return (
         <Container>
-            <View style={styles.back}>
-                <TouchableOpacity onPress={() => navigation.navigate("HomeScreen", route.params)}>
+            {loading && <LoadingScreen/>}
+            <View style={styles.container}>
+                <TouchableOpacity style={styles.back} onPress={() => navigation.navigate("HomeScreen")}>
                     <Image
                         style={styles.image}
                         source={require("../assets/back_arrow_icon.png")} />
                 </TouchableOpacity>
-            </View>
-            <View style={styles.container}>
                 <Text style={styles.text}>Profile</Text>
                 <Image source={require("../assets/profile_icon.png")} />
             </View>
             <View style={styles.first_info}>
-                <Text style={styles.text_info}>Name: {route.params.attributes.name}</Text>
-                <Text style={styles.text_info}>Email: {route.params.attributes.email}</Text>
+                <Text style={styles.text_info}>Name: {name}</Text>
+                <Text style={styles.text_info}>Email: {email}</Text>
             </View>
 
         </Container>
@@ -37,14 +60,15 @@ const styles = EStyleSheet.create({
     },
     text: {
         margin: "1rem",
-        marginTop: "0rem",
+        marginTop: "6rem",
         fontSize: 30,
         width: "80%",
         textAlign: "center",
     },
     back: {
-        width: "100%",
-        justifyContent: "flex-end",
+        position: "absolute",
+        left: "0%",
+        top: "0%",
     },
     image: {
         marginTop: "3rem",
