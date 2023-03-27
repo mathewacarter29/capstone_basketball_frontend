@@ -26,13 +26,12 @@ function LogIn({ navigation }) {
       username: username,
       password: password,
     };
+
+    let response = null;
     setLoading(true);
     // using amplify API call to validate user
     try {
-      const response = await Auth.signIn(
-        loginData.username,
-        loginData.password
-      );
+      response = await Auth.signIn(loginData.username, loginData.password);
     } catch (e) {
       setLoading(false);
       setShowError(true);
@@ -45,6 +44,12 @@ function LogIn({ navigation }) {
     setLoading(false);
     // navigate to the main screen below
     console.log(`Logged in as ${username}`);
+    console.log(response);
+
+    let homeScreenProps = {
+      attributes: response.attributes,
+    };
+    navigation.navigate("HomeScreen", homeScreenProps);
   }
 
   return (
