@@ -1,6 +1,6 @@
 import React from "react";
 import EStyleSheet from "react-native-extended-stylesheet";
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 
 function Game(props) {
   return (
@@ -21,6 +21,11 @@ function Game(props) {
       <View style={styles.rsvpbar}>
         <Text style={[styles.text, { fontWeight: "bold" }]}> RSVP</Text>
         <View style={styles.line} />
+        <View style={{ justifyContent: "space-between" }}>
+          <TouchableOpacity>
+            <Text style={styles.text}>{props.in.length}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -52,6 +57,9 @@ const styles = EStyleSheet.create({
     backgroundColor: "black",
     width: 1,
     height: "100%",
+  },
+  rsvpButton: {
+    width: "50%",
   },
 });
 export default Game;
