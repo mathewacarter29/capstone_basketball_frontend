@@ -15,11 +15,8 @@ web-build/
 
 # Temporary files created by Metro to check the health of the file watcher
 .metro-health-check*
-package-lock.json
-package.json
 
 #amplify-do-not-edit-begin
-amplify/
 amplify/\#current-cloud-backend
 amplify/.config/local-*
 amplify/logs
@@ -37,6 +34,7 @@ amplifyconfiguration.dart
 amplify-build-config.json
 amplify-gradle-config.json
 amplifytools.xcconfig
+amplify/*
 .secret-*
 **.sample
 #amplify-do-not-edit-end
