@@ -1,4 +1,5 @@
 import { React, useState } from "react";
+import Button from "../common/Button";
 
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import Container from "../common/Container";
@@ -20,6 +21,11 @@ function HomeScreen({ navigation }) {
         <Text style={styles.text}>Home Screen</Text>
         <Image source={require("../assets/basketballPlayerArms.png")} />
       </View>
+      <View style = {styles.bottomView}>         
+          <Button
+          title="Create Game"
+          onPress={() => navigation.navigate("CreateGame")}
+        /></View>
     </Container>
   );
 }
@@ -45,6 +51,15 @@ const styles = EStyleSheet.create({
     position: "absolute",
     right: "8%",
     top: "13%",
+  },
+  bottomView:{
+    width: '50%', 
+    height: 50, 
+    justifyContent: 'center', 
+    alignItems: 'center',
+    position: 'absolute',
+    bottom: 300,
+    marginLeft: "6rem"
   },
 });
 
