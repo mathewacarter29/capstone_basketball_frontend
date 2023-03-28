@@ -20,7 +20,7 @@ function HomeScreen({ navigation }) {
 
   const DUMMY_GAMES = [
     {
-      gameId: "1",
+      gameId: 1,
       creator: "Mat",
       location: "The Village Basketball Courts",
       // we will probably have to change the date format to epoch time for sorting?
@@ -30,7 +30,7 @@ function HomeScreen({ navigation }) {
       out: ["Seyam", "David"],
     },
     {
-      gameId: "2",
+      gameId: 2,
       creator: "Peyton",
       location: "McCommas",
       // we will probably have to change the date format to epoch time for sorting?
@@ -40,7 +40,7 @@ function HomeScreen({ navigation }) {
       out: ["Seyam", "David", "Rishi", "Parker"],
     },
     {
-      gameId: "3",
+      gameId: 3,
       creator: "Parker",
       location: "The Bubble",
       // we will probably have to change the date format to epoch time for sorting?
@@ -56,10 +56,10 @@ function HomeScreen({ navigation }) {
     // will need a loading screen for API call
     // get games from the database and add them to games array
     let tempGames = [];
-    DUMMY_GAMES.forEach((g) => {
+    DUMMY_GAMES.forEach((g, index) => {
       const gameObj = (
         <Game
-          key={g.id}
+          key={index}
           creator={g.creator}
           location={g.location}
           date={g.date}
