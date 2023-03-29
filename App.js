@@ -10,7 +10,7 @@ import config from "./src/aws-exports";
 import EmailVerification from "./screens/EmailVerification";
 import LogIn from "./screens/LogIn";
 import SignUp from "./screens/SignUp";
-import HomeScreen from "./screens/HomeScreen";
+import HomeScreen from "./screens/HomeScreen/HomeScreen";
 import Profile from "./screens/Profile";
 
 Amplify.configure(config);
@@ -21,6 +21,11 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+        <Stack.Screen
+          name="HomeScreen"
+          component={HomeScreen}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="GetStarted"
           component={GetStarted}
@@ -42,15 +47,11 @@ export default function App() {
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="HomeScreen"
-          component={HomeScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
           name="Profile"
           component={Profile}
           options={{ headerShown: false }}
         />
+
       </Stack.Navigator>
     </NavigationContainer>
   );
