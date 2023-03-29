@@ -37,6 +37,7 @@ const DATA = [
 ];
 
 
+
 function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
@@ -73,7 +74,7 @@ function HomeScreen() {
 
 const styles = EStyleSheet.create({
   container: {
-    flex: 1,
+    flex: "1",
     backgroundColor: "lightgray",
     alignItems: "center",
 

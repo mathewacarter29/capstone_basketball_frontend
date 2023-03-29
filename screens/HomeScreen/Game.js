@@ -1,8 +1,8 @@
 import React from "react";
 import EStyleSheet from "react-native-extended-stylesheet";
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import Button from "../../common/Button";
-import { TouchableOpacity } from "react-native";
+
 
 const Game = ({item}) => (
 
