@@ -7,6 +7,17 @@ import { Auth } from "aws-amplify";
 import ErrorPopup from "../common/ErrorPopup";
 import TextInput from "../common/TextInput";
 import Container from "../common/Container";
+import { DataStore } from "aws-amplify";
+import {Player, Location} from "../src/models";
+import '@azure/core-asynciterator-polyfill';
+
+let name;
+
+async function getAllPlayers() {
+    const players = await DataStore.query(Player);
+    console.log("ALL Players: ", players);
+}
+
 
 function LogIn({ navigation }) {
   const [username, setUsername] = useState("");
@@ -27,11 +38,15 @@ function LogIn({ navigation }) {
       password: password,
     };
 
-    let response = null;
+    response = null;
     setLoading(true);
+
+    const players = await DataStore.query(Player);
+    console.log("ALL Players: ", players);
     // using amplify API call to validate user
     try {
-      response = await Auth.signIn(loginData.username, loginData.password);
+        response = await Auth.signIn(loginData.username, loginData.password);
+      
     } catch (e) {
       setLoading(false);
       setShowError(true);
@@ -44,7 +59,8 @@ function LogIn({ navigation }) {
     setLoading(false);
     // navigate to the main screen below
     console.log(`Logged in as ${username}`);
-    console.log(response);
+    console.log(response.attributes.name);
+    name = response.attributes.name;
 
     let homeScreenProps = {
       attributes: response.attributes,
@@ -97,3 +113,4 @@ const styles = EStyleSheet.create({
 });
 
 export default LogIn;
+export { name };
