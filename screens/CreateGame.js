@@ -11,6 +11,7 @@ import RNPickerSelect from "react-native-picker-select";
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { DataStore } from "aws-amplify";
 import { Game } from "../src/models";
+import {Location} from "../src/models";
 import '@azure/core-asynciterator-polyfill';
 import { SDK } from 'aws-sdk';
 
@@ -18,6 +19,7 @@ import { SDK } from 'aws-sdk';
 function CreateGame({ navigation }) {
     const [loading, setLoading] = useState(false);
     const [ gameName, setName] = useState("");
+    const [ gameDescription, setGameDescription] = useState("");
     const [chosenDate, setChosenDate] = useState(new Date());
     const [ gameLocation, setLocation] = useState("");
     const [showError, setShowError] = useState(false);
@@ -54,18 +56,31 @@ function CreateGame({ navigation }) {
 //     setLoading(false);
 //     setShowError(false);
 // }
+
+async function getLocation(locationName) {
+  const locations = await DataStore.query(Location, (l) => l.nam.eq(locationName));
+  return locations[0];
+}
+
 async function handleSubmit(){
+
+    const location = getLocation(gameLocation);
     const isoDate = chosenDate.toISOString(); // Convert it to an ISO datetime string
     const awsDateTime = new SDK().util.date.iso8601(isoDate); // Convert it to an AWSDateTime object
     try {
         const game = await DataStore.save(
           new Game({
             name: gameName,
-            location: gameLocation,
+            description: gameDescription,
+            location: location,
             datetime: awsDateTime,
+            min_size: 10,
+            skill_level: 5,
+            player_ids: [],
+            organizer: "organizer"
           })
         );
-        console.log('Post saved successfully!', game);
+        console.log('Game saved successfully!', game);
       } catch (error) {
         console.log('Error saving game', error);
       }
@@ -82,6 +97,11 @@ return (
           placeholder="Enter a name for the game"
           onChangeText={(text) => setName(text)}
         ></TextInput>
+        <TextInput
+          value={gameDescription}
+          placeholder="Enter a description for the game"
+          onChangeText={(text) => setGameDescription(text)}
+        ></TextInput>
        <RNDateTimePicker 
        style={{flex: 1}}
        value={chosenDate} onDateChange={setChosenDate}/>
@@ -91,8 +111,9 @@ return (
             //onValueChange={(value) => console.log(value)}
             placeholder={{ label: "Please select a location", value: null }}
             items={[
-                { label: "McComas Gym", value: "McComas Gym" },
-                { label: "Village Courts", value: "Village Courts" },
+                { label: "McComas Hall", value: "McComas Gym" },
+                { label: "Lee Courts", value: "Lee Courts" },
+                { label: "Old Blacksburg HS", value: "Old Blacksburg HS" },
                 { label: "Cassell Colisuem", value: "Cassell Coliseum" },
             ]}
             style={customPickerStyles}

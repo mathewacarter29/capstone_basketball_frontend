@@ -1,0 +1,95 @@
+{
+  "providers": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-campuscourts-staging-134240-authRole",
+      "UnauthRoleArn": "arn:aws:iam::405928636317:role/amplify-campuscourts-staging-134240-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::405928636317:role/amplify-campuscourts-staging-134240-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-campuscourts-staging-134240-deployment",
+      "UnauthRoleName": "amplify-campuscourts-staging-134240-unauthRole",
+      "StackName": "amplify-campuscourts-staging-134240",
+      "StackId": "arn:aws:cloudformation:us-east-1:405928636317:stack/amplify-campuscourts-staging-134240/e9b9c830-cb12-11ed-8807-0a10823c42ab",
+      "AmplifyAppId": "d265h8xle97s72"
+    }
+  },
+  "api": {
+    "campuscourts": {
+      "dependsOn": [],
+      "output": {
+        "authConfig": {
+          "additionalAuthenticationProviders": [
+            {
+              "authenticationType": "AWS_IAM"
+            }
+          ],
+          "defaultAuthentication": {
+            "apiKeyConfig": {
+              "apiKeyExpirationDays": 30,
+              "description": "api key description"
+            },
+            "authenticationType": "API_KEY"
+          }
+        },
+        "GraphQLAPIIdOutput": "2whlfsik3rfdvpqwi2jnumummm",
+        "GraphQLAPIEndpointOutput": "https://sdudmn3hjvcx5daonwacipfom4.appsync-api.us-east-1.amazonaws.com/graphql",
+        "GraphQLAPIKeyOutput": "da2-s65htelsczeirn4odd3op7tlq4"
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "AppSync",
+      "lastPushTimeStamp": "2023-03-29T00:01:32.113Z",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-campuscourts-staging-134240-deployment/amplify-cfn-templates/api/cloudformation-template.json",
+        "logicalId": "apicampuscourts"
+      }
+    }
+  },
+  "auth": {
+    "campuscourts": {
+      "customAuth": false,
+      "dependsOn": [],
+      "frontendAuthConfig": {
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyMinLength": 8,
+          "passwordPolicyCharacters": [
+            "REQUIRES_LOWERCASE",
+            "REQUIRES_NUMBERS",
+            "REQUIRES_UPPERCASE"
+          ]
+        },
+        "signupAttributes": [
+          "NAME",
+          "EMAIL",
+          "PHONE_NUMBER"
+        ],
+        "socialProviders": [],
+        "usernameAttributes": [
+          "EMAIL"
+        ],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito",
+      "output": {
+        "CreatedSNSRole": "arn:aws:iam::405928636317:role/sns98a8b5ac134240-staging",
+        "UserPoolId": "us-east-1_WklKoOECn",
+        "AppClientIDWeb": "9t51qre8q2cbsi6100d06qjtv",
+        "AppClientID": "4t36peqmcc7l9hfnt59ibmm6td",
+        "IdentityPoolId": "us-east-1:f626fcbe-c74b-40fd-b5d8-896440679163",
+        "UserPoolArn": "arn:aws:cognito-idp:us-east-1:405928636317:userpool/us-east-1_WklKoOECn",
+        "IdentityPoolName": "testAuthIdentityPool__staging",
+        "UserPoolName": "campuscourts"
+      },
+      "lastPushTimeStamp": "2023-03-29T00:01:32.115Z",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-campuscourts-staging-134240-deployment/amplify-cfn-templates/auth/campuscourts-cloudformation-template.json",
+        "logicalId": "authcampuscourts"
+      }
+    }
+  }
+}
