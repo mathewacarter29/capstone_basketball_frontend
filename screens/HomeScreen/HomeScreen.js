@@ -11,6 +11,7 @@ import {
 import EStyleSheet from "react-native-extended-stylesheet";
 import Game from "./Game";
 import GameFeed from "./GameFeed";
+import Button from "../../common/Button";
 
 const DATA = [
   {
@@ -82,6 +83,12 @@ function HomeScreen({ navigation }) {
       <View style={styles.innerContainer}>
         <GameFeed data={DATA} />
       </View>
+      <View style = {styles.bottomView}>         
+          <Button
+          title="Create Game"
+          onPress={() => navigation.navigate("CreateGame")}
+        /></View>
+
     </View>
   );
 }
