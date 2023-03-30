@@ -6,15 +6,15 @@ import Button from "../../common/Button";
 function Game({ item }) {
   function rsvp(status) {
     if (status == "in") {
-      console.log(`${item.title}: RSVP Accepted`);
+      console.log(`${item.name}: RSVP Accepted`);
     } else {
-      console.log(`${item.title}: RSVP Rejected`);
+      console.log(`${item.name}: RSVP Rejected`);
     }
   }
 
   return (
     <View style={styles.item}>
-      <Text style={styles.title}>{item.title}</Text>
+      <Text style={styles.title}>{item.name}</Text>
 
       <Text style={styles.text}>
         <Text style={{ fontWeight: "bold" }}>Location: </Text>

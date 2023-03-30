@@ -9,15 +9,50 @@ import {
   ScrollView,
 } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
-import Game from "./Game";
+
 import GameFeed from "./GameFeed";
 import Button from "../../common/Button";
+
+import { DataStore } from "aws-amplify";
+import {Player, Game, Location, GamePlayer, Rsvp} from "../../src/models";
+import '@azure/core-asynciterator-polyfill'; 
+
+
+async function getPlayerGames() {
+
+  // from auth lib get user details
+
+  // get player object
+
+  // query player by email
+
+  let userEmail = "Test@gmail.com";
+  const players = await DataStore.query(Player, (p) => p.email.ne(userEmail) );
+  const player = players[0];
+
+  // query GamePlayer to find games player is invited to or created
+  const gamePlayers = await DataStore.query(GamePlayer, (gp) => gp.player_id.eq(player.id));
+
+  let userGames = [];
+  let startDate = new Date();
+
+  for (let i = 0; i < gamePlayers.length; i++) {
+    let game_id = gamePlayers[i].id;
+    
+
+    const games = await DataStore.query(Game, (c) => c.game_id.eq(game_id));
+    userGames.push(game);
+  }
+
+    console.log("games", game[0]);
+
+}
 
 const DATA = [
   {
     id: "1",
-    title: "First Game",
-    creator: "Mat",
+    name: "First Game",
+    organizer: "Mat",
     location: "The Village Basketball Courts",
     date: "6/30/2023",
     time: "12:00 PM",
@@ -26,8 +61,8 @@ const DATA = [
   },
   {
     id: "2",
-    title: "Second Game",
-    creator: "Peyton",
+    name: "Second Game",
+    organizer: "Peyton",
     location: "McCommas",
     date: "6/29/2023",
     time: "10:00 AM",
@@ -36,8 +71,8 @@ const DATA = [
   },
   {
     id: "3",
-    title: "Third Game",
-    creator: "Parker",
+    name: "Third Game",
+    organizer: "Parker",
     location: "The Bubble",
     date: "8/1/2023",
     time: "3:00 PM",
@@ -46,8 +81,8 @@ const DATA = [
   },
   {
     id: "4",
-    title: "Forth Game",
-    creator: "Parker",
+    name: "Forth Game",
+    organizer: "Parker",
     location: "The Bubble",
     date: "8/1/2023",
     time: "3:00 PM",
@@ -56,8 +91,8 @@ const DATA = [
   },
   {
     id: "5",
-    title: "Fifth Game",
-    creator: "Parker",
+    name: "Fifth Game",
+    organizer: "Parker",
     location: "The Bubble",
     date: "8/1/2023",
     time: "3:00 PM",
@@ -67,6 +102,7 @@ const DATA = [
 ];
 
 function HomeScreen({ navigation }) {
+  getPlayerGames();
   return (
     <View style={styles.container}>
       <TouchableOpacity
