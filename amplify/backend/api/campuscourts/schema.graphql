@@ -1,10 +1,23 @@
+enum RSVP {
+  ACCEPTED
+  DECLINED
+  PENDING
+}
+
+type GamePlayer @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  player_id: String!
+  game_id: String!
+  rsvp: RSVP
+  invited: Boolean
+}
+
 type Location @model @auth(rules: [{allow: public}]) {
   id: ID!
   latitude: Float
   longitude: Float
-  nam: String
+  name: String
   address: String
-  LocationGameRelationship: [Game] @hasMany(indexName: "byLocation", fields: ["id"])
 }
 
 type Player @model @auth(rules: [{allow: public}]) {
@@ -16,7 +29,6 @@ type Player @model @auth(rules: [{allow: public}]) {
   instagram: String
   twitter: String
   bio: String
-  games: [Game] @manyToMany(relationName: "GamePlayer")
 }
 
 type Game @model @auth(rules: [{allow: public}]) {
@@ -24,11 +36,11 @@ type Game @model @auth(rules: [{allow: public}]) {
   name: String
   description: String
   location: Location!
-  datetime: AWSDateTime!
-  min_size: Int
+  date: String!
+  time: String!
   skill_level: Int
-  player_ids: [AWSJSON]
   organizer: String
-  locationID: ID! @index(name: "byLocation")
-  PlayerGameRelationship: [Player] @manyToMany(relationName: "GamePlayer")
+  min_size: Int
+  invited_players: [String]
 }
+ 

@@ -12,6 +12,38 @@
       "AmplifyAppId": "d265h8xle97s72"
     }
   },
+  "api": {
+    "campuscourts": {
+      "dependsOn": [],
+      "output": {
+        "authConfig": {
+          "additionalAuthenticationProviders": [
+            {
+              "authenticationType": "AWS_IAM"
+            }
+          ],
+          "defaultAuthentication": {
+            "authenticationType": "API_KEY",
+            "apiKeyConfig": {
+              "apiKeyExpirationDays": 30,
+              "description": "api key description"
+            }
+          }
+        },
+        "GraphQLAPIIdOutput": "2whlfsik3rfdvpqwi2jnumummm",
+        "GraphQLAPIEndpointOutput": "https://sdudmn3hjvcx5daonwacipfom4.appsync-api.us-east-1.amazonaws.com/graphql",
+        "GraphQLAPIKeyOutput": "da2-s65htelsczeirn4odd3op7tlq4"
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "AppSync",
+      "lastPushTimeStamp": "2023-03-29T23:35:08.872Z",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-campuscourts-staging-134240-deployment/amplify-cfn-templates/api/cloudformation-template.json",
+        "logicalId": "apicampuscourts"
+      },
+      "lastPushDirHash": "rH5ewdzSAIOuDCuhBgztpqmWVV4="
+    }
+  },
   "auth": {
     "campuscourts": {
       "customAuth": false,
@@ -54,43 +86,11 @@
         "IdentityPoolName": "testAuthIdentityPool__staging",
         "UserPoolName": "campuscourts"
       },
-      "lastPushTimeStamp": "2023-03-28T00:05:19.890Z",
+      "lastPushTimeStamp": "2023-03-29T23:22:20.182Z",
       "providerMetadata": {
         "s3TemplateURL": "https://s3.amazonaws.com/amplify-campuscourts-staging-134240-deployment/amplify-cfn-templates/auth/campuscourts-cloudformation-template.json",
         "logicalId": "authcampuscourts"
       }
-    }
-  },
-  "api": {
-    "campuscourts": {
-      "service": "AppSync",
-      "providerPlugin": "awscloudformation",
-      "dependsOn": [],
-      "output": {
-        "authConfig": {
-          "defaultAuthentication": {
-            "authenticationType": "API_KEY",
-            "apiKeyConfig": {
-              "apiKeyExpirationDays": 30,
-              "description": "api key description"
-            }
-          },
-          "additionalAuthenticationProviders": [
-            {
-              "authenticationType": "AWS_IAM"
-            }
-          ]
-        },
-        "GraphQLAPIIdOutput": "2whlfsik3rfdvpqwi2jnumummm",
-        "GraphQLAPIEndpointOutput": "https://sdudmn3hjvcx5daonwacipfom4.appsync-api.us-east-1.amazonaws.com/graphql",
-        "GraphQLAPIKeyOutput": "da2-s65htelsczeirn4odd3op7tlq4"
-      },
-      "providerMetadata": {
-        "s3TemplateURL": "https://s3.amazonaws.com/amplify-campuscourts-staging-134240-deployment/amplify-cfn-templates/api/cloudformation-template.json",
-        "logicalId": "apicampuscourts"
-      },
-      "lastPushTimeStamp": "2023-03-28T00:05:24.161Z",
-      "lastPushDirHash": "bFTv501Pgdx/94Iy68TrpW0MNEU="
     }
   }
 }

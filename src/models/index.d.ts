@@ -1,10 +1,48 @@
 import { ModelInit, MutableModel, __modelMeta__, ManagedIdentifier } from "@aws-amplify/datastore";
 // @ts-ignore
-import { LazyLoading, LazyLoadingDisabled, AsyncCollection, AsyncItem } from "@aws-amplify/datastore";
+import { LazyLoading, LazyLoadingDisabled } from "@aws-amplify/datastore";
+
+export enum Rsvp {
+  ACCEPTED = "ACCEPTED",
+  DECLINED = "DECLINED",
+  PENDING = "PENDING"
+}
 
 
 
+type EagerGamePlayer = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<GamePlayer, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly player_id: string;
+  readonly game_id: string;
+  readonly rsvp?: Rsvp | keyof typeof Rsvp | null;
+  readonly invited?: boolean | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
 
+type LazyGamePlayer = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<GamePlayer, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly player_id: string;
+  readonly game_id: string;
+  readonly rsvp?: Rsvp | keyof typeof Rsvp | null;
+  readonly invited?: boolean | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type GamePlayer = LazyLoading extends LazyLoadingDisabled ? EagerGamePlayer : LazyGamePlayer
+
+export declare const GamePlayer: (new (init: ModelInit<GamePlayer>) => GamePlayer) & {
+  copyOf(source: GamePlayer, mutator: (draft: MutableModel<GamePlayer>) => MutableModel<GamePlayer> | void): GamePlayer;
+}
 
 type EagerLocation = {
   readonly [__modelMeta__]: {
@@ -14,9 +52,8 @@ type EagerLocation = {
   readonly id: string;
   readonly latitude?: number | null;
   readonly longitude?: number | null;
-  readonly nam?: string | null;
+  readonly name?: string | null;
   readonly address?: string | null;
-  readonly LocationGameRelationship?: (Game | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -29,9 +66,8 @@ type LazyLocation = {
   readonly id: string;
   readonly latitude?: number | null;
   readonly longitude?: number | null;
-  readonly nam?: string | null;
+  readonly name?: string | null;
   readonly address?: string | null;
-  readonly LocationGameRelationship: AsyncCollection<Game>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -55,7 +91,6 @@ type EagerPlayer = {
   readonly instagram?: string | null;
   readonly twitter?: string | null;
   readonly bio?: string | null;
-  readonly games?: (GamePlayer | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -73,7 +108,6 @@ type LazyPlayer = {
   readonly instagram?: string | null;
   readonly twitter?: string | null;
   readonly bio?: string | null;
-  readonly games: AsyncCollection<GamePlayer>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -92,13 +126,12 @@ type EagerGame = {
   readonly id: string;
   readonly name?: string | null;
   readonly description?: string | null;
-  readonly datetime: string;
-  readonly min_size?: number | null;
+  readonly date: string;
+  readonly time: string;
   readonly skill_level?: number | null;
-  readonly player_ids?: (string | null)[] | null;
   readonly organizer?: string | null;
-  readonly locationID: string;
-  readonly PlayerGameRelationship?: (GamePlayer | null)[] | null;
+  readonly min_size?: number | null;
+  readonly invited_players?: (string | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -111,13 +144,12 @@ type LazyGame = {
   readonly id: string;
   readonly name?: string | null;
   readonly description?: string | null;
-  readonly datetime: string;
-  readonly min_size?: number | null;
+  readonly date: string;
+  readonly time: string;
   readonly skill_level?: number | null;
-  readonly player_ids?: (string | null)[] | null;
   readonly organizer?: string | null;
-  readonly locationID: string;
-  readonly PlayerGameRelationship: AsyncCollection<GamePlayer>;
+  readonly min_size?: number | null;
+  readonly invited_players?: (string | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -126,38 +158,4 @@ export declare type Game = LazyLoading extends LazyLoadingDisabled ? EagerGame :
 
 export declare const Game: (new (init: ModelInit<Game>) => Game) & {
   copyOf(source: Game, mutator: (draft: MutableModel<Game>) => MutableModel<Game> | void): Game;
-}
-
-type EagerGamePlayer = {
-  readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<GamePlayer, 'id'>;
-    readOnlyFields: 'createdAt' | 'updatedAt';
-  };
-  readonly id: string;
-  readonly playerId?: string | null;
-  readonly gameId?: string | null;
-  readonly player: Player;
-  readonly game: Game;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-}
-
-type LazyGamePlayer = {
-  readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<GamePlayer, 'id'>;
-    readOnlyFields: 'createdAt' | 'updatedAt';
-  };
-  readonly id: string;
-  readonly playerId?: string | null;
-  readonly gameId?: string | null;
-  readonly player: AsyncItem<Player>;
-  readonly game: AsyncItem<Game>;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-}
-
-export declare type GamePlayer = LazyLoading extends LazyLoadingDisabled ? EagerGamePlayer : LazyGamePlayer
-
-export declare const GamePlayer: (new (init: ModelInit<GamePlayer>) => GamePlayer) & {
-  copyOf(source: GamePlayer, mutator: (draft: MutableModel<GamePlayer>) => MutableModel<GamePlayer> | void): GamePlayer;
 }
