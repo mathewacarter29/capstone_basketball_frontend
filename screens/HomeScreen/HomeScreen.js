@@ -115,6 +115,7 @@ const styles = EStyleSheet.create({
     height: "78%",
     marginTop: "6.5rem",
   },
+  
 });
 
 export default HomeScreen;

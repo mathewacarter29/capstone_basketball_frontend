@@ -85,7 +85,7 @@ function HomeScreen({ navigation }) {
 
         <View style={styles.row} >
             <TouchableOpacity>
-                <Text> Map View </Text>0
+                <Text> Map View </Text>
             </TouchableOpacity>
             <TouchableOpacity>
                 <Text> Game View </Text>
