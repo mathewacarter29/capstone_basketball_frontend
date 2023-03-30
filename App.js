@@ -12,6 +12,7 @@ import LogIn from "./screens/LogIn";
 import SignUp from "./screens/SignUp";
 import HomeScreen from "./screens/HomeScreen/HomeScreen";
 import Profile from "./screens/Profile";
+import MapScreen from "./screens/MapView/MapScreen";
 
 Amplify.configure(config);
 
@@ -21,6 +22,11 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+      <Stack.Screen
+          name="MapScreen"
+          component={MapScreen}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="HomeScreen"
           component={HomeScreen}
