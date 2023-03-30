@@ -1,67 +1,147 @@
 import React, { useEffect, useState } from "react";
 import { View, Text } from "react-native";
-import EStyleSheet from "react-native-extended-stylesheet";
+import EStyleSheet, { value } from "react-native-extended-stylesheet";
 import Button from "../common/Button";
 import LoadingScreen from "../common/LoadingScreen";
 import ErrorPopup from "../common/ErrorPopup";
 import TextInput from "../common/TextInput";
 import Container from "../common/Container";
-import { API } from "aws-amplify";
+import { Auth } from "aws-amplify";
 import RNPickerSelect from "react-native-picker-select";
 import RNDateTimePicker from '@react-native-community/datetimepicker';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { DataStore } from "aws-amplify";
-import { Game } from "../src/models";
-import {Location} from "../src/models";
+import {Player, Game, Location, GamePlayer, Rsvp} from "../src/models";
 import '@azure/core-asynciterator-polyfill';
-import { SDK } from 'aws-sdk';
-import { name } from "./LogIn";
-
 
 function CreateGame({ navigation }) {
+
     const [loading, setLoading] = useState(false);
-    const [ gameName, setName] = useState("");
+    const [ gameName, setGameName] = useState("");
     const [ gameDescription, setGameDescription] = useState("");
-    const [chosenDate, setChosenDate] = useState(new Date());
     const [ gameLocation, setLocation] = useState("");
     const [ gameMinSize, setMinSize] = useState("");
     const [ gameSkillLevel, setSkillLevel] = useState("");
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [chosenDate, setChosenDate] = useState(new Date());
+
+const changeSelectedDate = (event, selectedDate) => {
+    const currentDate = selectedDate || chosenDate;
+    setChosenDate(currentDate);
+}
+
+async function getAllPlayers() {
+  let userEmail = "Test@gmail.com";
+  const allPlayers = await DataStore.query(Player, (p) => p.email.ne(userEmail) );
+  console.log("All players: ", allPlayers);
+  return allPlayers;
+}
+
+async function getPlayer() {
+  // use auth to get use info
+
+  // use auth info to get Player entry
+
+  // todo: get this from auth
+  let userEmail = "Test@gmail.com";
+   
+  const players = await DataStore.query(Player, (p) => p.email.eq(userEmail));
+  console.log("Players returned from player: ", players)
+  return players[0];
+}
 
 
 async function getLocation(locationName) {
-  const locations = await DataStore.query(Location, (l) => l.nam.eq(locationName));
+  const locations = await DataStore.query(Location);
+  // const locations = await DataStore.query(Location, (l) => l.name.eq(locationName));
+  console.log("Locations returned: ", locations)
   return locations[0];
 }
 
-async function create(){
-    console.log(chosenDate);
-    const location = getLocation(gameLocation);
-    //const isoDate = chosenDate.toISOString(); // Convert it to an ISO datetime string
-    //const awsDateTime = new SDK().util.date.iso8601(isoDate); // Convert it to an AWSDateTime object
-    
-    // try {
-    //     const game = await DataStore.save(
-    //       new Game({
-    //         name: gameName,
-    //         description: gameDescription,
-    //         location: location,
-    //         datetime: chosenDate.toISOString(),
-    //         min_size: parseInt(gameMinSize),
-    //         skill_level: parseInt(gameSkillLevel),
-    //         player_ids: ["1","2","3"],
-    //         //player_ids: [{"id":1}, {"id":2}],
-    //         organizer: "organizer", //populate automatically with the name of the user creating the game 
-    //         locationID: "location1" 
-    //       })
-    //     );
-    //     console.log('Game saved successfully!', game);
-    //   } catch (error) {
-    //     console.log('Error saving game', error);
-    //   }
+async function storeGame(gameName, gameDate, gameTime, gameMinSize, gameSkillLevel, organizer, location) {
+  try {
+    const game = await DataStore.save(
+      new Game({
+        name: gameName,
+        description: gameDescription,
+        location: (await location),
+        date: gameDate,
+        time: gameTime,
+        min_size: parseInt(gameMinSize),
+        skill_level: parseInt(gameSkillLevel),
+        organizer: (await organizer).id, //populate automatically with the name of the user creating the game
+        location_id: location.id
+      })
+    );
+    console.log('Game saved successfully!', game);
+    return game;
+  }
+
+  catch (error) {
+    console.log('Error saving game', error);
+    return null;
+  }
+
 }
 
+async function storeGamePlayers(gameId, invitedPlayers) {
+
+
+    console.log("storeGameplayer: gameId: ", gameId)
+    for (let i = 0; i < (await invitedPlayers).length; i++) {
+      console.log("invited player i: ", invitedPlayers[i]);
+      try {
+        const gamePlayer = await DataStore.save(
+          new GamePlayer({
+            player_id: invitedPlayers[i].id,
+            game_id: gameId,
+            rsvp: Rsvp.PENDING,
+            invited: true
+          })
+        )
+        console.log("Saved GamePlayer: ", gamePlayer);
+      }
+      catch (error) {
+        console.log("error: ", error, "storing player: ", invitedPlayers[i]);
+      }
+    }
+  }
+
+  
+async function create(gameId, invtiedPlayers){
+    
+    //query for email to get player id
+    //const players = await DataStore.query(Player);
+    //console.log("ALL Players: ", players);
+
+    //const locations = await DataStore.query(Location);
+    //console.log("All locations: ", locations);
+  
+    const gameDate = (chosenDate.getMonth() + 1) + '/' + chosenDate.getDate() + '/' +  chosenDate.getFullYear();
+    const gameTime = chosenDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
+    const organizer = await getPlayer();
+
+    // todo: this should be list of players that organizer invites
+    const invitedPlayers = await getAllPlayers();
+    invitedPlayers.push(organizer); // add organizer to invited players so that they get added in GamePlayer
+    console.log("invited players: ", invitedPlayers)
+
+    const location = await getLocation(gameLocation);
+
+    let newGame = await storeGame(gameName, gameDate, gameTime, gameMinSize, gameSkillLevel, organizer, location);
+
+    if (newGame == null) {
+      console.log("Error creating game");
+      return;
+    }
+
+    storeGamePlayers(newGame.id, invitedPlayers);
+}
+
+
 return (
-    // This is gonna be the sign up form
+    
+    // This is the create event form
     <Container>
       {loading && <LoadingScreen />}
       <View style={styles.container}>
@@ -69,7 +149,7 @@ return (
         <TextInput
           value={gameName}
           placeholder="Enter a name for the game"
-          onChangeText={(text) => setName(text)}
+          onChangeText={(text) => setGameName(text)}
         ></TextInput>
         <TextInput
           value={gameDescription}
@@ -105,7 +185,9 @@ return (
         <RNDateTimePicker 
             mode="datetime"
             style={styles.datetimepicker}
-            value={chosenDate} onDateChange={setChosenDate}/>
+            value={chosenDate}
+            onChange={changeSelectedDate}
+        /> 
         <Button title="Create Game" onPress={() => create()} />
       </View>
       <View style={{ flex: 1, backgroundColor: "lightgray" }}></View>
