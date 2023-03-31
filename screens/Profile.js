@@ -5,6 +5,7 @@ import { Auth } from "aws-amplify";
 import LoadingScreen from "../common/LoadingScreen";
 import { React, useState, useEffect } from "react";
 import Button from "../common/Button";
+import BackArrow from "../common/BackArrow";
 
 function Profile({ navigation }) {
   const [name, setName] = useState("");
@@ -41,12 +42,7 @@ function Profile({ navigation }) {
     <Container>
       {loading && <LoadingScreen />}
       <View style={styles.container}>
-        <TouchableOpacity
-          style={styles.back}
-          onPress={() => navigation.navigate("HomeScreen")}
-        >
-          <Image source={require("../assets/back_arrow_icon.png")} />
-        </TouchableOpacity>
+        <BackArrow navigation={navigation} location="HomeScreen"/>
         <Text style={styles.text}>Profile</Text>
         <Image source={require("../assets/profile_icon.png")} />
         <Text style={styles.text_info}>Name: {name}</Text>

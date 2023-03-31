@@ -7,9 +7,13 @@ import { Auth } from "aws-amplify";
 import ErrorPopup from "../common/ErrorPopup";
 import TextInput from "../common/TextInput";
 import Container from "../common/Container";
+<<<<<<< HEAD
 import { DataStore } from "aws-amplify";
 import { Player, Location } from "../src/models";
 import "@azure/core-asynciterator-polyfill";
+=======
+import BackArrow from "../common/BackArrow";
+>>>>>>> a6b2de6... Common Back arrow created and added on relevant screens
 
 function LogIn({ navigation }) {
   const [username, setUsername] = useState("");
@@ -70,10 +74,7 @@ function LogIn({ navigation }) {
           secureTextEntry
         ></TextInput>
         <Button title="Log In" onPress={() => login()} />
-        <Button
-          title="Go Back"
-          onPress={() => navigation.navigate("GetStarted")}
-        />
+        <BackArrow navigation={navigation} location="GetStarted"/>
         {showError && <ErrorPopup errorMessage={errorMessage} />}
       </View>
       <View style={{ flex: 1, backgroundColor: "lightgray" }}></View>

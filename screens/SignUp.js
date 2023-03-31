@@ -7,9 +7,13 @@ import LoadingScreen from "../common/LoadingScreen";
 import ErrorPopup from "../common/ErrorPopup";
 import TextInput from "../common/TextInput";
 import Container from "../common/Container";
+<<<<<<< HEAD
 import "@azure/core-asynciterator-polyfill";
 import { Player, SkillLevel } from "../src/models";
 import { DataStore } from "aws-amplify";
+=======
+import BackArrow from "../common/BackArrow";
+>>>>>>> a6b2de6... Common Back arrow created and added on relevant screens
 
 function SignIn({ navigation }) {
   const [name, setName] = useState("");
@@ -127,10 +131,7 @@ function SignIn({ navigation }) {
           secureTextEntry
         ></TextInput>
         <Button onPress={() => signup()} title="Sign Up!" />
-        <Button
-          onPress={() => navigation.navigate("GetStarted")}
-          title="Go Back"
-        />
+        <BackArrow navigation={navigation} location="GetStarted"/>
         <Text
           style={styles.clickableText}
           onPress={() => navigation.navigate("EmailVerification")}
