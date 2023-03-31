@@ -7,6 +7,7 @@ import { Auth } from "aws-amplify";
 import ErrorPopup from "../common/ErrorPopup";
 import TextInput from "../common/TextInput";
 import Container from "../common/Container";
+import BackArrow from "../common/BackArrow";
 
 function LogIn({ navigation }) {
   const [username, setUsername] = useState("");
@@ -70,10 +71,7 @@ function LogIn({ navigation }) {
           secureTextEntry
         ></TextInput>
         <Button title="Log In" onPress={() => login()} />
-        <Button
-          title="Go Back"
-          onPress={() => navigation.navigate("GetStarted")}
-        />
+        <BackArrow navigation={navigation} location="GetStarted"/>
         {showError && <ErrorPopup errorMessage={errorMessage} />}
       </View>
       <View style={{ flex: 1, backgroundColor: "lightgray" }}></View>
