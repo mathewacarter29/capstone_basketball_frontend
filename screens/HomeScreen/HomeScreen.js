@@ -1,16 +1,16 @@
-import React from "react";
+import React, {useState} from "react";
 import {
-  SafeAreaView,
-  FlatList,
   Text,
   TouchableOpacity,
   Image,
   View,
   ScrollView,
 } from "react-native";
+
 import EStyleSheet from "react-native-extended-stylesheet";
-import Game from "./Game";
 import GameFeed from "./GameFeed";
+import MapScreen from "../MapView/MapScreen"
+
 
 const DATA = [
   {
@@ -65,9 +65,25 @@ const DATA = [
   },
 ];
 
+function ShowContent(props) {
+  if(props.number == 0){
+    return <MapScreen/>
+  }
+  else{
+    return <GameFeed data={DATA} />
+  }
+  
+  
+};
+
 function HomeScreen({ navigation }) {
+
+  const [mapView, setMapView] = useState(0);
+
   return (
     <View style={styles.container}>
+
+      {/*PROFILE ICON*/}
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate("Profile")}
@@ -76,12 +92,30 @@ function HomeScreen({ navigation }) {
           style={styles.image}
           source={require("../../assets/profile_icon.png")}
         />
-
         <Text style={styles.text}>Profile</Text>
       </TouchableOpacity>
-      <View style={styles.innerContainer}>
-        <GameFeed data={DATA} />
-      </View>
+
+        {/* RENDER LOCATION / FEED*/}
+        <View style={styles.innerContainer}>
+
+          <ShowContent number={mapView}/>
+          
+        </View>
+
+      {/* BOTTOM NAV BUTTONS */}
+      <View style={styles.row} >
+
+
+            <TouchableOpacity onPress={() => {setMapView(0)} }>
+                <Text style={styles.topText}> Map View </Text>
+            </TouchableOpacity>
+
+
+            <TouchableOpacity onPress={() => {setMapView(1)} }>
+                <Text style={styles.topText}> Game View </Text>
+            </TouchableOpacity>
+        </View>
+
     </View>
   );
 }
@@ -92,14 +126,6 @@ const styles = EStyleSheet.create({
   },
   container: {
     flex: "1",
-    backgroundColor: "lightgray",
-    alignItems: "center",
-  },
-  topText: {
-    fontSize: 30,
-    textAlign: "center",
-    fontWeight: "bold",
-    paddingBottom: "1rem",
   },
   button: {
     position: "absolute",
@@ -112,10 +138,27 @@ const styles = EStyleSheet.create({
     height: 52,
   },
   innerContainer: {
-    height: "78%",
+    height: "75%",
     marginTop: "6.5rem",
   },
-  
+  row: {
+    backgroundColor: "#ef9031",
+    flexDirection: "row",
+    borderRadius: "1rem",
+    marginTop: "1rem",
+    marginLeft: '2%',
+    marginRight: '2%',
+    justifyContent: 'space-evenly',
+  },
+  topText: {
+    color:"#2c3233",
+    fontSize: 30,
+    textAlign: "center",
+    fontWeight: "bold",
+    paddingBottom: ".5rem",
+    paddingTop: ".5rem",
+  },
+
 });
 
 export default HomeScreen;

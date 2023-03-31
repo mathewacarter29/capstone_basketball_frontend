@@ -23,11 +23,6 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
       <Stack.Screen
-          name="MapScreen"
-          component={MapScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
           name="HomeScreen"
           component={HomeScreen}
           options={{ headerShown: false }}

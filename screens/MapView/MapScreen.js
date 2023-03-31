@@ -10,46 +10,11 @@ import MapView from 'react-native-maps';
 import {PROVIDER_GOOGLE, Marker }  from 'react-native-maps';
 import EStyleSheet from "react-native-extended-stylesheet";
 
-this.state = {
-    markers: [
-        {
-            id: "1",
-            title: "McComas",
-            latitude : 37.220828,
-            longitude : -80.422655,
-    
-        },
-        {
-            id: "2",
-            title: "Bubble",
-            latitude : 37.215838,
-            longitude : -80.418904,
-        }
-      ]
-};
-
-
 
 function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
-        <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate("Profile")}
-        >
-            <Image
-            style={styles.image}
-            source={require("../../assets/profile_icon.png")}
-            />
-
-            <Text style={styles.text}>Profile</Text>
-        </TouchableOpacity>
-
-
-        <View style={styles.innerContainer}>
-
-            <Text style={styles.topText}>Courts Map</Text>
-            
+        
             <MapView style={styles.map} 
                 provider={PROVIDER_GOOGLE} 
                 initialRegion={{
@@ -62,35 +27,30 @@ function HomeScreen({ navigation }) {
                 {/* McComas */}
                 <Marker
                     coordinate={{latitude: 37.220828 , longitude: -80.422655}}
+                    onPress={() => console.log("McComas ")}
                 />
                 {/* Bubble */}
                 <Marker
                     coordinate={{latitude: 37.215838 , longitude: -80.418904}}
+                    onPress={() => console.log("Bubble")}
                 />
                 {/* Oak Lane Court */}
                 <Marker
                     coordinate={{latitude: 37.227031 , longitude: -80.437552}}
+                    onPress={() => console.log("pressed oaklane")}
                 />
                 {/* Blacksburg Rec Center */} 
                 <Marker
                     coordinate={{latitude: 37.243998 , longitude: -80.411862}}
+                    onPress={() => console.log("Blacksburg Rec Center")}
                 />
                 {/* Pritchard Courts */}
                 <Marker
                     coordinate={{latitude: 37.224828 , longitude: -80.418849}}
+                    onPress={() => console.log("Pritchard Courts")}
                 />
 
             </MapView>
-        </View>
-
-        <View style={styles.row} >
-            <TouchableOpacity>
-                <Text> Map View </Text>
-            </TouchableOpacity>
-            <TouchableOpacity>
-                <Text> Game View </Text>
-            </TouchableOpacity>
-        </View>
 
     </View>
   );
@@ -104,10 +64,12 @@ const styles = EStyleSheet.create({
     flex: "1",
   },
   topText: {
+    color:"#2c3233",
     fontSize: 30,
     textAlign: "center",
     fontWeight: "bold",
-    paddingBottom: ".25rem",
+    paddingBottom: ".5rem",
+    paddingTop: ".5rem",
   },
   button: {
     position: "absolute",
@@ -120,7 +82,7 @@ const styles = EStyleSheet.create({
     height: 52,
   },
   innerContainer: {
-    height: "70%",
+    height: "75%",
     marginTop: "6.5rem",
   },
   map: {
@@ -130,10 +92,10 @@ const styles = EStyleSheet.create({
     borderRadius: "1rem",
   },
   row: {
+    backgroundColor: "#ef9031",
     flexDirection: "row",
-    borderWidth: 1,
     borderRadius: "1rem",
-    marginTop: "3rem",
+    marginTop: "1rem",
     marginLeft: '2%',
     marginRight: '2%',
     justifyContent: 'space-evenly',

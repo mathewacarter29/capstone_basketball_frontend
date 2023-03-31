@@ -33,6 +33,9 @@ const styles = EStyleSheet.create({
     flex: "1",
     backgroundColor: "lightgray",
     alignItems: "center",
+    borderRadius: "1rem",
+    marginLeft: '2%',
+    marginRight: '2%',
   },
   topText: {
     fontSize: 30,
