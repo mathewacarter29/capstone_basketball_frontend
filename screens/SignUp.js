@@ -54,6 +54,7 @@ function SignIn({ navigation }) {
       return;
     }
     try {
+      setLoading(true);
       const player = await DataStore.save(
         new Player({
           name: name,
@@ -67,7 +68,10 @@ function SignIn({ navigation }) {
       );
       console.log('Post saved successfully!', player);
     } catch (error) {
-      console.log('Error saving player', error);
+      setLoading(false);
+      setShowError(true);
+      setErrorMessage(error.message)
+      return;
     }
     try {
       setLoading(true);

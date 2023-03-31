@@ -287,24 +287,19 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "date": {
-                    "name": "date",
+                "datetime": {
+                    "name": "datetime",
                     "isArray": false,
-                    "type": "String",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "time": {
-                    "name": "time",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": true,
+                    "type": "AWSTimestamp",
+                    "isRequired": false,
                     "attributes": []
                 },
                 "skill_level": {
                     "name": "skill_level",
                     "isArray": false,
-                    "type": "Int",
+                    "type": {
+                        "enum": "SkillLevel"
+                    },
                     "isRequired": false,
                     "attributes": []
                 },
@@ -315,13 +310,6 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "min_size": {
-                    "name": "min_size",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
                 "invited_players": {
                     "name": "invited_players",
                     "isArray": true,
@@ -329,6 +317,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "isArrayNullable": true
+                },
+                "min_size": {
+                    "name": "min_size",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
                 },
                 "createdAt": {
                     "name": "createdAt",
@@ -374,6 +369,15 @@ export const schema = {
         }
     },
     "enums": {
+        "SkillLevel": {
+            "name": "SkillLevel",
+            "values": [
+                "BEGINNER",
+                "INTERMEDIATE",
+                "EXPERIENCED",
+                "ANY"
+            ]
+        },
         "Rsvp": {
             "name": "Rsvp",
             "values": [
@@ -385,5 +389,5 @@ export const schema = {
     },
     "nonModels": {},
     "codegenVersion": "3.4.0",
-    "version": "9a88eb0964d0a9a1fe07070d205c2281"
+    "version": "639caef928936bb71a6c833f8d5abcd6"
 };

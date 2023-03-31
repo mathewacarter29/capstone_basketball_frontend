@@ -10,7 +10,7 @@ import config from "./src/aws-exports";
 import EmailVerification from "./screens/EmailVerification";
 import LogIn from "./screens/LogIn";
 import SignUp from "./screens/SignUp";
-import HomeScreen from "./screens/HomeScreen";
+import HomeScreen from "./screens/HomeScreen/HomeScreen";
 import Profile from "./screens/Profile";
 import CreateGame from "./screens/CreateGame";
 
@@ -22,6 +22,11 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+        <Stack.Screen
+          name="HomeScreen"
+          component={HomeScreen}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="GetStarted"
           component={GetStarted}
@@ -40,11 +45,6 @@ export default function App() {
         <Stack.Screen
           name="EmailVerification"
           component={EmailVerification}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="HomeScreen"
-          component={HomeScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen

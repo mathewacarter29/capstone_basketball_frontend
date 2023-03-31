@@ -2,6 +2,13 @@ import { ModelInit, MutableModel, __modelMeta__, ManagedIdentifier } from "@aws-
 // @ts-ignore
 import { LazyLoading, LazyLoadingDisabled } from "@aws-amplify/datastore";
 
+export enum SkillLevel {
+  BEGINNER = "BEGINNER",
+  INTERMEDIATE = "INTERMEDIATE",
+  EXPERIENCED = "EXPERIENCED",
+  ANY = "ANY"
+}
+
 export enum Rsvp {
   ACCEPTED = "ACCEPTED",
   DECLINED = "DECLINED",
@@ -126,12 +133,11 @@ type EagerGame = {
   readonly id: string;
   readonly name?: string | null;
   readonly description?: string | null;
-  readonly date: string;
-  readonly time: string;
-  readonly skill_level?: number | null;
+  readonly datetime?: number | null;
+  readonly skill_level?: SkillLevel | keyof typeof SkillLevel | null;
   readonly organizer?: string | null;
-  readonly min_size?: number | null;
   readonly invited_players?: (string | null)[] | null;
+  readonly min_size?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -144,12 +150,11 @@ type LazyGame = {
   readonly id: string;
   readonly name?: string | null;
   readonly description?: string | null;
-  readonly date: string;
-  readonly time: string;
-  readonly skill_level?: number | null;
+  readonly datetime?: number | null;
+  readonly skill_level?: SkillLevel | keyof typeof SkillLevel | null;
   readonly organizer?: string | null;
-  readonly min_size?: number | null;
   readonly invited_players?: (string | null)[] | null;
+  readonly min_size?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

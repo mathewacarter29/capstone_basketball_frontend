@@ -3,14 +3,13 @@ import { View, Text } from "react-native";
 import EStyleSheet, { value } from "react-native-extended-stylesheet";
 import Button from "../common/Button";
 import LoadingScreen from "../common/LoadingScreen";
-import ErrorPopup from "../common/ErrorPopup";
 import TextInput from "../common/TextInput";
 import Container from "../common/Container";
-import { Auth } from "aws-amplify";
 import RNPickerSelect from "react-native-picker-select";
 import RNDateTimePicker from '@react-native-community/datetimepicker';
-import { DataStore } from "aws-amplify";
-import {Player, Game, Location} from "../src/models";
+import { DataStore, Auth } from "aws-amplify";
+import {Player, Game, Location, GamePlayer, Rsvp} from "../src/models";
+import ErrorPopup from "../common/ErrorPopup";
 import '@azure/core-asynciterator-polyfill';
 
 function CreateGame({ navigation }) {
@@ -19,60 +18,134 @@ function CreateGame({ navigation }) {
     const [ gameName, setGameName] = useState("");
     const [ gameDescription, setGameDescription] = useState("");
     const [ gameLocation, setLocation] = useState("");
-    const [ gameMinSize, setMinSize] = useState("");
     const [ gameSkillLevel, setSkillLevel] = useState("");
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
     const [chosenDate, setChosenDate] = useState(new Date());
+    const [showError, setShowError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
+//on change function to set user selected date 
 const changeSelectedDate = (event, selectedDate) => {
     const currentDate = selectedDate || chosenDate;
     setChosenDate(currentDate);
 }
 
+//helper function to get everyone but the organizer to test inviting players
+async function getAllPlayers() {
+  let userEmail = "Test@gmail.com";
+  const allPlayers = await DataStore.query(Player, (p) => p.email.ne(userEmail) );
+  return allPlayers;
+}
 
+//gets current user
+async function getPlayer(){
+    response = await Auth.currentUserInfo();
+    const player = await DataStore.query(Player, (p) => p.email.eq(response.attributes.email));
+    return player[0];
+}
+//gets the location for the game based on what the user specified 
 async function getLocation(locationName) {
-  const locations = await DataStore.query(Location, (l) => l.nam.eq(locationName));
-  return locations[0];
+  const location = await DataStore.query(Location, (l) => l.name.eq(locationName));
+  return location;
 }
-  
-async function create(){
-    
-    //query for email to get player id
-    //const players = await DataStore.query(Player);
-    //console.log("ALL Players: ", players);
 
-    //const locations = await DataStore.query(Location);
-    //console.log("All locations: ", locations);
-  
-    const gameDate = (chosenDate.getMonth() + 1) + '/' + chosenDate.getDate() + '/' +  chosenDate.getFullYear();
-    const gameTime = chosenDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
+//saves a name game or returns an error
+async function storeGame(gameName, gameDescription, epochDate, gameSkillLevel, organizer, location) {
 
-    const location = getLocation(gameLocation);
+    //form field validation
+    // if game name is blank default name is generated
+    if([gameName].includes("")){
+        gameName = "Pickup game at " + location[0].name;
+    }
+    //if no game description is provided then set empty string
+    if([gameDescription].includes("")){
+        gameDescription = "";
+    }
+    //if no location is selected display error message
+    if([gameLocation].includes("")){
+        setShowError(true);
+        setErrorMessage("Please select a location");
+        return;
+    }
+    //if gameskilllevel is not specified set to ANY as default
+    if([gameSkillLevel].includes("")){
+        gameSkillLevel = "ANY";
+    }
+    //check if specified datetime is in the past 
+    epochNow = Math.floor(Date.now() / 1000);
+    if(epochDate <= epochNow){
+        setShowError(true);
+        setErrorMessage("Please select a valid future date and time");
+        return;
+    }
+    setShowError(false);
+    navigation.navigate("HomeScreen")
     try {
-        const game = await DataStore.save(
-          new Game({
-            name: gameName,
-            description: gameDescription,
-            location: location,
-            date: gameDate,
-            time: gameTime,
-            min_size: parseInt(gameMinSize),
-            skill_level: parseInt(gameSkillLevel),
-            player_ids: ["1","2","3"],
-            organizer: "organizer", //populate automatically with the name of the user creating the game 
-            locationID: "location1" 
-          })
-        );
-        console.log('Game saved successfully!', game);
-      } catch (error) {
-        console.log('Error saving game', error);
-      }
+    const game = await DataStore.save(
+      new Game({
+        name: gameName,
+        description: gameDescription,
+        location: (await location),
+        datetime: epochDate,
+        skill_level: gameSkillLevel,
+        organizer: (await organizer).id, 
+        location_id: location.id
+      })
+    );
+    return game;
+  }
+
+  catch (error) {
+    console.log('Error saving game', error);
+    return null;
+  }
+
 }
 
+//saves game player that represents each and every game and player association
+async function storeGamePlayers(gameId, invitedPlayers) {
+
+    for (let i = 0; i < (await invitedPlayers).length; i++) {
+      try {
+        const gamePlayer = await DataStore.save(
+          new GamePlayer({
+            player_id: invitedPlayers[i].id,
+            game_id: gameId,
+            rsvp: Rsvp.PENDING,
+            invited: true
+          })
+        )
+      }
+      catch (error) {
+        console.log("error: ", error, "storing player: ", invitedPlayers[i]);
+      }
+    }
+}
+
+//function to create the game
+async function create(){
+    setLoading(true);
+    //convert chosen date to epoch timestamp in seconds
+    epochDate = Math.floor(chosenDate.getTime() / 1000);
+
+    const organizer = await getPlayer();
+    console.log("organizer: ", organizer);
+    const location = await getLocation(gameLocation);
+    //todo: this should eventually be list of players that organizer invites, for now it is just all players in the db
+    const invitedPlayers = await getAllPlayers();
+    invitedPlayers.push(organizer); // add organizer to invited players so that they get added in GamePlayer
+
+    let newGame = await storeGame(gameName, gameDescription, epochDate, gameSkillLevel, organizer, location);
+
+    if (newGame == null) {
+      console.log("Error creating game");
+      return;
+    }
+
+    await storeGamePlayers(newGame.id, invitedPlayers);
+    setLoading(false);
+}
 
 return (
-    
     // This is the create event form
     <Container>
       {loading && <LoadingScreen />}
@@ -92,27 +165,26 @@ return (
             value={gameLocation}
             onValueChange={(value) => setLocation(value)}
             placeholder={{ label: "Please select a location", value: null }}
-            //eventually populate items from location database 
             items={[
-                { label: "McComas Hall", value: "McComas Gym" },
+                { label: "McComas Hall", value: "McComas Hall" },
                 { label: "Lee Courts", value: "Lee Courts" },
                 { label: "Old Blacksburg HS", value: "Old Blacksburg HS" },
                 { label: "Cassell Colisuem", value: "Cassell Coliseum" },
             ]}
             style={customPickerStyles}
         />
-        <TextInput
-          keyboardType="numeric"
-          value={gameMinSize}
-          placeholder="Enter a minimum size for this game"
-          onChangeText={(text) => setMinSize(text)}
-        ></TextInput>
-        <TextInput
-          keyboardType="numeric"
-          value={gameSkillLevel}
-          placeholder="Enter a skill level for the game" //detail regarding skill level
-          onChangeText={(text) => setSkillLevel(text)}
-        ></TextInput>
+       <RNPickerSelect
+            value={gameSkillLevel}
+            onValueChange={(value) => setSkillLevel(value)}
+            placeholder={{ label: "Please select a skill level", value: null }}
+            items={[
+                { label: "Beginner", value: "BEGINNER" },
+                { label: "Intermediate", value: "INTERMEDIATE" },
+                { label: "Experienced", value: "EXPERIENCED" },
+                { label: "Any", value: "ANY" },
+            ]}
+            style={customPickerStyles}
+        />
         <Text style={styles.otherText}>Enter date and time for the game</Text>
         <RNDateTimePicker 
             mode="datetime"
@@ -120,7 +192,8 @@ return (
             value={chosenDate}
             onChange={changeSelectedDate}
         /> 
-        <Button title="Create Game" onPress={() => create()} />
+        {showError && <ErrorPopup errorMessage={errorMessage} />}
+        <Button title="Create Game" onPress={() => create() } />
       </View>
       <View style={{ flex: 1, backgroundColor: "lightgray" }}></View>
     </Container>

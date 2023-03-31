@@ -11,12 +11,6 @@ import { DataStore } from "aws-amplify";
 import {Player, Location} from "../src/models";
 import '@azure/core-asynciterator-polyfill';
 
-
-async function getAllPlayers() {
-    const players = await DataStore.query(Player);
-    console.log("ALL Players: ", players);
-}
-
 function LogIn({ navigation }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -40,7 +34,6 @@ function LogIn({ navigation }) {
     setLoading(true);
 
     const players = await DataStore.query(Player);
-    console.log("ALL Players: ", players);
     // using amplify API call to validate user
     try {
         response = await Auth.signIn(loginData.username, loginData.password);
