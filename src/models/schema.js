@@ -182,7 +182,9 @@ export const schema = {
                 "skill_level": {
                     "name": "skill_level",
                     "isArray": false,
-                    "type": "Int",
+                    "type": {
+                        "enum": "SkillLevel"
+                    },
                     "isRequired": false,
                     "attributes": []
                 },
@@ -389,5 +391,5 @@ export const schema = {
     },
     "nonModels": {},
     "codegenVersion": "3.4.0",
-    "version": "639caef928936bb71a6c833f8d5abcd6"
+    "version": "c51fe421aaba1ffcfbf3d08a318d29f4"
 };

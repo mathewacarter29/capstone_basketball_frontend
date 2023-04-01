@@ -36,12 +36,12 @@
       },
       "providerPlugin": "awscloudformation",
       "service": "AppSync",
-      "lastPushTimeStamp": "2023-03-30T21:51:57.127Z",
+      "lastPushTimeStamp": "2023-03-31T20:40:44.712Z",
       "providerMetadata": {
         "s3TemplateURL": "https://s3.amazonaws.com/amplify-campuscourts-staging-134240-deployment/amplify-cfn-templates/api/cloudformation-template.json",
         "logicalId": "apicampuscourts"
       },
-      "lastPushDirHash": "471g+2Yl7nAH1JpjhwgJeM7YW7o="
+      "lastPushDirHash": "LloKCu9tqxWWPfPLaQn0tRZhU0U="
     }
   },
   "auth": {
@@ -86,7 +86,7 @@
         "IdentityPoolName": "testAuthIdentityPool__staging",
         "UserPoolName": "campuscourts"
       },
-      "lastPushTimeStamp": "2023-03-30T21:51:57.069Z",
+      "lastPushTimeStamp": "2023-03-31T20:40:44.658Z",
       "providerMetadata": {
         "s3TemplateURL": "https://s3.amazonaws.com/amplify-campuscourts-staging-134240-deployment/amplify-cfn-templates/auth/campuscourts-cloudformation-template.json",
         "logicalId": "authcampuscourts"

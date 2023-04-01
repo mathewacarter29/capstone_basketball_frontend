@@ -92,7 +92,7 @@ type EagerPlayer = {
   };
   readonly id: string;
   readonly name: string;
-  readonly skill_level?: number | null;
+  readonly skill_level?: SkillLevel | keyof typeof SkillLevel | null;
   readonly email?: string | null;
   readonly phone_number: string;
   readonly instagram?: string | null;
@@ -109,7 +109,7 @@ type LazyPlayer = {
   };
   readonly id: string;
   readonly name: string;
-  readonly skill_level?: number | null;
+  readonly skill_level?: SkillLevel | keyof typeof SkillLevel | null;
   readonly email?: string | null;
   readonly phone_number: string;
   readonly instagram?: string | null;

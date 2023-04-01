@@ -8,7 +8,7 @@ import ErrorPopup from "../common/ErrorPopup";
 import TextInput from "../common/TextInput";
 import Container from "../common/Container";
 import '@azure/core-asynciterator-polyfill';
-import {Player} from "../src/models";
+import { Player, SkillLevel } from "../src/models";
 import { DataStore } from "aws-amplify";
 
 function SignIn({ navigation }) {
@@ -58,9 +58,9 @@ function SignIn({ navigation }) {
       const player = await DataStore.save(
         new Player({
           name: name,
-          skill_level: 5,
           email: email,
           phone_number: phone,
+          skill_level: SkillLevel.ANY,
           instagram: "String",
           twitter: "String",
           bio: "String",

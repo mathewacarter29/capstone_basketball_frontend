@@ -30,7 +30,7 @@ type Location @model @auth(rules: [{allow: public}]) {
 type Player @model @auth(rules: [{allow: public}]) {
   id: ID!
   name: String!
-  skill_level: Int
+  skill_level: SkillLevel
   email: String
   phone_number: String!
   instagram: String
