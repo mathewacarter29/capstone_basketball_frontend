@@ -14,6 +14,7 @@ import "@azure/core-asynciterator-polyfill";
 =======
 import BackArrow from "../common/BackArrow";
 >>>>>>> a6b2de6... Common Back arrow created and added on relevant screens
+import BackArrow from "../common/BackArrow";
 
 function LogIn({ navigation }) {
   const [username, setUsername] = useState("");

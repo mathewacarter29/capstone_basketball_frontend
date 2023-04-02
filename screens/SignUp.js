@@ -14,6 +14,7 @@ import { DataStore } from "aws-amplify";
 =======
 import BackArrow from "../common/BackArrow";
 >>>>>>> a6b2de6... Common Back arrow created and added on relevant screens
+import BackArrow from "../common/BackArrow";
 
 function SignIn({ navigation }) {
   const [name, setName] = useState("");
