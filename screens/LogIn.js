@@ -7,13 +7,9 @@ import { Auth } from "aws-amplify";
 import ErrorPopup from "../common/ErrorPopup";
 import TextInput from "../common/TextInput";
 import Container from "../common/Container";
-<<<<<<< HEAD
 import { DataStore } from "aws-amplify";
 import { Player, Location } from "../src/models";
 import "@azure/core-asynciterator-polyfill";
-=======
-import BackArrow from "../common/BackArrow";
->>>>>>> a6b2de6... Common Back arrow created and added on relevant screens
 import BackArrow from "../common/BackArrow";
 
 function LogIn({ navigation }) {
