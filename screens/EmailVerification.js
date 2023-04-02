@@ -7,6 +7,7 @@ import LoadingScreen from "../common/LoadingScreen";
 import ErrorPopup from "../common/ErrorPopup";
 import TextInput from "../common/TextInput";
 import Container from "../common/Container";
+import BackArrow from "../common/BackArrow";
 
 function EmailVerification({ route, navigation }) {
   let startEmailValue = "";
@@ -81,10 +82,7 @@ function EmailVerification({ route, navigation }) {
         ></TextInput>
         <Button title="Verify" onPress={() => verify()}></Button>
         <Button title="Resend Code" onPress={() => resendCode()}></Button>
-        <Button
-          title="Go Back"
-          onPress={() => navigation.navigate("SignUp")}
-        ></Button>
+        <BackArrow navigation={navigation} location="SignUp"/>
         {showError && <ErrorPopup errorMessage={errorMessage} />}
       </View>
     </Container>

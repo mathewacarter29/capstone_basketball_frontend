@@ -1,17 +1,15 @@
 import EStyleSheet from "react-native-extended-stylesheet";
 import { Image, TouchableOpacity } from "react-native";
-
-
-
-
+import { useNavigation } from '@react-navigation/native';
 
 
 function BackArrow(props) {
+    navigation = useNavigation();
 
     return (
         <TouchableOpacity
           style={styles.back}
-          onPress={() => props.navigation.navigate(props.location)}
+          onPress={() => navigation.navigate(props.location)}
         >
           <Image source={require("../assets/back_arrow_icon.png")} />
         </TouchableOpacity>
