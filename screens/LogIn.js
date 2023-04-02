@@ -8,8 +8,8 @@ import ErrorPopup from "../common/ErrorPopup";
 import TextInput from "../common/TextInput";
 import Container from "../common/Container";
 import { DataStore } from "aws-amplify";
-import {Player, Location} from "../src/models";
-import '@azure/core-asynciterator-polyfill';
+import { Player, Location } from "../src/models";
+import "@azure/core-asynciterator-polyfill";
 
 function LogIn({ navigation }) {
   const [username, setUsername] = useState("");
@@ -30,14 +30,12 @@ function LogIn({ navigation }) {
       password: password,
     };
 
-    response = null;
     setLoading(true);
 
-    const players = await DataStore.query(Player);
+    // const players = await DataStore.query(Player);
     // using amplify API call to validate user
     try {
-        response = await Auth.signIn(loginData.username, loginData.password);
-      
+      response = await Auth.signIn(loginData.username, loginData.password);
     } catch (e) {
       setLoading(false);
       setShowError(true);
@@ -50,13 +48,8 @@ function LogIn({ navigation }) {
     setLoading(false);
     // navigate to the main screen below
     console.log(`Logged in as ${username}`);
-    //console.log(response.attributes.email);
-    email = response.attributes.email;
 
-    let homeScreenProps = {
-      attributes: response.attributes,
-    };
-    navigation.navigate("HomeScreen", homeScreenProps);
+    navigation.navigate("HomeScreen");
   }
 
   return (
