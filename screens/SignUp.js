@@ -7,6 +7,9 @@ import LoadingScreen from "../common/LoadingScreen";
 import ErrorPopup from "../common/ErrorPopup";
 import TextInput from "../common/TextInput";
 import Container from "../common/Container";
+import "@azure/core-asynciterator-polyfill";
+import { Player, SkillLevel } from "../src/models";
+import { DataStore } from "aws-amplify";
 
 function SignIn({ navigation }) {
   const [name, setName] = useState("");
@@ -48,6 +51,26 @@ function SignIn({ navigation }) {
     if (password !== confirm) {
       setShowError(true);
       setErrorMessage("Passwords do not match - please re-enter");
+      return;
+    }
+    try {
+      setLoading(true);
+      const player = await DataStore.save(
+        new Player({
+          name: name,
+          email: email,
+          phone_number: phone,
+          skill_level: SkillLevel.ANY,
+          instagram: "String",
+          twitter: "String",
+          bio: "String",
+        })
+      );
+      console.log("Post saved successfully!", player);
+    } catch (error) {
+      setLoading(false);
+      setShowError(true);
+      setErrorMessage(error.message);
       return;
     }
     try {
