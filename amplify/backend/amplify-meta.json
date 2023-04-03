@@ -36,7 +36,7 @@
       },
       "providerPlugin": "awscloudformation",
       "service": "AppSync",
-      "lastPushTimeStamp": "2023-03-31T20:55:14.345Z",
+      "lastPushTimeStamp": "2023-04-02T22:14:07.354Z",
       "providerMetadata": {
         "s3TemplateURL": "https://s3.amazonaws.com/amplify-campuscourts-staging-134240-deployment/amplify-cfn-templates/api/cloudformation-template.json",
         "logicalId": "apicampuscourts"
@@ -50,7 +50,9 @@
       "dependsOn": [],
       "frontendAuthConfig": {
         "mfaConfiguration": "OFF",
-        "mfaTypes": ["SMS"],
+        "mfaTypes": [
+          "SMS"
+        ],
         "passwordProtectionSettings": {
           "passwordPolicyMinLength": 8,
           "passwordPolicyCharacters": [
@@ -59,10 +61,18 @@
             "REQUIRES_UPPERCASE"
           ]
         },
-        "signupAttributes": ["NAME", "EMAIL", "PHONE_NUMBER"],
+        "signupAttributes": [
+          "NAME",
+          "EMAIL",
+          "PHONE_NUMBER"
+        ],
         "socialProviders": [],
-        "usernameAttributes": ["EMAIL"],
-        "verificationMechanisms": ["EMAIL"]
+        "usernameAttributes": [
+          "EMAIL"
+        ],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
       },
       "providerPlugin": "awscloudformation",
       "service": "Cognito",
@@ -76,7 +86,7 @@
         "IdentityPoolName": "testAuthIdentityPool__staging",
         "UserPoolName": "campuscourts"
       },
-      "lastPushTimeStamp": "2023-03-31T20:55:14.356Z",
+      "lastPushTimeStamp": "2023-04-02T22:14:07.356Z",
       "providerMetadata": {
         "s3TemplateURL": "https://s3.amazonaws.com/amplify-campuscourts-staging-134240-deployment/amplify-cfn-templates/auth/campuscourts-cloudformation-template.json",
         "logicalId": "authcampuscourts"
