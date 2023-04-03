@@ -98,7 +98,7 @@ function HomeScreen({ navigation }) {
      * we will get that change reflected here with our subscriber
      */
     const subscriber = DataStore.observeQuery(Game, (c) =>
-      c.datetime.gt(Date.now()/1000)
+      c.datetime.gt(Math.floor(Date.now() / 1000))
     ).subscribe(({ items }) => {
       setGames(items);
     });
