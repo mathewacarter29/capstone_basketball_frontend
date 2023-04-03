@@ -41,12 +41,9 @@ function EmailVerification({ route, navigation }) {
   }
 
   async function resendCode() {
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 10000));
-    setLoading(false);
-    if (fieldsEmpty()) {
+    if (email == "") {
       setShowError(true);
-      setErrorMessage("Enter all fields before resending code");
+      setErrorMessage("Please enter username to resend verification code");
       return;
     }
     try {
