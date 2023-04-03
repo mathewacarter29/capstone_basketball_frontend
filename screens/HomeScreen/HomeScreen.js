@@ -76,53 +76,37 @@ const DATA = [
   },
 ];
 
+
 function HomeScreen({ navigation }) {
-  const [data, dataSet] = useState([]);
+  const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(false);
 
   // useEffect(() => {
   //   //this function will get all games this user is assoicated with to populate their game feed screen
   //   //*still in progress
   //   // TODO: to get all games, just make a query with the model name as the arg: DataStore.query(Game)
-  //   async function getPlayerGames() {
-  //     setLoading(true);
-  //     // from auth lib get user details
-  //     // get player object
-  //     // query player by email
-  //     let userEmail = "test@gmail.com";
-  //     const authObj = await Auth.currentUserInfo();
-  //     console.log("Auth Object returned: ", authObj);
-  //     // const userEmail = authObj.attributes.email;
-
-  //     // get Player object from email
-  //     const players = await DataStore.query(Player, (p) =>
-  //       p.email.eq(userEmail)
-  //     );
-  //     const player = players[0];
-  //     console.log("Player returned: ", player);
-  //     // query GamePlayer to find games player is invited to or created
-  //     const gamePlayers = await DataStore.query(GamePlayer, (gp) =>
-  //       gp.player_id.eq(player.id)
-  //     );
-  //     //const userGames = [];
-  //     let startDate = new Date();
-
-  //     for (let i = 0; i < gamePlayers.length; i++) {
-  //       let game_id = gamePlayers[i].game_id;
-  //       //use this game_id to get the corresponding game
-  //       userGames = await DataStore.query(Game, (c) => c.id.eq(game_id));
-  //       //userGames.push(Game);
-  //       //as each game is retrieved, add it to the data array
-  //       //DATA[i] = {id: userGames[i].id}
-  //     }
-  //     dataSet(userGames);
-  //     setLoading(false);
-  //   }
-  //   getPlayerGames();
+  //   setGames(getGames());
   // }, []);
   // if (!data) {
   //   return null;
   // }
+
+  useEffect(() => {
+    /**
+     * This keeps `Games` fresh.
+     * if another user makes a change to the game details, 
+     * we will get that change reflected here with our subscriber
+     */
+    const subscriber = DataStore.observeQuery(Game, (c) =>
+      c.datetime.gt(Date.now()/1000)
+    ).subscribe(({ items }) => {
+      setGames(items);
+    });
+
+    return () => {
+      subscriber.unsubscribe();
+    };
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -147,7 +131,7 @@ function HomeScreen({ navigation }) {
         />
       </TouchableOpacity>
       <View style={styles.innerContainer}>
-        <GameFeed data={DATA} />
+        <GameFeed data={games} />
       </View>
     </View>
   );

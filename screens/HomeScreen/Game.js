@@ -3,6 +3,23 @@ import EStyleSheet from "react-native-extended-stylesheet";
 import { View, Text, TouchableOpacity } from "react-native";
 import Button from "../../common/Button";
 
+function epochToLocalDate(epoch) {
+  const date = new Date(epoch * 1000); // Convert epoch to milliseconds
+  const month = ('0' + (date.getMonth() + 1)).slice(-2); // Get local month and pad with 0 if needed
+  const day = ('0' + date.getDate()).slice(-2); // Get local day and pad with 0 if needed
+  const year = date.getFullYear(); // Get local year
+  return `${month}-${day}-${year}`;
+}
+
+function epochToLocalTime(epoch) {
+  const date = new Date(epoch * 1000); // Convert epoch to milliseconds
+  const hours = date.getHours(); // Get local hours
+  const minutes = ('0' + date.getMinutes()).slice(-2); // Get local minutes and pad with 0 if needed
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  const formattedHours = ('0' + (hours % 12 || 12)).slice(-2); // Convert to 12-hour format and pad with 0 if needed
+  return `${formattedHours}:${minutes} ${ampm}`;
+}
+
 function Game({ item }) {
   //console.log("item ", item);
   function rsvp(status) {
@@ -24,12 +41,12 @@ function Game({ item }) {
 
       <Text style={styles.text}>
         <Text style={{ fontWeight: "bold" }}>Date: </Text>
-        {item.date}
+        {epochToLocalDate(item.datetime)}
       </Text>
 
       <Text style={styles.text}>
         <Text style={{ fontWeight: "bold" }}>Time: </Text>
-        {item.time}
+        {epochToLocalTime(item.datetime)}
       </Text>
 
       <View style={styles.row}>
@@ -46,14 +63,14 @@ function Game({ item }) {
             style={[styles.button, { backgroundColor: "lightgreen" }]}
             onPress={() => rsvp("in")}
           >
-            <Text style={styles.text}>Accepted: {item.in.length}</Text>
+            <Text style={styles.text}>Accepted: {7}</Text>
           </TouchableOpacity>
           <View style={styles.line} />
           <TouchableOpacity
             style={[styles.button, styles.redButton]}
             onPress={() => rsvp("out")}
           >
-            <Text style={styles.text}>Rejected: {item.out.length}</Text>
+            <Text style={styles.text}>Rejected: {4}</Text>
           </TouchableOpacity>
         </View>
       </View>
