@@ -41,7 +41,6 @@ function EmailVerification({ route, navigation }) {
   }
 
   async function resendCode() {
-
     try {
       setLoading(true);
       const response = await Auth.resendSignUp(email);
