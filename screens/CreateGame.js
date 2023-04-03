@@ -138,12 +138,12 @@ function CreateGame({ navigation }) {
     // START making API calls
     setLoading(true);
     const location = await getLocation(gameLocation);
+    const organizer = await getPlayer();
     // if location is null, there was an error getting the location. Error logged in getLocation()
     if (!location) {
       setLoading(false);
       return;
     }
-    const organizer = await getPlayer();
     // If there is no organizer, there was a problem and an error was logged
     if (!organizer) {
       setLoading(false);
