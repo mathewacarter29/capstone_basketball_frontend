@@ -66,7 +66,7 @@ function SignIn({ navigation }) {
           bio: "String",
         })
       );
-      console.log("Post saved successfully!", player);
+      console.log("Player saved successfully!", player);
     } catch (error) {
       setLoading(false);
       setShowError(true);
