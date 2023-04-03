@@ -71,7 +71,7 @@ function LogIn({ navigation }) {
           secureTextEntry
         ></TextInput>
         <Button title="Log In" onPress={() => login()} />
-        <BackArrow navigation={navigation} location="GetStarted"/>
+        <BackArrow location="GetStarted"/>
         {showError && <ErrorPopup errorMessage={errorMessage} />}
       </View>
       <View style={{ flex: 1, backgroundColor: "lightgray" }}></View>

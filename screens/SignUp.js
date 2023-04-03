@@ -129,7 +129,7 @@ function SignIn({ navigation }) {
           secureTextEntry
         ></TextInput>
         <Button onPress={() => signup()} title="Sign Up!" />
-        <BackArrow navigation={navigation} location="GetStarted"/>
+        <BackArrow location="GetStarted"/>
         <Text
           style={styles.clickableText}
           onPress={() => navigation.navigate("EmailVerification")}

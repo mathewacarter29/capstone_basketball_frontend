@@ -42,7 +42,7 @@ function Profile({ navigation }) {
     <Container>
       {loading && <LoadingScreen />}
       <View style={styles.container}>
-        <BackArrow navigation={navigation} location="HomeScreen"/>
+        <BackArrow location="HomeScreen"/>
         <Text style={styles.text}>Profile</Text>
         <Image source={require("../assets/profile_icon.png")} />
         <Text style={styles.text_info}>Name: {name}</Text>

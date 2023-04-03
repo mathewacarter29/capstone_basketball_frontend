@@ -68,6 +68,7 @@ function EmailVerification({ route, navigation }) {
     <Container>
       {loading && <LoadingScreen />}
       <View style={styles.container}>
+        <BackArrow location="SignUp"/>
         <Text style={styles.text}>Verify your account</Text>
         <TextInput
           value={email}
@@ -82,7 +83,6 @@ function EmailVerification({ route, navigation }) {
         ></TextInput>
         <Button title="Verify" onPress={() => verify()}></Button>
         <Button title="Resend Code" onPress={() => resendCode()}></Button>
-        <BackArrow navigation={navigation} location="SignUp"/>
         {showError && <ErrorPopup errorMessage={errorMessage} />}
       </View>
     </Container>

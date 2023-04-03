@@ -5,6 +5,7 @@ import Button from "../common/Button";
 import LoadingScreen from "../common/LoadingScreen";
 import TextInput from "../common/TextInput";
 import Container from "../common/Container";
+import BackArrow from "../common/BackArrow";
 import RNPickerSelect from "react-native-picker-select";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import { DataStore, Auth } from "aws-amplify";
@@ -179,6 +180,7 @@ function CreateGame({ navigation }) {
     <Container>
       {loading && <LoadingScreen />}
       <View style={styles.container}>
+        <BackArrow location="HomeScreen"/>
         <Text style={styles.text}>Let's create a game!</Text>
         <TextInput
           value={gameName}
