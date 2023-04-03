@@ -44,11 +44,6 @@ function EmailVerification({ route, navigation }) {
     setLoading(true);
     await new Promise((r) => setTimeout(r, 10000));
     setLoading(false);
-    if (fieldsEmpty()) {
-      setShowError(true);
-      setErrorMessage("Enter all fields before resending code");
-      return;
-    }
     try {
       setLoading(true);
       const response = await Auth.resendSignUp(email);
