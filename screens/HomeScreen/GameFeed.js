@@ -12,7 +12,7 @@ import EStyleSheet from "react-native-extended-stylesheet";
 import Game from "./Game";
 
 function GameFeed(props) {
-  //console.log("props: ", props);
+  // console.log("props: ", props);
   return (
     <View style={styles.container}>
       <FlatList
