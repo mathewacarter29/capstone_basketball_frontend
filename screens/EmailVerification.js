@@ -41,9 +41,7 @@ function EmailVerification({ route, navigation }) {
   }
 
   async function resendCode() {
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 10000));
-    setLoading(false);
+
     try {
       setLoading(true);
       const response = await Auth.resendSignUp(email);
