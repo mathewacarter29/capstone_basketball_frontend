@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { View, Text } from "react-native";
-import EStyleSheet, { value } from "react-native-extended-stylesheet";
+import EStyleSheet from "react-native-extended-stylesheet";
 import Button from "../common/Button";
-import LoadingScreen from "../common/LoadingScreen";
 import TextInput from "../common/TextInput";
 import Container from "../common/Container";
 import RNPickerSelect from "react-native-picker-select";
@@ -176,8 +175,7 @@ function CreateGame({ navigation }) {
 
   return (
     // This is the create event form
-    <Container>
-      {loading && <LoadingScreen />}
+    <Container goBackTo="HomeScreen" loadingState={loading}>
       <View style={styles.container}>
         <Text style={styles.text}>Let's create a game!</Text>
         <TextInput
