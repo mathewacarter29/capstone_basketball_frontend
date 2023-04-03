@@ -2,15 +2,11 @@ import { React, useState } from "react";
 import EStyleSheet from "react-native-extended-stylesheet";
 import { Keyboard, View, Text, Image } from "react-native";
 import Button from "../common/Button";
-import LoadingScreen from "../common/LoadingScreen";
 import { Auth } from "aws-amplify";
 import ErrorPopup from "../common/ErrorPopup";
 import TextInput from "../common/TextInput";
 import Container from "../common/Container";
-import { DataStore } from "aws-amplify";
-import { Player, Location } from "../src/models";
 import "@azure/core-asynciterator-polyfill";
-import BackArrow from "../common/BackArrow";
 
 function LogIn({ navigation }) {
   const [username, setUsername] = useState("");
@@ -54,8 +50,7 @@ function LogIn({ navigation }) {
   }
 
   return (
-    <Container>
-      {loading && <LoadingScreen />}
+    <Container goBackTo="GetStarted" loadingState={loading}>
       <View style={styles.container}>
         <Text style={styles.text}>Welcome Back!</Text>
         <Image source={require("../assets/basketballPlayerArms.png")} />
@@ -71,7 +66,6 @@ function LogIn({ navigation }) {
           secureTextEntry
         ></TextInput>
         <Button title="Log In" onPress={() => login()} />
-        <BackArrow location="GetStarted"/>
         {showError && <ErrorPopup errorMessage={errorMessage} />}
       </View>
       <View style={{ flex: 1, backgroundColor: "lightgray" }}></View>

@@ -1,11 +1,9 @@
 import EStyleSheet from "react-native-extended-stylesheet";
 import Container from "../common/Container";
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text, Image } from "react-native";
 import { Auth } from "aws-amplify";
-import LoadingScreen from "../common/LoadingScreen";
 import { React, useState, useEffect } from "react";
 import Button from "../common/Button";
-import BackArrow from "../common/BackArrow";
 
 function Profile({ navigation }) {
   const [name, setName] = useState("");
@@ -39,10 +37,8 @@ function Profile({ navigation }) {
   }, []);
 
   return (
-    <Container>
-      {loading && <LoadingScreen />}
+    <Container goBackTo="HomeScreen" loadingState={loading}>
       <View style={styles.container}>
-        <BackArrow location="HomeScreen"/>
         <Text style={styles.text}>Profile</Text>
         <Image source={require("../assets/profile_icon.png")} />
         <Text style={styles.text_info}>Name: {name}</Text>
