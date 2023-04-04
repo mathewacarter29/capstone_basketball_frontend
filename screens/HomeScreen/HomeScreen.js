@@ -33,6 +33,7 @@ const DATA = [
     time: "12:00 PM",
     in: ["Abir", "Mat", "Peyton", "Rishi", "Parker"],
     out: ["Seyam", "David"],
+    description: "This is a test description to see if the field will show up",
   },
   {
     id: "2",

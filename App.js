@@ -13,6 +13,7 @@ import SignUp from "./screens/SignUp";
 import HomeScreen from "./screens/HomeScreen/HomeScreen";
 import Profile from "./screens/Profile";
 import CreateGame from "./screens/CreateGame";
+import GameDetails from "./screens/GameDetails";
 
 Amplify.configure(config);
 
@@ -23,13 +24,13 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
-          name="HomeScreen"
-          component={HomeScreen}
+          name="GetStarted"
+          component={GetStarted}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="GetStarted"
-          component={GetStarted}
+          name="HomeScreen"
+          component={HomeScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
@@ -55,6 +56,11 @@ export default function App() {
         <Stack.Screen
           name="CreateGame"
           component={CreateGame}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="GameDetails"
+          component={GameDetails}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

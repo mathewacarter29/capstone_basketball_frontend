@@ -2,8 +2,10 @@ import React from "react";
 import EStyleSheet from "react-native-extended-stylesheet";
 import { View, Text, TouchableOpacity } from "react-native";
 import Button from "../../common/Button";
+import { useNavigation } from "@react-navigation/native";
 
 function Game({ item }) {
+  const navigation = useNavigation();
   //console.log("item ", item);
   function rsvp(status) {
     if (status == "in") {
@@ -13,8 +15,13 @@ function Game({ item }) {
     }
   }
 
+  function clickedGame() {
+    console.log("navigating to game screen:", item.id);
+    navigation.navigate("GameDetails", { item });
+  }
+
   return (
-    <View style={styles.item}>
+    <TouchableOpacity style={styles.item} onPress={() => clickedGame()}>
       <Text style={styles.title}>{item.name}</Text>
 
       <Text style={styles.text}>
@@ -57,7 +64,7 @@ function Game({ item }) {
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
