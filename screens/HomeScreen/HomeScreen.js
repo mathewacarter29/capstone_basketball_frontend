@@ -85,9 +85,7 @@ function HomeScreen({ navigation }) {
   const [playerGames, setPlayerGames] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  function extractGameIds(gamePlayers) {
-    return 
-  }
+  
   
   async function getPlayerGames(allGames) {
 
@@ -116,7 +114,7 @@ function HomeScreen({ navigation }) {
     console.log("user game ids: ", userGameIds);
     const userGames = allGames.filter((game) => {
       console.log("game id: ", game.id);
-      userGameIds.includes(game.id);
+      return userGameIds.includes(game.id);
     });
     console.log("userGames: ", userGames);
   
