@@ -77,19 +77,52 @@ const DATA = [
 ];
 
 
+
+
 function HomeScreen({ navigation }) {
   const [games, setGames] = useState([]);
+  const [userGames, setUserGames] = useState([]);
+  const [playerGames, setPlayerGames] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // useEffect(() => {
-  //   //this function will get all games this user is assoicated with to populate their game feed screen
-  //   //*still in progress
-  //   // TODO: to get all games, just make a query with the model name as the arg: DataStore.query(Game)
-  //   setGames(getGames());
-  // }, []);
-  // if (!data) {
-  //   return null;
-  // }
+  function extractGameIds(gamePlayers) {
+    return 
+  }
+  
+  async function getPlayerGames(allGames) {
+
+    const authObj = await Auth.currentUserInfo();
+    console.log("Auth Object returned: ", authObj);
+    const userEmail = authObj.attributes.email;
+  
+    // get Player object from email
+    const players = await DataStore.query(Player, (p) =>
+      p.email.eq(userEmail)
+    );
+    const player = players[0];
+    console.log("Player returned: ", player);
+
+    console.log("Player id: ", player.id);
+  
+    // query GamePlayer to find games player is invited to or created
+    const gamePlayers = await DataStore.query(GamePlayer, (gp) =>
+      gp.player_id.eq(player.id)
+    );
+    console.log("Game players: ", gamePlayers);
+    const userGameIds = gamePlayers.map((gamePlayer) => {
+      return gamePlayer.id
+    });
+    console.log("ALL GAMES: ", allGames);
+    console.log("user game ids: ", userGameIds);
+    const userGames = allGames.filter((game) => {
+      console.log("game id: ", game.id);
+      userGameIds.includes(game.id);
+    });
+    console.log("userGames: ", userGames);
+  
+    return userGames;
+  
+  }
 
   useEffect(() => {
     /**
@@ -101,6 +134,7 @@ function HomeScreen({ navigation }) {
       c.datetime.gt(Math.floor(Date.now() / 1000))
     ).subscribe(({ items }) => {
       setGames(items);
+      setUserGames(getPlayerGames(items));
     });
 
     return () => {
