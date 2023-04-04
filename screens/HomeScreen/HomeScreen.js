@@ -19,64 +19,6 @@ import { DataStore } from "aws-amplify";
 import { Player, Game, Location, GamePlayer, Rsvp } from "../../src/models";
 import "@azure/core-asynciterator-polyfill";
 
-//const [loading, setLoading] = useState(false);
-let userGames;
-// let DATA = [];
-
-const DATA = [
-  {
-    id: "1",
-    name: "First Game",
-    organizer: "Mat",
-    location: "The Village Basketball Courts",
-    date: "6/30/2023",
-    time: "12:00 PM",
-    in: ["Abir", "Mat", "Peyton", "Rishi", "Parker"],
-    out: ["Seyam", "David"],
-  },
-  {
-    id: "2",
-    name: "Second Game",
-    organizer: "Peyton",
-    location: "McCommas",
-    date: "6/29/2023",
-    time: "10:00 AM",
-    in: ["Abir", "Mat", "Peyton"],
-    out: ["Seyam", "David", "Rishi", "Parker"],
-  },
-  {
-    id: "3",
-    name: "Third Game",
-    organizer: "Parker",
-    location: "The Bubble",
-    date: "8/1/2023",
-    time: "3:00 PM",
-    in: ["Abir", "Mat", "Peyton", "Seyam", "David", "Rishi", "Parker"],
-    out: [],
-  },
-  {
-    id: "4",
-    name: "Forth Game",
-    organizer: "Parker",
-    location: "The Bubble",
-    date: "8/1/2023",
-    time: "3:00 PM",
-    in: ["Abir", "Mat", "Peyton", "Seyam", "David", "Rishi", "Parker"],
-    out: [],
-  },
-  {
-    id: "5",
-    name: "Fifth Game",
-    organizer: "Parker",
-    location: "The Bubble",
-    date: "8/1/2023",
-    time: "3:00 PM",
-    in: ["Abir", "Mat", "Peyton", "Seyam", "David", "Rishi", "Parker"],
-    out: [],
-  },
-];
-
-
 
 
 function HomeScreen({ navigation }) {
@@ -90,7 +32,7 @@ function HomeScreen({ navigation }) {
   async function getPlayerGames(allGames) {
 
     const authObj = await Auth.currentUserInfo();
-    console.log("Auth Object returned: ", authObj);
+    // console.log("Auth Object returned: ", authObj);
     const userEmail = authObj.attributes.email;
   
     // get Player object from email
@@ -98,9 +40,9 @@ function HomeScreen({ navigation }) {
       p.email.eq(userEmail)
     );
     const player = players[0];
-    console.log("Player returned: ", player);
+    // console.log("Player returned: ", player);
 
-    console.log("Player id: ", player.id);
+    // console.log("Player id: ", player.id);
   
     // query GamePlayer to find games player is invited to or created
     const gamePlayers = await DataStore.query(GamePlayer, (gp) =>
@@ -113,10 +55,10 @@ function HomeScreen({ navigation }) {
     console.log("ALL GAMES: ", allGames);
     console.log("user game ids: ", userGameIds);
     const userGames = allGames.filter((game) => {
-      console.log("game id: ", game.id);
+      // console.log("game id: ", game.id);
       return userGameIds.includes(game.id);
     });
-    console.log("userGames: ", userGames);
+    // console.log("userGames: ", userGames);
   
     return userGames;
   

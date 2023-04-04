@@ -80,11 +80,11 @@ function CreateGame({ navigation }) {
         new Game({
           name: gameInfo.name,
           description: gameInfo.description,
-          location: gameInfo.location,
+          location: "McComas Hall",
           datetime: gameInfo.date,
           skill_level: gameInfo.skillLevel,
-          organizer: gameInfo.organizer.id,
-          location_id: gameInfo.location.id,
+          organizer: '15237838-a84f-47f5-934b-7320367385a6',
+          invited_players: ['575217d9-959e-43b1-9dff-bfb9b2294b52']
         })
       );
       return game;
@@ -162,12 +162,15 @@ function CreateGame({ navigation }) {
       skillLevel: gameSkillLevel ? gameSkillLevel : SkillLevel.ANY,
       organizer: organizer,
       location: location,
+      invited_players: ['575217d9-959e-43b1-9dff-bfb9b2294b52', organizer] // todo: get invited players
     };
     let newGame = await storeGame(gameInfo);
     if (newGame == null) {
       setLoading(false);
       return;
     }
+
+    storeGamePlayers(gameId, gameInfo.invited_players);
     setShowError(false);
 
     //await storeGamePlayers(newGame.id, invitedPlayers);
