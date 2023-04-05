@@ -21,8 +21,8 @@ function GameDetails({ route, navigation }) {
   return (
     <Container goBackTo="HomeScreen">
       <View style={styles.container}>
-        <View style={{ alignItems: "center" }}>
-          <Text style={styles.topText}>Game details for {details.name}</Text>
+        <View style={styles.infoContainer}>
+          <Text style={styles.topText}>{details.name}</Text>
           <Text style={styles.text}>
             <Text style={styles.bold}>Date: </Text>
             {details.date}
@@ -82,6 +82,12 @@ const styles = EStyleSheet.create({
     width: "100%",
     justifyContent: "flex-end",
     marginBottom: "2rem",
+  },
+  infoContainer: {
+    borderWidth: 1,
+    borderRadius: "1rem",
+    margin: "1rem",
+    width: "90%",
   },
 });
 
