@@ -48,17 +48,17 @@ function HomeScreen({ navigation }) {
     const gamePlayers = await DataStore.query(GamePlayer, (gp) =>
       gp.player_id.eq(player.id)
     );
-    console.log("Game players: ", gamePlayers);
+    //console.log("Game players: ", gamePlayers);
     const userGameIds = gamePlayers.map((gamePlayer) => {
       return gamePlayer.id
     });
-    console.log("ALL GAMES: ", allGames);
-    console.log("user game ids: ", userGameIds);
+    //console.log("ALL GAMES: ", allGames);
+    //console.log("user game ids: ", userGameIds);
     const userGames = allGames.filter((game) => {
       // console.log("game id: ", game.id);
       return userGameIds.includes(game.id);
     });
-    // console.log("userGames: ", userGames);
+     console.log("userGames: ", userGames);
   
     return userGames;
   
@@ -73,6 +73,7 @@ function HomeScreen({ navigation }) {
     const subscriber = DataStore.observeQuery(Game, (c) =>
       c.datetime.gt(Math.floor(Date.now() / 1000))
     ).subscribe(({ items }) => {
+      //console.log("items:" ,  items);
       setGames(items);
       setUserGames(getPlayerGames(items));
     });

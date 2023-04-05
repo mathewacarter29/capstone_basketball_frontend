@@ -13,6 +13,8 @@ import SignUp from "./screens/SignUp";
 import HomeScreen from "./screens/HomeScreen/HomeScreen";
 import Profile from "./screens/Profile";
 import CreateGame from "./screens/CreateGame";
+import GameDetails from "./screens/GameDetails";
+import UpdateGame from "./screens/UpdateGame";
 
 Amplify.configure(config);
 
@@ -55,6 +57,16 @@ export default function App() {
         <Stack.Screen
           name="CreateGame"
           component={CreateGame}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="GameDetails"
+          component={GameDetails}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="UpdateGame"
+          component={UpdateGame}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
