@@ -18,6 +18,7 @@ import { Auth } from "aws-amplify";
 import { DataStore } from "aws-amplify";
 import { Player, Game, Location, GamePlayer, Rsvp } from "../../src/models";
 import "@azure/core-asynciterator-polyfill";
+import Container from "../../common/Container";
 
 //const [loading, setLoading] = useState(false);
 let userGames;
@@ -31,7 +32,16 @@ const DATA = [
     location: "The Village Basketball Courts",
     date: "6/30/2023",
     time: "12:00 PM",
-    in: ["Abir", "Mat", "Peyton", "Rishi", "Parker"],
+    in: [
+      "Abir",
+      "Mat",
+      "Peyton",
+      "Rishi",
+      "Parker",
+      "Parker",
+      "Parker",
+      "Parker",
+    ],
     out: ["Seyam", "David"],
     description: "This is a test description to see if the field will show up",
   },
@@ -42,7 +52,7 @@ const DATA = [
     location: "McCommas",
     date: "6/29/2023",
     time: "10:00 AM",
-    in: ["Abir", "Mat", "Peyton"],
+    in: ["Abir"],
     out: ["Seyam", "David", "Rishi", "Parker"],
   },
   {
@@ -126,7 +136,7 @@ function HomeScreen({ navigation }) {
   // }
 
   return (
-    <View style={styles.container}>
+    <Container style={styles.container}>
       {loading && <LoadingScreen />}
       <TouchableOpacity
         style={styles.profileButton}
@@ -150,7 +160,7 @@ function HomeScreen({ navigation }) {
       <View style={styles.innerContainer}>
         <GameFeed data={DATA} />
       </View>
-    </View>
+    </Container>
   );
 }
 

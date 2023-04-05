@@ -1,11 +1,14 @@
 import React from "react";
 import EStyleSheet from "react-native-extended-stylesheet";
-import { View, Text } from "react-native";
+import { View, Text, ScrollView, FlatList } from "react-native";
 import Container from "../common/Container";
 import Button from "../common/Button";
 
 function GameDetails({ route, navigation }) {
   const details = route.params.item;
+  const accepted = details.in.map((playerName, index) => {
+    return { id: index, name: playerName };
+  });
   const DUMMY_USERNAME = "Parker";
 
   function isGameOwner() {
@@ -17,6 +20,14 @@ function GameDetails({ route, navigation }) {
   function showDescription() {
     return details.description != "" && details.description != undefined;
   }
+
+  const renderItem = ({ item }) => {
+    return (
+      <View style={{ borderWidth: 1 }}>
+        <Text style={styles.text}>{item.name}</Text>
+      </View>
+    );
+  };
 
   return (
     <Container goBackTo="HomeScreen">
@@ -46,6 +57,16 @@ function GameDetails({ route, navigation }) {
             </Text>
           )}
         </View>
+        <FlatList
+          data={accepted}
+          renderItem={({ item }) => (
+            <View style={{ borderBottomWidth: 1 }}>
+              <Text style={styles.text}>{item.name}</Text>
+            </View>
+          )}
+          keyExtractor={(item) => item.id}
+          style={styles.infoContainer}
+        />
         <View style={styles.buttonContainer}>
           <Button title="Edit Game Details" disabled={!isGameOwner()} />
           <Button title="Delete Game" disabled={!isGameOwner()} />
@@ -67,7 +88,6 @@ const styles = EStyleSheet.create({
     flex: 1,
     marginTop: "7.5rem",
     alignItems: "center",
-    justifyContent: "space-between",
   },
   text: {
     fontSize: 20,
@@ -80,7 +100,6 @@ const styles = EStyleSheet.create({
   buttonContainer: {
     alignItems: "center",
     width: "100%",
-    justifyContent: "flex-end",
     marginBottom: "2rem",
   },
   infoContainer: {
