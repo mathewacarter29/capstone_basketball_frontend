@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text } from "react-native";
+import { View, Text, ScrollView } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
 import Button from "../common/Button";
 import TextInput from "../common/TextInput";
@@ -176,53 +176,58 @@ function CreateGame({ navigation }) {
   return (
     // This is the create event form
     <Container goBackTo="HomeScreen" loadingState={loading}>
-      <View style={styles.container}>
-        <Text style={styles.text}>Let's create a game!</Text>
-        <TextInput
-          value={gameName}
-          placeholder="Enter a name for the game"
-          onChangeText={(text) => setGameName(text)}
-        ></TextInput>
-        <TextInput
-          value={gameDescription}
-          placeholder="Enter a description for the game"
-          onChangeText={(text) => setGameDescription(text)}
-        ></TextInput>
-        <RNPickerSelect
-          value={gameLocation}
-          onValueChange={(value) => setLocation(value)}
-          placeholder={{ label: "Please select a location", value: null }}
-          items={[
-            { label: "McComas Hall", value: "McComas Hall" },
-            { label: "Lee Courts", value: "Lee Courts" },
-            { label: "Old Blacksburg HS", value: "Old Blacksburg HS" },
-            { label: "Cassell Colisuem", value: "Cassell Coliseum" },
-          ]}
-          style={customPickerStyles}
-        />
-        <RNPickerSelect
-          value={gameSkillLevel}
-          onValueChange={(value) => setSkillLevel(value)}
-          placeholder={{ label: "Please select a skill level", value: null }}
-          items={[
-            { label: "Beginner", value: SkillLevel.BEGINNER },
-            { label: "Intermediate", value: SkillLevel.INTERMEDIATE },
-            { label: "Experienced", value: SkillLevel.EXPERIENCED },
-            { label: "Any", value: SkillLevel.ANY },
-          ]}
-          style={customPickerStyles}
-        />
-        <Text style={styles.otherText}>Enter date and time for the game</Text>
-        <RNDateTimePicker
-          mode="datetime"
-          style={styles.datetimepicker}
-          value={chosenDate}
-          onChange={changeSelectedDate}
-        />
-        <Button title="Create Game" onPress={() => create()} />
-        {showError && <ErrorPopup errorMessage={errorMessage} />}
-      </View>
-      <View style={{ flex: 1, backgroundColor: "lightgray" }}></View>
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        style={{ backgroundColor: "lightgray" }}
+      >
+        <View style={styles.container}>
+          <Text style={styles.text}>Let's create a game!</Text>
+          <TextInput
+            value={gameName}
+            placeholder="Enter a name for the game"
+            onChangeText={(text) => setGameName(text)}
+          ></TextInput>
+          <TextInput
+            value={gameDescription}
+            placeholder="Enter a description for the game"
+            onChangeText={(text) => setGameDescription(text)}
+          ></TextInput>
+          <RNPickerSelect
+            value={gameLocation}
+            onValueChange={(value) => setLocation(value)}
+            placeholder={{ label: "Please select a location", value: null }}
+            items={[
+              { label: "McComas Hall", value: "McComas Hall" },
+              { label: "Lee Courts", value: "Lee Courts" },
+              { label: "Old Blacksburg HS", value: "Old Blacksburg HS" },
+              { label: "Cassell Colisuem", value: "Cassell Coliseum" },
+            ]}
+            style={customPickerStyles}
+          />
+          <RNPickerSelect
+            value={gameSkillLevel}
+            onValueChange={(value) => setSkillLevel(value)}
+            placeholder={{ label: "Please select a skill level", value: null }}
+            items={[
+              { label: "Beginner", value: SkillLevel.BEGINNER },
+              { label: "Intermediate", value: SkillLevel.INTERMEDIATE },
+              { label: "Experienced", value: SkillLevel.EXPERIENCED },
+              { label: "Any", value: SkillLevel.ANY },
+            ]}
+            style={customPickerStyles}
+          />
+          <Text style={styles.otherText}>Enter date and time for the game</Text>
+          <RNDateTimePicker
+            mode="datetime"
+            style={styles.datetimepicker}
+            value={chosenDate}
+            onChange={changeSelectedDate}
+          />
+          <Button title="Create Game" onPress={() => create()} />
+          {showError && <ErrorPopup errorMessage={errorMessage} />}
+        </View>
+        <View style={{ flex: 1, backgroundColor: "lightgray" }}></View>
+      </ScrollView>
     </Container>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text } from "react-native";
+import { View, Text, ScrollView } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
 import Button from "../common/Button";
 import { Auth } from "aws-amplify";
@@ -94,46 +94,51 @@ function SignIn({ navigation }) {
   return (
     // This is gonna be the sign up form
     <Container goBackTo="GetStarted" loadingState={loading}>
-      <View style={styles.container}>
-        <Text style={styles.text}>Let's help you play some basketball!</Text>
-        <TextInput
-          value={name}
-          placeholder="Enter your full name"
-          onChangeText={(text) => setName(text)}
-        ></TextInput>
-        <TextInput
-          value={email}
-          placeholder="Enter your email"
-          onChangeText={(text) => setEmail(text)}
-        ></TextInput>
-        <TextInput
-          value={phone}
-          keyboardType="numeric"
-          placeholder="Enter your phone number"
-          onChangeText={(text) => setPhone(text)}
-        ></TextInput>
-        <TextInput
-          value={password}
-          placeholder="Enter your password"
-          onChangeText={(text) => setPassword(text)}
-          secureTextEntry
-        ></TextInput>
-        <TextInput
-          value={confirm}
-          placeholder="Confirm your password"
-          onChangeText={(text) => setConfirm(text)}
-          secureTextEntry
-        ></TextInput>
-        <Button onPress={() => signup()} title="Sign Up!" />
-        <Text
-          style={styles.clickableText}
-          onPress={() => navigation.navigate("EmailVerification")}
-        >
-          I was sent a verification code - verify my account
-        </Text>
-        {showError && <ErrorPopup errorMessage={errorMessage} />}
-      </View>
-      <View style={{ flex: 1, backgroundColor: "lightgray" }}></View>
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        style={{ backgroundColor: "lightgray" }}
+      >
+        <View style={styles.container}>
+          <Text style={styles.text}>Let's help you play some basketball!</Text>
+          <TextInput
+            value={name}
+            placeholder="Enter your full name"
+            onChangeText={(text) => setName(text)}
+          ></TextInput>
+          <TextInput
+            value={email}
+            placeholder="Enter your email"
+            onChangeText={(text) => setEmail(text)}
+          ></TextInput>
+          <TextInput
+            value={phone}
+            keyboardType="numeric"
+            placeholder="Enter your phone number"
+            onChangeText={(text) => setPhone(text)}
+          ></TextInput>
+          <TextInput
+            value={password}
+            placeholder="Enter your password"
+            onChangeText={(text) => setPassword(text)}
+            secureTextEntry
+          ></TextInput>
+          <TextInput
+            value={confirm}
+            placeholder="Confirm your password"
+            onChangeText={(text) => setConfirm(text)}
+            secureTextEntry
+          ></TextInput>
+          <Button onPress={() => signup()} title="Sign Up!" />
+          <Text
+            style={styles.clickableText}
+            onPress={() => navigation.navigate("EmailVerification")}
+          >
+            I was sent a verification code - verify my account
+          </Text>
+          {showError && <ErrorPopup errorMessage={errorMessage} />}
+        </View>
+        <View style={{ flex: 1, backgroundColor: "lightgray" }}></View>
+      </ScrollView>
     </Container>
   );
 }

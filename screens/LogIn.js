@@ -1,6 +1,6 @@
 import { React, useState } from "react";
 import EStyleSheet from "react-native-extended-stylesheet";
-import { Keyboard, View, Text, Image } from "react-native";
+import { Keyboard, View, Text, Image, ScrollView } from "react-native";
 import Button from "../common/Button";
 import { Auth } from "aws-amplify";
 import ErrorPopup from "../common/ErrorPopup";
@@ -51,24 +51,29 @@ function LogIn({ navigation }) {
 
   return (
     <Container goBackTo="GetStarted" loadingState={loading}>
-      <View style={styles.container}>
-        <Text style={styles.text}>Welcome Back!</Text>
-        <Image source={require("../assets/basketballPlayerArms.png")} />
-        <TextInput
-          value={username}
-          placeholder="Enter your email"
-          onChangeText={(text) => setUsername(text)}
-        ></TextInput>
-        <TextInput
-          value={password}
-          placeholder="Enter your password"
-          onChangeText={(text) => setPassword(text)}
-          secureTextEntry
-        ></TextInput>
-        <Button title="Log In" onPress={() => login()} />
-        {showError && <ErrorPopup errorMessage={errorMessage} />}
-      </View>
-      <View style={{ flex: 1, backgroundColor: "lightgray" }}></View>
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        style={{ backgroundColor: "lightgray" }}
+      >
+        <View style={styles.container}>
+          <Text style={styles.text}>Welcome Back!</Text>
+          <Image source={require("../assets/basketballPlayerArms.png")} />
+          <TextInput
+            value={username}
+            placeholder="Enter your email"
+            onChangeText={(text) => setUsername(text)}
+          ></TextInput>
+          <TextInput
+            value={password}
+            placeholder="Enter your password"
+            onChangeText={(text) => setPassword(text)}
+            secureTextEntry
+          ></TextInput>
+          <Button title="Log In" onPress={() => login()} />
+          {showError && <ErrorPopup errorMessage={errorMessage} />}
+        </View>
+        <View style={{ flex: 1, backgroundColor: "lightgray" }}></View>
+      </ScrollView>
     </Container>
   );
 }
