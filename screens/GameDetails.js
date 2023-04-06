@@ -3,6 +3,7 @@ import EStyleSheet from "react-native-extended-stylesheet";
 import { View, Text, ScrollView, FlatList } from "react-native";
 import Container from "../common/Container";
 import Button from "../common/Button";
+import BackArrow from "../common/BackArrow";
 
 function GameDetails({ route, navigation }) {
   const details = route.params.item;
@@ -30,34 +31,40 @@ function GameDetails({ route, navigation }) {
   };
 
   return (
-    <Container goBackTo="HomeScreen">
-      <View style={styles.container}>
-        <View style={styles.infoContainer}>
-          <Text style={styles.topText}>{details.name}</Text>
+    <View style={styles.container}>
+      <BackArrow location="HomeScreen" />
+      <View style={styles.infoContainer}>
+        <Text style={styles.topText}>{details.name}</Text>
+        <Text style={styles.text}>
+          <Text style={styles.bold}>Date: </Text>
+          {details.date}
+        </Text>
+        <Text style={styles.text}>
+          <Text style={styles.bold}>Location: </Text>
+          {details.location}
+        </Text>
+        <Text style={styles.text}>
+          <Text style={styles.bold}>Time: </Text>
+          {details.time}
+        </Text>
+        <Text style={styles.text}>
+          <Text style={styles.bold}>Organizer: </Text>
+          {details.organizer}
+        </Text>
+        {showDescription() && (
           <Text style={styles.text}>
-            <Text style={styles.bold}>Date: </Text>
-            {details.date}
+            <Text style={styles.bold}>Description: </Text>
+            {details.description}
           </Text>
-          <Text style={styles.text}>
-            <Text style={styles.bold}>Location: </Text>
-            {details.location}
-          </Text>
-          <Text style={styles.text}>
-            <Text style={styles.bold}>Time: </Text>
-            {details.time}
-          </Text>
-          <Text style={styles.text}>
-            <Text style={styles.bold}>Organizer: </Text>
-            {details.organizer}
-          </Text>
-          {showDescription() && (
-            <Text style={styles.text}>
-              <Text style={styles.bold}>Description: </Text>
-              {details.description}
-            </Text>
-          )}
-        </View>
+        )}
+      </View>
+      <View style={[styles.infoContainer, styles.acceptedContainer]}>
         <FlatList
+          ListHeaderComponent={
+            <>
+              <Text style={[styles.text, styles.bold]}>Players Attending</Text>
+            </>
+          }
           data={accepted}
           renderItem={({ item }) => (
             <View style={{ borderBottomWidth: 1 }}>
@@ -65,14 +72,13 @@ function GameDetails({ route, navigation }) {
             </View>
           )}
           keyExtractor={(item) => item.id}
-          style={styles.infoContainer}
         />
-        <View style={styles.buttonContainer}>
-          <Button title="Edit Game Details" disabled={!isGameOwner()} />
-          <Button title="Delete Game" disabled={!isGameOwner()} />
-        </View>
       </View>
-    </Container>
+      <View style={styles.buttonContainer}>
+        <Button title="Edit Game Details" disabled={!isGameOwner()} />
+        <Button title="Delete Game" disabled={!isGameOwner()} />
+      </View>
+    </View>
   );
 }
 
@@ -82,12 +88,14 @@ const styles = EStyleSheet.create({
     textAlign: "center",
     fontWeight: "bold",
     margin: "0.5rem",
-    marginBottom: "3rem",
+    marginBottom: "1rem",
+    textDecorationLine: "underline",
   },
   container: {
     flex: 1,
-    marginTop: "7.5rem",
     alignItems: "center",
+    backgroundColor: "lightgray",
+    paddingTop: "6rem",
   },
   text: {
     fontSize: 20,
@@ -100,13 +108,17 @@ const styles = EStyleSheet.create({
   buttonContainer: {
     alignItems: "center",
     width: "100%",
-    marginBottom: "2rem",
+    position: "absolute",
+    bottom: "5%",
   },
   infoContainer: {
     borderWidth: 1,
     borderRadius: "1rem",
     margin: "1rem",
     width: "90%",
+  },
+  acceptedContainer: {
+    height: "10rem",
   },
 });
 

@@ -136,7 +136,7 @@ function HomeScreen({ navigation }) {
   // }
 
   return (
-    <Container style={styles.container}>
+    <View style={styles.container}>
       {loading && <LoadingScreen />}
       <TouchableOpacity
         style={styles.profileButton}
@@ -160,7 +160,7 @@ function HomeScreen({ navigation }) {
       <View style={styles.innerContainer}>
         <GameFeed data={DATA} />
       </View>
-    </Container>
+    </View>
   );
 }
 
