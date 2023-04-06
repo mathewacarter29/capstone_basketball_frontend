@@ -5,7 +5,11 @@ import MapView from "react-native-maps";
 import { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import EStyleSheet from "react-native-extended-stylesheet";
 
-function MapScreen({ navigation }) {
+function showCourtFeed(props) {
+  console.log(props);
+}
+
+function MapScreen() {
   return (
     <View style={styles.container}>
       <MapView
@@ -21,27 +25,27 @@ function MapScreen({ navigation }) {
         {/* McComas */}
         <Marker
           coordinate={{ latitude: 37.220828, longitude: -80.422655 }}
-          onPress={() => console.log("McComas ")}
+          onPress={() => showCourtFeed("McComas ")}
         />
         {/* Bubble */}
         <Marker
           coordinate={{ latitude: 37.215838, longitude: -80.418904 }}
-          onPress={() => console.log("Bubble")}
+          onPress={() => showCourtFeed("Bubble")}
         />
         {/* Oak Lane Court */}
         <Marker
           coordinate={{ latitude: 37.227031, longitude: -80.437552 }}
-          onPress={() => console.log("pressed oaklane")}
+          onPress={() => showCourtFeed("pressed oaklane")}
         />
         {/* Blacksburg Rec Center */}
         <Marker
           coordinate={{ latitude: 37.243998, longitude: -80.411862 }}
-          onPress={() => console.log("Blacksburg Rec Center")}
+          onPress={() => showCourtFeed("bb rec center")}
         />
         {/* Pritchard Courts */}
         <Marker
           coordinate={{ latitude: 37.224828, longitude: -80.418849 }}
-          onPress={() => console.log("Pritchard Courts")}
+          onPress={() => showCourtFeed("Pritchard Courts")}
         />
       </MapView>
     </View>
@@ -49,48 +53,14 @@ function MapScreen({ navigation }) {
 }
 
 const styles = EStyleSheet.create({
-  wrapper: {
-    height: "80%",
-  },
   container: {
     flex: "1",
-  },
-  topText: {
-    color: "#2c3233",
-    fontSize: 30,
-    textAlign: "center",
-    fontWeight: "bold",
-    paddingBottom: ".5rem",
-    paddingTop: ".5rem",
-  },
-  button: {
-    position: "absolute",
-    right: "4%",
-    top: "4%",
-    alignItems: "center",
-  },
-  image: {
-    width: 50,
-    height: 52,
-  },
-  innerContainer: {
-    height: "75%",
-    marginTop: "6.5rem",
   },
   map: {
     marginLeft: "2%",
     marginRight: "2%",
     height: "100%",
     borderRadius: "1rem",
-  },
-  row: {
-    backgroundColor: "#ef9031",
-    flexDirection: "row",
-    borderRadius: "1rem",
-    marginTop: "1rem",
-    marginLeft: "2%",
-    marginRight: "2%",
-    justifyContent: "space-evenly",
   },
 });
 

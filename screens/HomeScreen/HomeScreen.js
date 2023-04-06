@@ -5,7 +5,6 @@ import EStyleSheet from "react-native-extended-stylesheet";
 import LoadingScreen from "../../common/LoadingScreen";
 
 import GameFeed from "./GameFeed";
-import Button from "../../common/Button";
 import MapScreen from "../MapView/MapScreen";
 
 import { Auth } from "aws-amplify";
@@ -69,14 +68,6 @@ const DATA = [
     out: [],
   },
 ];
-
-function ShowContent(props) {
-  if (props.number == 0) {
-    return <MapScreen />;
-  } else {
-    return <GameFeed data={DATA} />;
-  }
-}
 
 function HomeScreen({ navigation }) {
   // useEffect(() => {
@@ -176,7 +167,7 @@ function HomeScreen({ navigation }) {
             setMiddleView("GameFeed");
           }}
         >
-          <Text style={styles.topText}> Game View </Text>
+          <Text style={styles.topText}> Game Feed </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -184,17 +175,8 @@ function HomeScreen({ navigation }) {
 }
 
 const styles = EStyleSheet.create({
-  wrapper: {
-    height: "80%",
-  },
   container: {
     flex: "1",
-  },
-  button: {
-    position: "absolute",
-    right: "4%",
-    top: "4%",
-    alignItems: "center",
   },
   profileButton: {
     position: "absolute",
@@ -220,16 +202,16 @@ const styles = EStyleSheet.create({
     backgroundColor: "#ef9031",
     flexDirection: "row",
     borderRadius: "1rem",
+    justifyContent: "space-around",
     marginTop: "1rem",
     marginLeft: "2%",
     marginRight: "2%",
-    justifyContent: "space-evenly",
   },
   topText: {
     color: "#2c3233",
     fontSize: 30,
-    textAlign: "center",
     fontWeight: "bold",
+    textAlign: "center",
     paddingBottom: ".5rem",
     paddingTop: ".5rem",
   },
