@@ -8,7 +8,10 @@ import BackArrow from "../common/BackArrow";
 function GameDetails({ route, navigation }) {
   const details = route.params.item;
   const accepted = details.in.map((playerName, index) => {
-    return { id: index, name: playerName };
+    return { id: index, name: playerName, status: "In" };
+  });
+  const declined = details.out.map((playerName, index) => {
+    return { id: index + accepted.length, name: playerName, status: "Out" };
   });
   const DUMMY_USERNAME = "Parker";
 
@@ -24,8 +27,16 @@ function GameDetails({ route, navigation }) {
 
   const renderItem = ({ item }) => {
     return (
-      <View style={{ borderWidth: 1 }}>
+      <View style={styles.nameContainer}>
         <Text style={styles.text}>{item.name}</Text>
+        <Text
+          style={[
+            styles.text,
+            item.status == "In" ? { color: "green" } : { color: "red" },
+          ]}
+        >
+          {item.status}
+        </Text>
       </View>
     );
   };
@@ -65,12 +76,8 @@ function GameDetails({ route, navigation }) {
               <Text style={[styles.text, styles.bold]}>Players Attending</Text>
             </>
           }
-          data={accepted}
-          renderItem={({ item }) => (
-            <View style={{ borderBottomWidth: 1 }}>
-              <Text style={styles.text}>{item.name}</Text>
-            </View>
-          )}
+          data={[...accepted, ...declined]}
+          renderItem={renderItem}
           keyExtractor={(item) => item.id}
         />
       </View>
@@ -119,6 +126,14 @@ const styles = EStyleSheet.create({
   },
   acceptedContainer: {
     height: "10rem",
+  },
+  nameContainer: {
+    borderBottomWidth: 1,
+    justifyContent: "space-between",
+    flexDirection: "row",
+    borderRadius: "1rem",
+    marginLeft: "1rem",
+    marginRight: "1rem",
   },
 });
 
