@@ -12,7 +12,7 @@ import LogIn from "./screens/LogIn";
 import SignUp from "./screens/SignUp";
 import HomeScreen from "./screens/HomeScreen/HomeScreen";
 import Profile from "./screens/Profile";
-import MapScreen from "./screens/MapView/MapScreen";
+import CreateGame from "./screens/CreateGame";
 
 Amplify.configure(config);
 
@@ -52,7 +52,11 @@ export default function App() {
           component={Profile}
           options={{ headerShown: false }}
         />
-
+        <Stack.Screen
+          name="CreateGame"
+          component={CreateGame}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

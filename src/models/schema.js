@@ -1,5 +1,87 @@
 export const schema = {
     "models": {
+        "GamePlayer": {
+            "name": "GamePlayer",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "player_id": {
+                    "name": "player_id",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "game_id": {
+                    "name": "game_id",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "rsvp": {
+                    "name": "rsvp",
+                    "isArray": false,
+                    "type": {
+                        "enum": "Rsvp"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "invited": {
+                    "name": "invited",
+                    "isArray": false,
+                    "type": "Boolean",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "GamePlayers",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "public",
+                                "operations": [
+                                    "create",
+                                    "update",
+                                    "delete",
+                                    "read"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "Location": {
             "name": "Location",
             "fields": {
@@ -24,8 +106,8 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "nam": {
-                    "name": "nam",
+                "name": {
+                    "name": "name",
                     "isArray": false,
                     "type": "String",
                     "isRequired": false,
@@ -37,22 +119,6 @@ export const schema = {
                     "type": "String",
                     "isRequired": false,
                     "attributes": []
-                },
-                "LocationGameRelationship": {
-                    "name": "LocationGameRelationship",
-                    "isArray": true,
-                    "type": {
-                        "model": "Game"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": [
-                            "locationID"
-                        ]
-                    }
                 },
                 "createdAt": {
                     "name": "createdAt",
@@ -116,7 +182,9 @@ export const schema = {
                 "skill_level": {
                     "name": "skill_level",
                     "isArray": false,
-                    "type": "Int",
+                    "type": {
+                        "enum": "SkillLevel"
+                    },
                     "isRequired": false,
                     "attributes": []
                 },
@@ -154,22 +222,6 @@ export const schema = {
                     "type": "String",
                     "isRequired": false,
                     "attributes": []
-                },
-                "games": {
-                    "name": "games",
-                    "isArray": true,
-                    "type": {
-                        "model": "GamePlayer"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": [
-                            "player"
-                        ]
-                    }
                 },
                 "createdAt": {
                     "name": "createdAt",
@@ -240,31 +292,18 @@ export const schema = {
                 "datetime": {
                     "name": "datetime",
                     "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "min_size": {
-                    "name": "min_size",
-                    "isArray": false,
-                    "type": "Int",
+                    "type": "AWSTimestamp",
                     "isRequired": false,
                     "attributes": []
                 },
                 "skill_level": {
                     "name": "skill_level",
                     "isArray": false,
-                    "type": "Int",
+                    "type": {
+                        "enum": "SkillLevel"
+                    },
                     "isRequired": false,
                     "attributes": []
-                },
-                "player_ids": {
-                    "name": "player_ids",
-                    "isArray": true,
-                    "type": "AWSJSON",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true
                 },
                 "organizer": {
                     "name": "organizer",
@@ -273,28 +312,20 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "locationID": {
-                    "name": "locationID",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "PlayerGameRelationship": {
-                    "name": "PlayerGameRelationship",
+                "invited_players": {
+                    "name": "invited_players",
                     "isArray": true,
-                    "type": {
-                        "model": "GamePlayer"
-                    },
+                    "type": "String",
                     "isRequired": false,
                     "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": [
-                            "game"
-                        ]
-                    }
+                    "isArrayNullable": true
+                },
+                "min_size": {
+                    "name": "min_size",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
                 },
                 "createdAt": {
                     "name": "createdAt",
@@ -321,15 +352,6 @@ export const schema = {
                     "properties": {}
                 },
                 {
-                    "type": "key",
-                    "properties": {
-                        "name": "byLocation",
-                        "fields": [
-                            "locationID"
-                        ]
-                    }
-                },
-                {
                     "type": "auth",
                     "properties": {
                         "rules": [
@@ -346,108 +368,28 @@ export const schema = {
                     }
                 }
             ]
+        }
+    },
+    "enums": {
+        "SkillLevel": {
+            "name": "SkillLevel",
+            "values": [
+                "BEGINNER",
+                "INTERMEDIATE",
+                "EXPERIENCED",
+                "ANY"
+            ]
         },
-        "GamePlayer": {
-            "name": "GamePlayer",
-            "fields": {
-                "id": {
-                    "name": "id",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "playerId": {
-                    "name": "playerId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "gameId": {
-                    "name": "gameId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "player": {
-                    "name": "player",
-                    "isArray": false,
-                    "type": {
-                        "model": "Player"
-                    },
-                    "isRequired": true,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetNames": [
-                            "playerId"
-                        ]
-                    }
-                },
-                "game": {
-                    "name": "game",
-                    "isArray": false,
-                    "type": {
-                        "model": "Game"
-                    },
-                    "isRequired": true,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetNames": [
-                            "gameId"
-                        ]
-                    }
-                },
-                "createdAt": {
-                    "name": "createdAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                },
-                "updatedAt": {
-                    "name": "updatedAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                }
-            },
-            "syncable": true,
-            "pluralName": "GamePlayers",
-            "attributes": [
-                {
-                    "type": "model",
-                    "properties": {}
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byPlayer",
-                        "fields": [
-                            "playerId"
-                        ]
-                    }
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byGame",
-                        "fields": [
-                            "gameId"
-                        ]
-                    }
-                }
+        "Rsvp": {
+            "name": "Rsvp",
+            "values": [
+                "ACCEPTED",
+                "DECLINED",
+                "PENDING"
             ]
         }
     },
-    "enums": {},
     "nonModels": {},
     "codegenVersion": "3.4.0",
-    "version": "a4a6e7b1e6dda7e25269c384ee4e9c34"
+    "version": "c51fe421aaba1ffcfbf3d08a318d29f4"
 };

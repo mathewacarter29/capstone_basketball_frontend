@@ -3,10 +3,12 @@ import { View, Text } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
 import Button from "../common/Button";
 import { Auth } from "aws-amplify";
-import LoadingScreen from "../common/LoadingScreen";
 import ErrorPopup from "../common/ErrorPopup";
 import TextInput from "../common/TextInput";
 import Container from "../common/Container";
+import "@azure/core-asynciterator-polyfill";
+import { Player, SkillLevel } from "../src/models";
+import { DataStore } from "aws-amplify";
 
 function SignIn({ navigation }) {
   const [name, setName] = useState("");
@@ -52,6 +54,26 @@ function SignIn({ navigation }) {
     }
     try {
       setLoading(true);
+      const player = await DataStore.save(
+        new Player({
+          name: name,
+          email: email,
+          phone_number: phone,
+          skill_level: SkillLevel.ANY,
+          instagram: "String",
+          twitter: "String",
+          bio: "String",
+        })
+      );
+      console.log("Player saved successfully!", player);
+    } catch (error) {
+      setLoading(false);
+      setShowError(true);
+      setErrorMessage(error.message);
+      return;
+    }
+    try {
+      setLoading(true);
       const { user } = await Auth.signUp({
         username: email,
         password: password,
@@ -71,8 +93,7 @@ function SignIn({ navigation }) {
 
   return (
     // This is gonna be the sign up form
-    <Container>
-      {loading && <LoadingScreen />}
+    <Container goBackTo="GetStarted" loadingState={loading}>
       <View style={styles.container}>
         <Text style={styles.text}>Let's help you play some basketball!</Text>
         <TextInput
@@ -104,10 +125,6 @@ function SignIn({ navigation }) {
           secureTextEntry
         ></TextInput>
         <Button onPress={() => signup()} title="Sign Up!" />
-        <Button
-          onPress={() => navigation.navigate("GetStarted")}
-          title="Go Back"
-        />
         <Text
           style={styles.clickableText}
           onPress={() => navigation.navigate("EmailVerification")}
@@ -124,7 +141,7 @@ function SignIn({ navigation }) {
 const styles = EStyleSheet.create({
   container: {
     alignItems: "center",
-    paddingTop: "5rem",
+    paddingTop: "7rem",
     justifyContent: "flex-end",
   },
   text: {

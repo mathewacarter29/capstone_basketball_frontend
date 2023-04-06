@@ -2,11 +2,11 @@ import { React, useState } from "react";
 import EStyleSheet from "react-native-extended-stylesheet";
 import { Keyboard, View, Text, Image } from "react-native";
 import Button from "../common/Button";
-import LoadingScreen from "../common/LoadingScreen";
 import { Auth } from "aws-amplify";
 import ErrorPopup from "../common/ErrorPopup";
 import TextInput from "../common/TextInput";
 import Container from "../common/Container";
+import "@azure/core-asynciterator-polyfill";
 
 function LogIn({ navigation }) {
   const [username, setUsername] = useState("");
@@ -27,8 +27,9 @@ function LogIn({ navigation }) {
       password: password,
     };
 
-    let response = null;
     setLoading(true);
+
+    // const players = await DataStore.query(Player);
     // using amplify API call to validate user
     try {
       response = await Auth.signIn(loginData.username, loginData.password);
@@ -44,17 +45,12 @@ function LogIn({ navigation }) {
     setLoading(false);
     // navigate to the main screen below
     console.log(`Logged in as ${username}`);
-    console.log(response);
 
-    let homeScreenProps = {
-      attributes: response.attributes,
-    };
-    navigation.navigate("HomeScreen", homeScreenProps);
+    navigation.navigate("HomeScreen");
   }
 
   return (
-    <Container>
-      {loading && <LoadingScreen />}
+    <Container goBackTo="GetStarted" loadingState={loading}>
       <View style={styles.container}>
         <Text style={styles.text}>Welcome Back!</Text>
         <Image source={require("../assets/basketballPlayerArms.png")} />
@@ -70,10 +66,6 @@ function LogIn({ navigation }) {
           secureTextEntry
         ></TextInput>
         <Button title="Log In" onPress={() => login()} />
-        <Button
-          title="Go Back"
-          onPress={() => navigation.navigate("GetStarted")}
-        />
         {showError && <ErrorPopup errorMessage={errorMessage} />}
       </View>
       <View style={{ flex: 1, backgroundColor: "lightgray" }}></View>

@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import { React, useEffect, useState } from "react";
 import {
   Text,
   TouchableOpacity,
@@ -8,15 +8,25 @@ import {
 } from "react-native";
 
 import EStyleSheet from "react-native-extended-stylesheet";
-import GameFeed from "./GameFeed";
-import MapScreen from "../MapView/MapScreen"
+import LoadingScreen from "../../common/LoadingScreen";
 
+import GameFeed from "./GameFeed";
+import Button from "../../common/Button";
+
+import { Auth } from "aws-amplify";
+import { DataStore } from "aws-amplify";
+import { Player, Game, Location, GamePlayer, Rsvp } from "../../src/models";
+import "@azure/core-asynciterator-polyfill";
+
+//const [loading, setLoading] = useState(false);
+let userGames;
+// let DATA = [];
 
 const DATA = [
   {
     id: "1",
-    title: "First Game",
-    creator: "Mat",
+    name: "First Game",
+    organizer: "Mat",
     location: "The Village Basketball Courts",
     date: "6/30/2023",
     time: "12:00 PM",
@@ -25,8 +35,8 @@ const DATA = [
   },
   {
     id: "2",
-    title: "Second Game",
-    creator: "Peyton",
+    name: "Second Game",
+    organizer: "Peyton",
     location: "McCommas",
     date: "6/29/2023",
     time: "10:00 AM",
@@ -35,8 +45,8 @@ const DATA = [
   },
   {
     id: "3",
-    title: "Third Game",
-    creator: "Parker",
+    name: "Third Game",
+    organizer: "Parker",
     location: "The Bubble",
     date: "8/1/2023",
     time: "3:00 PM",
@@ -45,8 +55,8 @@ const DATA = [
   },
   {
     id: "4",
-    title: "Forth Game",
-    creator: "Parker",
+    name: "Forth Game",
+    organizer: "Parker",
     location: "The Bubble",
     date: "8/1/2023",
     time: "3:00 PM",
@@ -55,8 +65,8 @@ const DATA = [
   },
   {
     id: "5",
-    title: "Fifth Game",
-    creator: "Parker",
+    name: "Fifth Game",
+    organizer: "Parker",
     location: "The Bubble",
     date: "8/1/2023",
     time: "3:00 PM",
@@ -77,15 +87,63 @@ function ShowContent(props) {
 };
 
 function HomeScreen({ navigation }) {
+  const [data, dataSet] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // useEffect(() => {
+  //   //this function will get all games this user is assoicated with to populate their game feed screen
+  //   //*still in progress
+  //   // TODO: to get all games, just make a query with the model name as the arg: DataStore.query(Game)
+  //   async function getPlayerGames() {
+  //     setLoading(true);
+  //     // from auth lib get user details
+  //     // get player object
+  //     // query player by email
+  //     let userEmail = "test@gmail.com";
+  //     const authObj = await Auth.currentUserInfo();
+  //     console.log("Auth Object returned: ", authObj);
+  //     // const userEmail = authObj.attributes.email;
+
+  //     // get Player object from email
+  //     const players = await DataStore.query(Player, (p) =>
+  //       p.email.eq(userEmail)
+  //     );
+  //     const player = players[0];
+  //     console.log("Player returned: ", player);
+  //     // query GamePlayer to find games player is invited to or created
+  //     const gamePlayers = await DataStore.query(GamePlayer, (gp) =>
+  //       gp.player_id.eq(player.id)
+  //     );
+  //     //const userGames = [];
+  //     let startDate = new Date();
+
+  //     for (let i = 0; i < gamePlayers.length; i++) {
+  //       let game_id = gamePlayers[i].game_id;
+  //       //use this game_id to get the corresponding game
+  //       userGames = await DataStore.query(Game, (c) => c.id.eq(game_id));
+  //       //userGames.push(Game);
+  //       //as each game is retrieved, add it to the data array
+  //       //DATA[i] = {id: userGames[i].id}
+  //     }
+  //     dataSet(userGames);
+  //     setLoading(false);
+  //   }
+  //   getPlayerGames();
+  // }, []);
+  // if (!data) {
+  //   return null;
+  // }
+
 
   const [mapView, setMapView] = useState(0);
 
   return (
     <View style={styles.container}>
+      {loading && <LoadingScreen />}
 
       {/*PROFILE ICON*/}
       <TouchableOpacity
-        style={styles.button}
+        style={styles.profileButton}
         onPress={() => navigation.navigate("Profile")}
       >
         <Image
@@ -93,6 +151,15 @@ function HomeScreen({ navigation }) {
           source={require("../../assets/profile_icon.png")}
         />
         <Text style={styles.text}>Profile</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.createButton}
+        onPress={() => navigation.navigate("CreateGame")}
+      >
+        <Image
+          style={styles.image}
+          source={require("../../assets/plus_icon.png")}
+        />
       </TouchableOpacity>
 
         {/* RENDER LOCATION / FEED*/}
@@ -127,7 +194,25 @@ const styles = EStyleSheet.create({
   container: {
     flex: "1",
   },
+  profileButton: {
+    position: "absolute",
+    right: "4%",
+    top: "6%",
+    alignItems: "center",
+  },
+  topText1: {
+    fontSize: 30,
+    textAlign: "center",
+    fontWeight: "bold",
+    paddingBottom: "1rem",
+  },
   button: {
+    position: "absolute",
+    right: "4%",
+    top: "4%",
+    alignItems: "center",
+  },
+  profileButton: {
     position: "absolute",
     right: "4%",
     top: "4%",

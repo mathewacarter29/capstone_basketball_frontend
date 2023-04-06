@@ -3,7 +3,6 @@ import { View, Text, Alert } from "react-native";
 import Button from "../common/Button";
 import EStyleSheet from "react-native-extended-stylesheet";
 import { Auth } from "aws-amplify";
-import LoadingScreen from "../common/LoadingScreen";
 import ErrorPopup from "../common/ErrorPopup";
 import TextInput from "../common/TextInput";
 import Container from "../common/Container";
@@ -41,12 +40,9 @@ function EmailVerification({ route, navigation }) {
   }
 
   async function resendCode() {
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 10000));
-    setLoading(false);
-    if (fieldsEmpty()) {
+    if (email == "") {
       setShowError(true);
-      setErrorMessage("Enter all fields before resending code");
+      setErrorMessage("Please enter username to resend verification code");
       return;
     }
     try {
@@ -64,8 +60,7 @@ function EmailVerification({ route, navigation }) {
   }
 
   return (
-    <Container>
-      {loading && <LoadingScreen />}
+    <Container goBackTo="SignUp" loadingState={loading}>
       <View style={styles.container}>
         <Text style={styles.text}>Verify your account</Text>
         <TextInput
@@ -81,10 +76,6 @@ function EmailVerification({ route, navigation }) {
         ></TextInput>
         <Button title="Verify" onPress={() => verify()}></Button>
         <Button title="Resend Code" onPress={() => resendCode()}></Button>
-        <Button
-          title="Go Back"
-          onPress={() => navigation.navigate("SignUp")}
-        ></Button>
         {showError && <ErrorPopup errorMessage={errorMessage} />}
       </View>
     </Container>
@@ -95,7 +86,6 @@ const styles = EStyleSheet.create({
   container: {
     alignItems: "center",
     paddingTop: "7rem",
-    height: "100%",
   },
   text: {
     margin: "1rem",
