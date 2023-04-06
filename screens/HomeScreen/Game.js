@@ -1,19 +1,11 @@
 import React from "react";
 import EStyleSheet from "react-native-extended-stylesheet";
 import { View, Text, TouchableOpacity } from "react-native";
-import Button from "../../common/Button";
 import { useNavigation } from "@react-navigation/native";
+import rsvp from "../../utils/rsvp";
 
 function Game({ item }) {
   const navigation = useNavigation();
-  //console.log("item ", item);
-  function rsvp(status) {
-    if (status == "in") {
-      console.log(`${item.name}: RSVP Accepted`);
-    } else {
-      console.log(`${item.name}: RSVP Rejected`);
-    }
-  }
 
   function clickedGame() {
     console.log("navigating to game screen:", item.id);
@@ -51,14 +43,14 @@ function Game({ item }) {
         >
           <TouchableOpacity
             style={[styles.button, { backgroundColor: "lightgreen" }]}
-            onPress={() => rsvp("in")}
+            onPress={() => rsvp("in", item)}
           >
             <Text style={styles.text}>Accepted: {item.in.length}</Text>
           </TouchableOpacity>
           <View style={styles.line} />
           <TouchableOpacity
             style={[styles.button, styles.redButton]}
-            onPress={() => rsvp("out")}
+            onPress={() => rsvp("out", item)}
           >
             <Text style={styles.text}>Rejected: {item.out.length}</Text>
           </TouchableOpacity>

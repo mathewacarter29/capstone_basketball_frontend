@@ -1,9 +1,9 @@
 import React from "react";
 import EStyleSheet from "react-native-extended-stylesheet";
-import { View, Text, ScrollView, FlatList } from "react-native";
-import Container from "../common/Container";
+import { View, Text, TouchableOpacity, FlatList } from "react-native";
 import Button from "../common/Button";
 import BackArrow from "../common/BackArrow";
+import rsvp from "../utils/rsvp";
 
 function GameDetails({ route, navigation }) {
   const details = route.params.item;
@@ -81,6 +81,31 @@ function GameDetails({ route, navigation }) {
           keyExtractor={(item) => item.id}
         />
       </View>
+      <View style={styles.row}>
+        <Text style={[styles.text, styles.bold]}>RSVP:</Text>
+        <View style={styles.line} />
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-around",
+            flex: 1,
+          }}
+        >
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: "lightgreen" }]}
+            onPress={() => rsvp("in", details)}
+          >
+            <Text style={styles.text}>Accept</Text>
+          </TouchableOpacity>
+          <View style={styles.line} />
+          <TouchableOpacity
+            style={[styles.button, styles.redButton]}
+            onPress={() => rsvp("out", details)}
+          >
+            <Text style={styles.text}>Reject</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
       <View style={styles.buttonContainer}>
         <Button title="Edit Game Details" disabled={!isGameOwner()} />
         <Button title="Delete Game" disabled={!isGameOwner()} />
@@ -97,6 +122,22 @@ const styles = EStyleSheet.create({
     margin: "0.5rem",
     marginBottom: "1rem",
     textDecorationLine: "underline",
+  },
+  button: {
+    flex: 1,
+    alignItems: "center",
+  },
+  row: {
+    width: "90%",
+    flexDirection: "row",
+    borderWidth: 1,
+    borderRadius: "1rem",
+    margin: "1rem",
+  },
+  redButton: {
+    backgroundColor: "#FAA0A0",
+    borderBottomRightRadius: "1rem",
+    borderTopRightRadius: "1rem",
   },
   container: {
     flex: 1,
