@@ -20,7 +20,12 @@ function Container(props) {
           behavior={Platform.OS == "ios" ? "padding" : "height"}
           style={styles.scroll_container}
         >
-          {props.children}
+          <ScrollView
+            contentContainerStyle={{ flexGrow: 1 }}
+            style={{ backgroundColor: "lightgray" }}
+          >
+            {props.children}
+          </ScrollView>
         </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
     </View>
@@ -30,7 +35,6 @@ function Container(props) {
 const styles = EStyleSheet.create({
   scroll_container: {
     flex: 1,
-    backgroundColor: "lightgray",
   },
 });
 
