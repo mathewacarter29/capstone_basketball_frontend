@@ -79,8 +79,6 @@ function ShowContent(props) {
 }
 
 function HomeScreen({ navigation }) {
-
-
   // useEffect(() => {
   //   //this function will get all games this user is assoicated with to populate their game feed screen
   //   //*still in progress
@@ -181,7 +179,6 @@ function HomeScreen({ navigation }) {
           <Text style={styles.topText}> Game View </Text>
         </TouchableOpacity>
       </View>
-      
     </View>
   );
 }
