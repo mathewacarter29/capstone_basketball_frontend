@@ -35,8 +35,8 @@ const styles = EStyleSheet.create({
     backgroundColor: "lightgray",
     alignItems: "center",
     borderRadius: "1rem",
-    marginLeft: '2%',
-    marginRight: '2%',
+    marginLeft: "2%",
+    marginRight: "2%",
   },
   topText: {
     fontSize: 30,

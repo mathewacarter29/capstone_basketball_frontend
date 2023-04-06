@@ -1,57 +1,49 @@
 import React from "react";
-import {
-  Text,
-  TouchableOpacity,
-  Image,
-  View,
-} from "react-native";
+import { Text, TouchableOpacity, Image, View } from "react-native";
 
-import MapView from 'react-native-maps';
-import {PROVIDER_GOOGLE, Marker }  from 'react-native-maps';
+import MapView from "react-native-maps";
+import { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import EStyleSheet from "react-native-extended-stylesheet";
 
-
-function HomeScreen({ navigation }) {
+function MapScreen({ navigation }) {
   return (
     <View style={styles.container}>
-        
-            <MapView style={styles.map} 
-                provider={PROVIDER_GOOGLE} 
-                initialRegion={{
-                    latitude: 37.227702,
-                    longitude: -80.422125,
-                    latitudeDelta: 0.035,
-                    longitudeDelta: 0.035,
-                }}
-            >
-                {/* McComas */}
-                <Marker
-                    coordinate={{latitude: 37.220828 , longitude: -80.422655}}
-                    onPress={() => console.log("McComas ")}
-                />
-                {/* Bubble */}
-                <Marker
-                    coordinate={{latitude: 37.215838 , longitude: -80.418904}}
-                    onPress={() => console.log("Bubble")}
-                />
-                {/* Oak Lane Court */}
-                <Marker
-                    coordinate={{latitude: 37.227031 , longitude: -80.437552}}
-                    onPress={() => console.log("pressed oaklane")}
-                />
-                {/* Blacksburg Rec Center */} 
-                <Marker
-                    coordinate={{latitude: 37.243998 , longitude: -80.411862}}
-                    onPress={() => console.log("Blacksburg Rec Center")}
-                />
-                {/* Pritchard Courts */}
-                <Marker
-                    coordinate={{latitude: 37.224828 , longitude: -80.418849}}
-                    onPress={() => console.log("Pritchard Courts")}
-                />
-
-            </MapView>
-
+      <MapView
+        style={styles.map}
+        provider={PROVIDER_GOOGLE}
+        initialRegion={{
+          latitude: 37.227702,
+          longitude: -80.422125,
+          latitudeDelta: 0.035,
+          longitudeDelta: 0.035,
+        }}
+      >
+        {/* McComas */}
+        <Marker
+          coordinate={{ latitude: 37.220828, longitude: -80.422655 }}
+          onPress={() => console.log("McComas ")}
+        />
+        {/* Bubble */}
+        <Marker
+          coordinate={{ latitude: 37.215838, longitude: -80.418904 }}
+          onPress={() => console.log("Bubble")}
+        />
+        {/* Oak Lane Court */}
+        <Marker
+          coordinate={{ latitude: 37.227031, longitude: -80.437552 }}
+          onPress={() => console.log("pressed oaklane")}
+        />
+        {/* Blacksburg Rec Center */}
+        <Marker
+          coordinate={{ latitude: 37.243998, longitude: -80.411862 }}
+          onPress={() => console.log("Blacksburg Rec Center")}
+        />
+        {/* Pritchard Courts */}
+        <Marker
+          coordinate={{ latitude: 37.224828, longitude: -80.418849 }}
+          onPress={() => console.log("Pritchard Courts")}
+        />
+      </MapView>
     </View>
   );
 }
@@ -64,7 +56,7 @@ const styles = EStyleSheet.create({
     flex: "1",
   },
   topText: {
-    color:"#2c3233",
+    color: "#2c3233",
     fontSize: 30,
     textAlign: "center",
     fontWeight: "bold",
@@ -86,9 +78,9 @@ const styles = EStyleSheet.create({
     marginTop: "6.5rem",
   },
   map: {
-    marginLeft: '2%',
-    marginRight: '2%',
-    height: '100%',
+    marginLeft: "2%",
+    marginRight: "2%",
+    height: "100%",
     borderRadius: "1rem",
   },
   row: {
@@ -96,12 +88,10 @@ const styles = EStyleSheet.create({
     flexDirection: "row",
     borderRadius: "1rem",
     marginTop: "1rem",
-    marginLeft: '2%',
-    marginRight: '2%',
-    justifyContent: 'space-evenly',
+    marginLeft: "2%",
+    marginRight: "2%",
+    justifyContent: "space-evenly",
   },
 });
 
-export default HomeScreen;
-
-
+export default MapScreen;

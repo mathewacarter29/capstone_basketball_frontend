@@ -1,17 +1,12 @@
 import { React, useEffect, useState } from "react";
-import {
-  Text,
-  TouchableOpacity,
-  Image,
-  View,
-  ScrollView,
-} from "react-native";
+import { Text, TouchableOpacity, Image, View, ScrollView } from "react-native";
 
 import EStyleSheet from "react-native-extended-stylesheet";
 import LoadingScreen from "../../common/LoadingScreen";
 
 import GameFeed from "./GameFeed";
 import Button from "../../common/Button";
+import MapScreen from "../MapView/MapScreen";
 
 import { Auth } from "aws-amplify";
 import { DataStore } from "aws-amplify";
@@ -76,19 +71,15 @@ const DATA = [
 ];
 
 function ShowContent(props) {
-  if(props.number == 0){
-    return <MapScreen/>
+  if (props.number == 0) {
+    return <MapScreen />;
+  } else {
+    return <GameFeed data={DATA} />;
   }
-  else{
-    return <GameFeed data={DATA} />
-  }
-  
-  
-};
+}
 
 function HomeScreen({ navigation }) {
-  const [data, dataSet] = useState([]);
-  const [loading, setLoading] = useState(false);
+
 
   // useEffect(() => {
   //   //this function will get all games this user is assoicated with to populate their game feed screen
@@ -134,8 +125,10 @@ function HomeScreen({ navigation }) {
   //   return null;
   // }
 
+  const [data, dataSet] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const [mapView, setMapView] = useState(0);
+  const [middleView, setMiddleView] = useState("GameFeed");
 
   return (
     <View style={styles.container}>
@@ -152,6 +145,8 @@ function HomeScreen({ navigation }) {
         />
         <Text style={styles.text}>Profile</Text>
       </TouchableOpacity>
+
+      {/*CREATE GAME*/}
       <TouchableOpacity
         style={styles.createButton}
         onPress={() => navigation.navigate("CreateGame")}
@@ -162,27 +157,31 @@ function HomeScreen({ navigation }) {
         />
       </TouchableOpacity>
 
-        {/* RENDER LOCATION / FEED*/}
-        <View style={styles.innerContainer}>
-
-          <ShowContent number={mapView}/>
-          
-        </View>
+      {/* RENDER LOCATION / FEED*/}
+      <View style={styles.innerContainer}>
+        {middleView == "GameFeed" && <GameFeed data={DATA} />}
+        {middleView == "MapScreen" && <MapScreen />}
+      </View>
 
       {/* BOTTOM NAV BUTTONS */}
-      <View style={styles.row} >
+      <View style={styles.row}>
+        <TouchableOpacity
+          onPress={() => {
+            setMiddleView("MapScreen");
+          }}
+        >
+          <Text style={styles.topText}> Map View </Text>
+        </TouchableOpacity>
 
-
-            <TouchableOpacity onPress={() => {setMapView(0)} }>
-                <Text style={styles.topText}> Map View </Text>
-            </TouchableOpacity>
-
-
-            <TouchableOpacity onPress={() => {setMapView(1)} }>
-                <Text style={styles.topText}> Game View </Text>
-            </TouchableOpacity>
-        </View>
-
+        <TouchableOpacity
+          onPress={() => {
+            setMiddleView("GameFeed");
+          }}
+        >
+          <Text style={styles.topText}> Game View </Text>
+        </TouchableOpacity>
+      </View>
+      
     </View>
   );
 }
@@ -194,18 +193,6 @@ const styles = EStyleSheet.create({
   container: {
     flex: "1",
   },
-  profileButton: {
-    position: "absolute",
-    right: "4%",
-    top: "6%",
-    alignItems: "center",
-  },
-  topText1: {
-    fontSize: 30,
-    textAlign: "center",
-    fontWeight: "bold",
-    paddingBottom: "1rem",
-  },
   button: {
     position: "absolute",
     right: "4%",
@@ -215,6 +202,12 @@ const styles = EStyleSheet.create({
   profileButton: {
     position: "absolute",
     right: "4%",
+    top: "4%",
+    alignItems: "center",
+  },
+  createButton: {
+    position: "absolute",
+    left: "4%",
     top: "4%",
     alignItems: "center",
   },
@@ -231,19 +224,18 @@ const styles = EStyleSheet.create({
     flexDirection: "row",
     borderRadius: "1rem",
     marginTop: "1rem",
-    marginLeft: '2%',
-    marginRight: '2%',
-    justifyContent: 'space-evenly',
+    marginLeft: "2%",
+    marginRight: "2%",
+    justifyContent: "space-evenly",
   },
   topText: {
-    color:"#2c3233",
+    color: "#2c3233",
     fontSize: 30,
     textAlign: "center",
     fontWeight: "bold",
     paddingBottom: ".5rem",
     paddingTop: ".5rem",
   },
-
 });
 
 export default HomeScreen;
