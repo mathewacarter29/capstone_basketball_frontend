@@ -32,7 +32,7 @@ function CreateGame({ navigation }) {
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [locations, setLocations] = useState([]);
-  const [selected, setSelected] = useState([]);
+  const [selectedPlayers, setSelected] = useState([]);
 
   //dummy player data for testing UI for inviting
   const data = [
@@ -139,13 +139,14 @@ function CreateGame({ navigation }) {
   }
 
   //saves game player that represents each and every game and player association
-  async function storeGamePlayers(gameId, invitedPlayers) {
+  async function storeGamePlayers(gameId) {
     setLoading(true);
-    for (let i = 0; i < (await invitedPlayers).length; i++) {
+  
+    for (let i = 0; i < selectedPlayers.length; i++) {
       try {
         const gamePlayer = await DataStore.save(
           new GamePlayer({
-            player_id: invitedPlayers[i].id,
+            player_id: selectedPlayers[i],
             game_id: gameId,
             rsvp: Rsvp.PENDING,
             invited: true,
@@ -153,7 +154,8 @@ function CreateGame({ navigation }) {
         );
       } catch (error) {
         setLoading(false);
-        console.log("error: ", error, "storing player: ", invitedPlayers[i]);
+        setShowError(true);
+        console.log("error: ", error.message, "storing player: ", selectedPlayers[i]);
       }
     }
     setLoading(false);
@@ -191,9 +193,7 @@ function CreateGame({ navigation }) {
       setLoading(false);
       return;
     }
-    //todo: this should eventually be list of players that organizer invites, for now it is just all players in the db
-    // const invitedPlayers = await getAllPlayers();
-    // invitedPlayers.push(organizer); // add organizer to invited players so that they get added in GamePlayer
+
 
     const gameInfo = {
       // if gamename is empty, set it
@@ -204,7 +204,7 @@ function CreateGame({ navigation }) {
       skillLevel: gameSkillLevel ? gameSkillLevel : SkillLevel.ANY,
       organizer: organizer,
       location: location,
-      invited_players: ["575217d9-959e-43b1-9dff-bfb9b2294b52", organizer], // todo: get invited players
+      invited_players: selectedPlayers,
     };
     let newGame = await storeGame(gameInfo);
     if (newGame == null) {
@@ -212,13 +212,13 @@ function CreateGame({ navigation }) {
       return;
     }
 
-    storeGamePlayers(gameId, gameInfo.invited_players);
     setShowError(false);
 
-    //await storeGamePlayers(newGame.id, invitedPlayers);
+    await storeGamePlayers(newGame.id, invitedPlayers);
     navigation.navigate("HomeScreen");
   }
 
+  console.log(selectedPlayers);
   return (
     // This is the create event form
     <Container>
@@ -272,7 +272,7 @@ function CreateGame({ navigation }) {
           valueField="value"
           placeholder="Invite players"
           searchPlaceholder="Search..."
-          value={selected}
+          value={selectedPlayers}
           onChange={(item) => {
             setSelected(item);
           }}
