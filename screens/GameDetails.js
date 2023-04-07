@@ -1,24 +1,87 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { Auth } from "aws-amplify";
 import EStyleSheet from "react-native-extended-stylesheet";
 import { View, Text, TouchableOpacity, FlatList } from "react-native";
 import Button from "../common/Button";
 import BackArrow from "../common/BackArrow";
+import { DataStore } from "aws-amplify";
+import "@azure/core-asynciterator-polyfill";
+import {
+  Player,
+  Game,
+  Location,
+  GamePlayer,
+  Rsvp,
+  SkillLevel,
+} from "../src/models";
+
+import {epochToLocalDate} from '../utils/TimeUtil';
+import {epochToLocalTime} from '../utils/TimeUtil';
 import rsvp from "../utils/rsvp";
 
 function GameDetails({ route, navigation }) {
   const details = route.params.item;
-  const accepted = details.in.map((playerName, index) => {
-    return { id: index, name: playerName, status: "In" };
-  });
-  const declined = details.out.map((playerName, index) => {
-    return { id: index + accepted.length, name: playerName, status: "Out" };
-  });
-  const DUMMY_USERNAME = "Parker";
+  const [accepted, setAccepted] = useState([]);
+  const [declined, setDeclined] = useState([]);
+  const [thisPlayer, setThisPlayer] = useState([]);
+
+  console.log("details: ", details);
+
+  //gets current user
+  async function getPlayer() {
+    try {
+      const response = await Auth.currentUserInfo();
+      const player = await DataStore.query(Player, (p) => p.email.eq(response.attributes.email));
+      console.log("This player returned: ", player[0]);
+      setThisPlayer(player[0]);
+
+    } catch (error) {
+      console.log("Error getting player: ", error.message);
+    }
+  }
+
+  async function getInvitedPlayers() {
+    let playerids = details.invited_players;
+    console.log("player ids: ", playerids);
+
+    acceptedPlayers = [];
+    declinedPlayers = [];
+    for (let i = 0; i < playerids.length; i++) {
+      let playerId = playerids[i];
+      console.log("player id in while loop: ", playerids)
+      const gamePlayer = await DataStore.query(GamePlayer, (c) => c.and(c => [c.player_id.eq(playerId), c.game_id.eq(details.id)]));
+      console.log("game player returned: ", gamePlayer);
+      const player = await DataStore.query(Player, (c) => c.id.eq(playerId));
+      console.log("player returned: ", player);
+      if (gamePlayer[0].rsvp == Rsvp.ACCEPTED) {
+        accepted.push(player[0].name);
+      }
+      else {
+        declined.push(player[0].name);
+      }
+    }
+
+    setAccepted(acceptedPlayers);
+    setDeclined(declinedPlayers);
+  }
+
+
+
+  useEffect(() => {
+    getPlayer();
+    getInvitedPlayers();
+  }, []);
+
+
+  // const declined = details.out.map((playerName, index) => {
+  //   return { id: index + accepted.length, name: playerName, status: "Out" };
+  // });
+
 
   function isGameOwner() {
     // Use a dummy username until actual organizer names are used
     // We would need DUMMY_USERNAME to be the name of the current user
-    return DUMMY_USERNAME == details.organizer;
+    return thisPlayer.id == details.organizer;
   }
 
   function showDescription() {
@@ -48,7 +111,7 @@ function GameDetails({ route, navigation }) {
         <Text style={styles.topText}>{details.name}</Text>
         <Text style={styles.text}>
           <Text style={styles.bold}>Date: </Text>
-          {details.date}
+          {epochToLocalDate(details.datetime)}
         </Text>
         <Text style={styles.text}>
           <Text style={styles.bold}>Location: </Text>
@@ -56,11 +119,11 @@ function GameDetails({ route, navigation }) {
         </Text>
         <Text style={styles.text}>
           <Text style={styles.bold}>Time: </Text>
-          {details.time}
+          {epochToLocalTime(details.datetime)}
         </Text>
         <Text style={styles.text}>
           <Text style={styles.bold}>Organizer: </Text>
-          {details.organizer}
+          {thisPlayer.name}
         </Text>
         {showDescription() && (
           <Text style={styles.text}>
@@ -81,7 +144,7 @@ function GameDetails({ route, navigation }) {
           keyExtractor={(item) => item.id}
         />
       </View>
-      <View style={styles.row}>
+      {!isGameOwner() ? <View style={styles.row}>
         <Text style={[styles.text, styles.bold]}>RSVP:</Text>
         <View style={styles.line} />
         <View
@@ -105,11 +168,11 @@ function GameDetails({ route, navigation }) {
             <Text style={styles.text}>Reject</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </View> :
       <View style={styles.buttonContainer}>
-        <Button title="Edit Game Details" disabled={!isGameOwner()} />
-        <Button title="Delete Game" disabled={!isGameOwner()} />
-      </View>
+        <Button title="Edit Game Details"  />
+        <Button title="Delete Game"  />
+      </View>}
     </View>
   );
 }

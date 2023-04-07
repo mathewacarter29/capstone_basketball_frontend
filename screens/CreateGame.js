@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
 import Button from "../common/Button";

@@ -3,6 +3,8 @@ import EStyleSheet from "react-native-extended-stylesheet";
 import { View, Text, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import rsvp from "../../utils/rsvp";
+import {epochToLocalDate} from '../../utils/TimeUtil';
+import {epochToLocalTime} from '../../utils/TimeUtil';
 
 function Game({ item }) {
   const navigation = useNavigation();
