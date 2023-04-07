@@ -115,16 +115,27 @@ function CreateGame({ navigation }) {
   }
 
   //saves a name game or returns an error
-  async function storeGame(gameInfo) {
+  async function storeGame() {
+
+    //convert chosen date to epoch timestamp in seconds
+    epochNow = Math.floor(Date.now() / 1000);
+    epochDate = Math.floor(chosenDate.getTime() / 1000);
+    //check if specified datetime is in the past
+    if (epochDate <= epochNow) {
+      setShowError(true);
+      setErrorMessage("Please select a valid future date and time");
+      return;
+    }
+    
     //form field validation
     try {
       const game = await DataStore.save(
         new Game({
-          name: gameInfo.name,
-          description: gameInfo.description,
+          name: gameName ? gameName : "Pickup game at " + location.name,
+          description: gameDescription,
           location: "McComas Hall",
-          datetime: gameInfo.date,
-          skill_level: gameInfo.skillLevel,
+          datetime: epochDate,
+          skill_level: gameSkillLevel ? gameSkillLevel : SkillLevel.ANY,
           organizer: thisPlayer.id,
           invited_players: selectedPlayers,
         })
@@ -164,58 +175,30 @@ function CreateGame({ navigation }) {
 
   //function to create the game
   async function create() {
+    console.log("INSIDE CREATE");
     //if no location is selected display error message
     if (gameLocation == "") {
       setShowError(true);
       setErrorMessage("Please select a location");
       return;
     }
-    //convert chosen date to epoch timestamp in seconds
-    epochDate = Math.floor(chosenDate.getTime() / 1000);
-    //check if specified datetime is in the past
-    epochNow = Math.floor(Date.now() / 1000);
-    if (epochDate <= epochNow) {
-      setShowError(true);
-      setErrorMessage("Please select a valid future date and time");
-      return;
-    }
-
+    
     // START making API calls
     setLoading(true);
-    const location = await getLocation(gameLocation);
-    const organizer = await getPlayer();
-    // if location is null, there was an error getting the location. Error logged in getLocation()
-    if (!location) {
+
+    let newGame = await storeGame();
+    console.log("New created game: ", newGame);
+    if (newGame == null || newGame == undefined) {
       setLoading(false);
-      return;
-    }
-    // If there is no organizer, there was a problem and an error was logged
-    if (!organizer) {
-      setLoading(false);
+      setErrorMessage("Error creating game.")
+      setShowError(true);
       return;
     }
 
-
-    const gameInfo = {
-      // if gamename is empty, set it
-      name: gameName ? gameName : "Pickup game at " + location.name,
-      description: gameDescription,
-      date: epochDate,
-      // if the skill level is undefined, set it to ANY
-      skillLevel: gameSkillLevel ? gameSkillLevel : SkillLevel.ANY,
-      organizer: organizer,
-      location: location,
-      invited_players: selectedPlayers,
-    };
-    let newGame = await storeGame(gameInfo);
-    if (newGame == null) {
-      setLoading(false);
-      return;
-    }
-
+    let gamePlayersStored = await storeGamePlayers(newGame.id);
+    console.log("Game Players Stored: ", gamePlayersStored);
+    
     setShowError(false);
-
-    await storeGamePlayers(newGame.id, invitedPlayers);
     navigation.navigate("HomeScreen");
   }
 
@@ -286,7 +269,7 @@ function CreateGame({ navigation }) {
           value={chosenDate}
           onChange={changeSelectedDate}
         />
-        <Button title="Create Game" onPress={() => create()} />
+        <Button title="Create Game" onPress={create} />
         {showError && <ErrorPopup errorMessage={errorMessage} />}
       </View>
       <View style={{ flex: 1, backgroundColor: "lightgray" }}></View>
