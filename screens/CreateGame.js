@@ -133,7 +133,7 @@ function CreateGame({ navigation }) {
         new Game({
           name: gameName ? gameName : "Pickup game at " + location.name,
           description: gameDescription,
-          location: "McComas Hall",
+          location: gameLocation,
           datetime: epochDate,
           skill_level: gameSkillLevel ? gameSkillLevel : SkillLevel.ANY,
           organizer: thisPlayer.id,
@@ -224,12 +224,6 @@ function CreateGame({ navigation }) {
           onValueChange={(value) => setLocation(value)}
           placeholder={{ label: "Please select a location", value: null }}
           items={locations}
-          // items={[
-          //   { label: "McComas Hall", value: "McComas Hall" },
-          //   { label: "Lee Courts", value: "Lee Courts" },
-          //   { label: "Old Blacksburg HS", value: "Old Blacksburg HS" },
-          //   { label: "Cassell Colisuem", value: "Cassell Coliseum" },
-          // ]}
           style={customPickerStyles}
         />
         <RNPickerSelect
