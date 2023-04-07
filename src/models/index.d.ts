@@ -133,6 +133,7 @@ type EagerGame = {
   readonly id: string;
   readonly name?: string | null;
   readonly description?: string | null;
+  readonly location?: string | null;
   readonly datetime?: number | null;
   readonly skill_level?: SkillLevel | keyof typeof SkillLevel | null;
   readonly organizer?: string | null;
@@ -150,6 +151,7 @@ type LazyGame = {
   readonly id: string;
   readonly name?: string | null;
   readonly description?: string | null;
+  readonly location?: string | null;
   readonly datetime?: number | null;
   readonly skill_level?: SkillLevel | keyof typeof SkillLevel | null;
   readonly organizer?: string | null;

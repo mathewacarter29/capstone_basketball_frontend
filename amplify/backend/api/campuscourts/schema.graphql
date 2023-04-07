@@ -11,7 +11,7 @@ enum RSVP {
   PENDING
 }
 
-type GamePlayer @model @auth(rules: [{allow: public}]) {
+type GamePlayer @model @auth(rules: [{ allow: public }]) {
   id: ID!
   player_id: String!
   game_id: String!
@@ -19,7 +19,7 @@ type GamePlayer @model @auth(rules: [{allow: public}]) {
   invited: Boolean
 }
 
-type Location @model @auth(rules: [{allow: public}]) {
+type Location @model @auth(rules: [{ allow: public }]) {
   id: ID!
   latitude: Float
   longitude: Float
@@ -27,7 +27,7 @@ type Location @model @auth(rules: [{allow: public}]) {
   address: String
 }
 
-type Player @model @auth(rules: [{allow: public}]) {
+type Player @model @auth(rules: [{ allow: public }]) {
   id: ID!
   name: String!
   skill_level: SkillLevel
@@ -38,15 +38,14 @@ type Player @model @auth(rules: [{allow: public}]) {
   bio: String
 }
 
-type Game @model @auth(rules: [{allow: public}]) {
+type Game @model @auth(rules: [{ allow: public }]) {
   id: ID!
   name: String
   description: String
-  location: Location!
+  location: String
   datetime: AWSTimestamp
   skill_level: SkillLevel
   organizer: String
   invited_players: [String]
   min_size: Int
 }
- 

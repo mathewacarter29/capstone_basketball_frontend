@@ -7,6 +7,7 @@ import TextInput from "../common/TextInput";
 import Container from "../common/Container";
 import RNPickerSelect from "react-native-picker-select";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
+import { MultiSelect } from "react-native-element-dropdown";
 import { DataStore, Auth } from "aws-amplify";
 import {
   Player,
@@ -28,6 +29,37 @@ function CreateGame({ navigation }) {
   const [chosenDate, setChosenDate] = useState(new Date());
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [locations, setLocations] = useState([]);
+  const [selected, setSelected] = useState([]);
+
+  //dummy player data for testing UI for inviting
+  const data = [
+    { label: "Mathew Carter", value: "Mathew Carter" },
+    { label: "Rishi Murudkar", value: "Rishi Murudkar" },
+    { label: "Parker Harnack", value: "Parker Harnack" },
+    { label: "Peyton Dexter", value: "Peyton Dexter" },
+  ];
+
+  //get all locations to populate the location picker
+  async function getLocations() {
+    setLoading(true);
+    try {
+      const allLocations = await DataStore.query(Location);
+      //map the name to an array
+      const formatLocations = allLocations.map(({ name: value }) => ({
+        value,
+        label: value,
+      }));
+      setLocations(formatLocations);
+    } catch (error) {
+      //if locations don't load for some reason then we should probably display an error message and route back
+      console.log(error.message);
+    }
+    setLoading(false);
+  }
+  useEffect(() => {
+    getLocations();
+  }, []);
 
   //on change function to set user selected date
   const changeSelectedDate = (event, selectedDate) => {
@@ -83,8 +115,8 @@ function CreateGame({ navigation }) {
           location: "McComas Hall",
           datetime: gameInfo.date,
           skill_level: gameInfo.skillLevel,
-          organizer: '15237838-a84f-47f5-934b-7320367385a6',
-          invited_players: ['575217d9-959e-43b1-9dff-bfb9b2294b52']
+          organizer: "15237838-a84f-47f5-934b-7320367385a6",
+          invited_players: ["575217d9-959e-43b1-9dff-bfb9b2294b52"],
         })
       );
       return game;
@@ -162,7 +194,7 @@ function CreateGame({ navigation }) {
       skillLevel: gameSkillLevel ? gameSkillLevel : SkillLevel.ANY,
       organizer: organizer,
       location: location,
-      invited_players: ['575217d9-959e-43b1-9dff-bfb9b2294b52', organizer] // todo: get invited players
+      invited_players: ["575217d9-959e-43b1-9dff-bfb9b2294b52", organizer], // todo: get invited players
     };
     let newGame = await storeGame(gameInfo);
     if (newGame == null) {
@@ -197,12 +229,13 @@ function CreateGame({ navigation }) {
           value={gameLocation}
           onValueChange={(value) => setLocation(value)}
           placeholder={{ label: "Please select a location", value: null }}
-          items={[
-            { label: "McComas Hall", value: "McComas Hall" },
-            { label: "Lee Courts", value: "Lee Courts" },
-            { label: "Old Blacksburg HS", value: "Old Blacksburg HS" },
-            { label: "Cassell Colisuem", value: "Cassell Coliseum" },
-          ]}
+          items={locations}
+          // items={[
+          //   { label: "McComas Hall", value: "McComas Hall" },
+          //   { label: "Lee Courts", value: "Lee Courts" },
+          //   { label: "Old Blacksburg HS", value: "Old Blacksburg HS" },
+          //   { label: "Cassell Colisuem", value: "Cassell Coliseum" },
+          // ]}
           style={customPickerStyles}
         />
         <RNPickerSelect
@@ -216,6 +249,24 @@ function CreateGame({ navigation }) {
             { label: "Any", value: SkillLevel.ANY },
           ]}
           style={customPickerStyles}
+        />
+        <MultiSelect
+          style={multiSelectStyles.dropdown}
+          placeholderStyle={multiSelectStyles.placeholderStyle}
+          selectedTextStyle={multiSelectStyles.selectedTextStyle}
+          inputSearchStyle={multiSelectStyles.inputSearchStyle}
+          iconStyle={multiSelectStyles.iconStyle}
+          search
+          data={data}
+          labelField="label"
+          valueField="value"
+          placeholder="Invite players"
+          searchPlaceholder="Search..."
+          value={selected}
+          onChange={(item) => {
+            setSelected(item);
+          }}
+          selectedStyle={multiSelectStyles.selectedStyle}
         />
         <Text style={styles.otherText}>Enter date and time for the game</Text>
         <RNDateTimePicker
@@ -283,6 +334,43 @@ const customPickerStyles = EStyleSheet.create({
     borderRadius: 8,
     color: "black",
     paddingRight: 30, // to ensure the text is never behind the icon
+  },
+});
+
+const multiSelectStyles = EStyleSheet.create({
+  dropdown: {
+    height: "3rem",
+    width: "80%",
+    borderRadius: "1rem",
+    backgroundColor: "white",
+    margin: "1rem",
+    marginLeft: "1.25 rem",
+    color: "#333",
+    padding: "rem",
+    shadowColor: "#171717",
+    shadowRadius: 3,
+    shadowOpacity: 0.2,
+    shadowOffset: { width: -2, height: 4 },
+  },
+  placeholderStyle: {
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    fontSize: 14,
+  },
+  iconStyle: {
+    width: 20,
+    height: 20,
+  },
+  inputSearchStyle: {
+    height: 40,
+    fontSize: 16,
+  },
+  icon: {
+    marginRight: 5,
+  },
+  selectedStyle: {
+    borderRadius: 12,
   },
 });
 
