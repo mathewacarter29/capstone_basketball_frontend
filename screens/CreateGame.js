@@ -125,10 +125,11 @@ function CreateGame({ navigation }) {
           location: "McComas Hall",
           datetime: gameInfo.date,
           skill_level: gameInfo.skillLevel,
-          organizer: "15237838-a84f-47f5-934b-7320367385a6",
-          invited_players: ["575217d9-959e-43b1-9dff-bfb9b2294b52"],
+          organizer: thisPlayer.id,
+          invited_players: selectedPlayers,
         })
       );
+      console.log("Game created: ", game);
       return game;
     } catch (error) {
       setShowError(true);
