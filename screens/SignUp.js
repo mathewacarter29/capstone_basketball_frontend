@@ -3,7 +3,6 @@ import { View, Text } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
 import Button from "../common/Button";
 import { Auth } from "aws-amplify";
-import LoadingScreen from "../common/LoadingScreen";
 import ErrorPopup from "../common/ErrorPopup";
 import TextInput from "../common/TextInput";
 import Container from "../common/Container";
@@ -94,8 +93,7 @@ function SignIn({ navigation }) {
 
   return (
     // This is gonna be the sign up form
-    <Container>
-      {loading && <LoadingScreen />}
+    <Container goBackTo="GetStarted" loadingState={loading}>
       <View style={styles.container}>
         <Text style={styles.text}>Let's help you play some basketball!</Text>
         <TextInput
@@ -127,10 +125,6 @@ function SignIn({ navigation }) {
           secureTextEntry
         ></TextInput>
         <Button onPress={() => signup()} title="Sign Up!" />
-        <Button
-          onPress={() => navigation.navigate("GetStarted")}
-          title="Go Back"
-        />
         <Text
           style={styles.clickableText}
           onPress={() => navigation.navigate("EmailVerification")}
@@ -147,7 +141,7 @@ function SignIn({ navigation }) {
 const styles = EStyleSheet.create({
   container: {
     alignItems: "center",
-    paddingTop: "5rem",
+    paddingTop: "7rem",
     justifyContent: "flex-end",
   },
   text: {

@@ -2,44 +2,17 @@ import React from "react";
 import EStyleSheet from "react-native-extended-stylesheet";
 import { View, Text, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-//import epochToLocalDate from "../../common/util";
-//import epochToLocalTime from "../../common/util";
-
-function epochToLocalDate(epoch) {
-  const date = new Date(epoch * 1000); // Convert epoch to milliseconds
-  const month = ('0' + (date.getMonth() + 1)).slice(-2); // Get local month and pad with 0 if needed
-  const day = ('0' + date.getDate()).slice(-2); // Get local day and pad with 0 if needed
-  const year = date.getFullYear(); // Get local year
-  return `${month}-${day}-${year}`;
-}
-
- function epochToLocalTime(epoch) {
-  const date = new Date(epoch * 1000); // Convert epoch to milliseconds
-  const hours = date.getHours(); // Get local hours
-  const minutes = ('0' + date.getMinutes()).slice(-2); // Get local minutes and pad with 0 if needed
-  const ampm = hours >= 12 ? 'PM' : 'AM';
-  const formattedHours = ('0' + (hours % 12 || 12)).slice(-2); // Convert to 12-hour format and pad with 0 if needed
-  return `${formattedHours}:${minutes} ${ampm}`;
-}
-
+import rsvp from "../../utils/rsvp";
 
 function Game({ item }) {
-  //console.log("item ", item);
   const navigation = useNavigation();
-  function rsvp(status) {
-    if (status == "in") {
-      console.log(`${item.name}: RSVP Accepted`);
-    } else {
-      console.log(`${item.name}: RSVP Rejected`);
-    }
-  }
 
   function clickedGame() {
     console.log("navigating to game screen:", item.id);
     navigation.navigate("GameDetails", { item });
   }
 
- return (
+  return (
     <TouchableOpacity style={styles.item} onPress={() => clickedGame()}>
       <Text style={styles.title}>{item.name}</Text>
 
@@ -70,14 +43,14 @@ function Game({ item }) {
         >
           <TouchableOpacity
             style={[styles.button, { backgroundColor: "lightgreen" }]}
-            onPress={() => rsvp("in")}
+            onPress={() => rsvp("in", item)}
           >
             {/* <Text style={styles.text}>Accepted: {item.in.length}</Text> */}
           </TouchableOpacity>
           <View style={styles.line} />
           <TouchableOpacity
             style={[styles.button, styles.redButton]}
-            onPress={() => rsvp("out")}
+            onPress={() => rsvp("out", item)}
           >
             {/* <Text style={styles.text}>Rejected: {item.out.length}</Text> */}
           </TouchableOpacity>
