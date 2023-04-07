@@ -21,6 +21,8 @@ import ErrorPopup from "../common/ErrorPopup";
 import "@azure/core-asynciterator-polyfill";
 
 function CreateGame({ navigation }) {
+  const [thisPlayer, setThisPlayer] = useState("");
+  const [toInvite, setToInvite] = useState([]);
   const [loading, setLoading] = useState(false);
   const [gameName, setGameName] = useState("");
   const [gameDescription, setGameDescription] = useState("");
@@ -57,7 +59,24 @@ function CreateGame({ navigation }) {
     }
     setLoading(false);
   }
+
+  async function getPlayers() {
+    setLoading(true);
+    let toInvite = [];
+    try {
+      const allPlayers = await DataStore.query(Player, (p) => p.email.ne(thisPlayer.email));
+      allPlayers.map((element) => {
+        toInvite.push({label: element.name, value: element.id});
+      });
+      console.log("to invite: ", toInvite);
+      setToInvite(toInvite);
+    } catch (error) {
+      console.log("Error occurred in getting all players: " + error.message);
+    }
+  }
   useEffect(() => {
+    getPlayer();
+    getPlayers();
     getLocations();
   }, []);
 
@@ -67,23 +86,14 @@ function CreateGame({ navigation }) {
     setChosenDate(currentDate);
   };
 
-  //helper function to get everyone but the organizer to test inviting players
-  async function getAllPlayers() {
-    let userEmail = "Test@gmail.com";
-    const allPlayers = await DataStore.query(Player, (p) =>
-      p.email.ne(userEmail)
-    );
-    return allPlayers;
-  }
-
   //gets current user
   async function getPlayer() {
     try {
       const response = await Auth.currentUserInfo();
-      const player = await DataStore.query(Player, (p) =>
-        p.email.eq(response.attributes.email)
-      );
-      return player[0];
+      const player = await DataStore.query(Player, (p) => p.email.eq(response.attributes.email));
+      console.log("This player returned: ", player[0]);
+      setThisPlayer(player[0]);
+
     } catch (error) {
       setShowError(true);
       setErrorMessage(`Error getting player: ${error.message}`);
@@ -257,7 +267,7 @@ function CreateGame({ navigation }) {
           inputSearchStyle={multiSelectStyles.inputSearchStyle}
           iconStyle={multiSelectStyles.iconStyle}
           search
-          data={data}
+          data={toInvite}
           labelField="label"
           valueField="value"
           placeholder="Invite players"
