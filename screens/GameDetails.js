@@ -36,9 +36,11 @@ function GameDetails({ route, navigation }) {
     async function getPlayer() {
         try {
           const response = await Auth.currentUserInfo();
+          console.log("Auth response: ", response);
           const player = await DataStore.query(Player, (p) =>
             p.email.eq(response.attributes.email)
           );
+          console.log("Player response: ", player[0])
           return player[0];
         } catch (error) {
           setShowError(true);
@@ -51,7 +53,8 @@ function GameDetails({ route, navigation }) {
     // Use a dummy username until actual organizer names are used
     // We would need DUMMY_USERNAME to be the name of the current user
     const player = await getPlayer();
-    return player.id == details.organizer;
+    console.log("player: ", player);
+    return player != undefined && player.id == details.organizer;
   }
 
   function showDescription() {
