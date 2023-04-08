@@ -25,7 +25,7 @@ function HomeScreen({ navigation }) {
   const [userGames, setUserGames] = useState([]);
   const [playerGames, setPlayerGames] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  const [thisPlayer, setThisPlayer] = useState([]);
   
   
   async function getPlayerGames(allGames) {
@@ -39,6 +39,7 @@ function HomeScreen({ navigation }) {
       p.email.eq(userEmail)
     );
     const player = players[0];
+    setThisPlayer(player);
     // console.log("Player returned: ", player);
 
     // console.log("Player id: ", player.id);

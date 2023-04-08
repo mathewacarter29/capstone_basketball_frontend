@@ -21,7 +21,7 @@ function Game({ item }) {
 
       <Text style={styles.text}>
         <Text style={{ fontWeight: "bold" }}>Location: </Text>
-        {/* {item.location} */}
+        {item.location}
       </Text>
 
       <Text style={styles.text}>
