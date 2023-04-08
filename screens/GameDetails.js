@@ -21,11 +21,13 @@ import rsvp from "../utils/rsvp";
 
 function GameDetails({ route, navigation }) {
   const details = route.params.item;
-  console.log("detuals", details)
+  const thisPlayer = details.player;
+  const thisGame = details.game;
+
   const [loading, setLoading] = useState(false);
   const [accepted, setAccepted] = useState([]);
   const [declined, setDeclined] = useState([]);
-  const [thisPlayer, setThisPlayer] = useState([]);
+
 
   const [gameOrganizer, setGameOrganizer] = useState([]);
 
@@ -36,10 +38,7 @@ function GameDetails({ route, navigation }) {
       const response = await Auth.currentUserInfo();
       const player = await DataStore.query(Player, (p) => p.email.eq(response.attributes.email));
       console.log("This player returned: ", player[0]);
-      // setThisPlayer(player[0]);
       return player[0];
-
-
     } catch (error) {
       console.log("Error getting player: ", error.message);
     }
@@ -47,14 +46,15 @@ function GameDetails({ route, navigation }) {
 
   async function getInvitedPlayers() {
     setLoading(true);
-    let playerids = details.invited_players;
+    let playerids = thisGame.invited_players;
     console.log("player ids: ", playerids);
 
     acceptedPlayers = [];
     declinedPlayers = [];
     for (let i = 0; i < playerids.length; i++) {
       let playerId = playerids[i];
-      const gamePlayer = await DataStore.query(GamePlayer, (c) => c.and(c => [c.player_id.eq(playerId), c.game_id.eq(details.id)]));
+      const gamePlayer = await DataStore.query(GamePlayer, (c) => c.and(c => 
+        [c.player_id.eq(playerId), c.game_id.eq(thisGame.id)]));
       console.log("game player returned: ", gamePlayer);
       const player = await DataStore.query(Player, (c) => c.id.eq(playerId));
       console.log("player returned: ", player);
@@ -65,46 +65,28 @@ function GameDetails({ route, navigation }) {
         declinedPlayers.push({ id: player[0].id, name: player[0].name, status: "Out" });
       }
     }
-
-    // setAccepted(acceptedPlayers);
-    // setDeclined(declinedPlayers);
-    // setLoading(false);
     return {
       accepted: acceptedPlayers,
       declined: declinedPlayers
     }
   }
 
-  async function getGameOrganizer(player) {
-    if (player.id == details.organizer) {
-      return player.name;
+  async function getGameOrganizer() {
+    if (thisPlayer.id == thisGame.organizer) {
+      return thisPlayer.name;
     } else {
-      const organizer = await DataStore.query(Player, details.organizer);
+      const organizer = await DataStore.query(Player, thisGame.organizer);
       console.log("organizer returned: ", organizer);
       return organizer.name;
     }
   }
-
-
-  useEffect(() => {
-    async function fetchData() {
-      await getPlayer();
-      await getGameOrganizer();
-      await getInvitedPlayers();
-    }
-  
-    fetchData();
-  }, []);
   
   useEffect(() => {
     async function fetchData() {
       try {
         setLoading(true);
   
-        const playerRes = await getPlayer();
-        setThisPlayer(playerRes);
-  
-        const organizerRes = await getGameOrganizer(playerRes);
+        const organizerRes = await getGameOrganizer();
         setGameOrganizer(organizerRes);
   
         const invitedPlayersRes = await getInvitedPlayers();
@@ -125,11 +107,11 @@ function GameDetails({ route, navigation }) {
   function isGameOwner() {
     // Use a dummy username until actual organizer names are used
     // We would need DUMMY_USERNAME to be the name of the current user
-    return thisPlayer.id == details.organizer;
+    return thisPlayer.id == thisGame.organizer;
   }
 
   function showDescription() {
-    return details.description != "" && details.description != undefined;
+    return thisGame.description != "" && thisGame.description != undefined;
   }
 
   const renderItem = ({ item, index }) => {
@@ -156,7 +138,7 @@ function GameDetails({ route, navigation }) {
  
   async function handleDelete() {
     setLoading(true);
-    const toDelete = await DataStore.query(Game, details.id);
+    const toDelete = await DataStore.query(Game, thisGame.id);
     DataStore.delete(toDelete);
     setLoading(false);
     navigation.navigate("HomeScreen");
@@ -166,18 +148,18 @@ function GameDetails({ route, navigation }) {
     <View style={styles.container}>
       <BackArrow location="HomeScreen" />
       <View style={styles.infoContainer}>
-        <Text style={styles.topText}>{details.name}</Text>
+        <Text style={styles.topText}>{thisGame.name}</Text>
         <Text style={styles.text}>
           <Text style={styles.bold}>Date: </Text>
-          {epochToLocalDate(details.datetime)}
+          {epochToLocalDate(thisGame.datetime)}
         </Text>
         <Text style={styles.text}>
           <Text style={styles.bold}>Location: </Text>
-          {details.location}
+          {thisGame.location}
         </Text>
         <Text style={styles.text}>
           <Text style={styles.bold}>Time: </Text>
-          {epochToLocalTime(details.datetime)}
+          {epochToLocalTime(thisGame.datetime)}
         </Text>
         <Text style={styles.text}>
           <Text style={styles.bold}>Organizer: </Text>
@@ -186,7 +168,7 @@ function GameDetails({ route, navigation }) {
         {showDescription() && (
           <Text style={styles.text}>
             <Text style={styles.bold}>Description: </Text>
-            {details.description}
+            {thisGame.description}
           </Text>
         )}
       </View>
@@ -213,14 +195,14 @@ function GameDetails({ route, navigation }) {
         >
           <TouchableOpacity
             style={[styles.button, { backgroundColor: "lightgreen" }]}
-            onPress={() => rsvp(details.id, thisPlayer.id, Rsvp.ACCEPTED)}
+            onPress={() => rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED)}
           >
             <Text style={styles.text}>Accept</Text>
           </TouchableOpacity>
           <View style={styles.line} />
           <TouchableOpacity
             style={[styles.button, styles.redButton]}
-            onPress={() => rsvp(details.id, thisPlayer.id, Rsvp.DECLINED)}
+            onPress={() => rsvp(thisGame.id, thisPlayer.id, Rsvp.DECLINED)}
           >
             <Text style={styles.text}>Reject</Text>
           </TouchableOpacity>

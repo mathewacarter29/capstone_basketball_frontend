@@ -105,7 +105,7 @@ function HomeScreen({ navigation }) {
         />
       </TouchableOpacity>
       <View style={styles.innerContainer}>
-        <GameFeed data={games} />
+        <GameFeed data={{games: games, thisPlayer: thisPlayer}} />
       </View>
     </View>
   );

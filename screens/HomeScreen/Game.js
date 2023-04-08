@@ -21,17 +21,17 @@ function Game({ item }) {
 
       <Text style={styles.text}>
         <Text style={{ fontWeight: "bold" }}>Location: </Text>
-        {item.location}
+        {item.game.location}
       </Text>
 
       <Text style={styles.text}>
         <Text style={{ fontWeight: "bold" }}>Date: </Text>
-        {epochToLocalDate(item.datetime)}
+        {epochToLocalDate(item.game.datetime)}
       </Text>
 
       <Text style={styles.text}>
         <Text style={{ fontWeight: "bold" }}>Time: </Text>
-        {epochToLocalTime(item.datetime)}
+        {epochToLocalTime(item.game.datetime)}
       </Text>
 
       <View style={styles.row}>
@@ -46,14 +46,14 @@ function Game({ item }) {
         >
           <TouchableOpacity
             style={[styles.button, { backgroundColor: "lightgreen" }]}
-            onPress={() => rsvp("in", item)}
+            onPress={() => rsvp("in", item.game)}
           >
             <Text style={styles.text}>Accept</Text>
           </TouchableOpacity>
           <View style={styles.line} />
           <TouchableOpacity
             style={[styles.button, styles.redButton]}
-            onPress={() => rsvp("out", item)}
+            onPress={() => rsvp("out", item.game)}
           >
             <Text style={styles.text}>Reject</Text>
           </TouchableOpacity>
