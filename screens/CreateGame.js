@@ -166,7 +166,6 @@ function CreateGame({ navigation }) {
 
   //function to create the game
   async function create() {
-    console.log("INSIDE CREATE");
     //if no location is selected display error message
     if (gameLocation == "") {
       setShowError(true);
@@ -178,13 +177,13 @@ function CreateGame({ navigation }) {
     setLoading(true);
 
     let newGame = await storeGame();
-    console.log("New created game: ", newGame);
     if (newGame == null || newGame == undefined) {
       setLoading(false);
       setErrorMessage("Error creating game.")
       setShowError(true);
       return;
     }
+    console.log("New created game: ", newGame);
 
     let gamePlayersStored = await storeGamePlayers(newGame.id);
     console.log("Game Players Stored: ", gamePlayersStored);
@@ -193,7 +192,7 @@ function CreateGame({ navigation }) {
     navigation.navigate("HomeScreen");
   }
 
-  console.log(selectedPlayers);
+
   return (
     // This is the create event form
     <Container goBackTo="HomeScreen" loadingState={loading}>
