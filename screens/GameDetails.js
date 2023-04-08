@@ -31,19 +31,6 @@ function GameDetails({ route, navigation }) {
 
   const [gameOrganizer, setGameOrganizer] = useState([]);
 
-  //gets current user
-  // async function getPlayer() {
-  //   setLoading(true);
-  //   try {
-  //     const response = await Auth.currentUserInfo();
-  //     const player = await DataStore.query(Player, (p) => p.email.eq(response.attributes.email));
-  //     console.log("This player returned: ", player[0]);
-  //     return player[0];
-  //   } catch (error) {
-  //     console.log("Error getting player: ", error.message);
-  //   }
-  // }
-
   async function getInvitedPlayers() {
     setLoading(true);
     let playerids = thisGame.invited_players;
@@ -51,19 +38,29 @@ function GameDetails({ route, navigation }) {
 
     acceptedPlayers = [];
     declinedPlayers = [];
+
+
     for (let i = 0; i < playerids.length; i++) {
-      let playerId = playerids[i];
-      const gamePlayer = await DataStore.query(GamePlayer, (c) => c.and(c => 
-        [c.player_id.eq(playerId), c.game_id.eq(thisGame.id)]));
-      console.log("game player returned: ", gamePlayer);
-      const player = await DataStore.query(Player, (c) => c.id.eq(playerId));
-      console.log("player returned: ", player);
-      if (gamePlayer[0].rsvp == Rsvp.ACCEPTED) {
-        acceptedPlayers.push({ id: player[0].id, name: player[0].name, status: "In" });
+
+      try {
+        let playerId = playerids[i];
+        const gamePlayer = await DataStore.query(GamePlayer, (c) => c.and(c => 
+          [c.player_id.eq(playerId), c.game_id.eq(thisGame.id)]));
+        console.log("game player returned: ", gamePlayer);
+        const player = await DataStore.query(Player, (c) => c.id.eq(playerId));
+        console.log("player returned: ", player);
+        if (gamePlayer[0].rsvp == Rsvp.ACCEPTED) {
+          acceptedPlayers.push({ id: player[0].id, name: player[0].name, status: "In" });
+        }
+        else {
+          declinedPlayers.push({ id: player[0].id, name: player[0].name, status: "Out" });
+        }
       }
-      else {
-        declinedPlayers.push({ id: player[0].id, name: player[0].name, status: "Out" });
+
+      catch (error) {
+        console.log("error occured in finding", i, "ith game player rsvp");
       }
+      
     }
     return {
       accepted: acceptedPlayers,
@@ -74,10 +71,19 @@ function GameDetails({ route, navigation }) {
   async function getGameOrganizer() {
     if (thisPlayer.id == thisGame.organizer) {
       return thisPlayer.name;
-    } else {
-      const organizer = await DataStore.query(Player, thisGame.organizer);
-      console.log("organizer returned: ", organizer);
-      return organizer.name;
+    } 
+    
+    else {
+      try {
+        const organizer = await DataStore.query(Player, thisGame.organizer);
+        console.log("organizer returned: ", organizer);
+        return organizer.name;
+      } 
+      
+      catch (error) {
+        console.log("error getting organizer");
+        return;
+      }
     }
   }
   
@@ -132,16 +138,23 @@ function GameDetails({ route, navigation }) {
 
   function handleEdit() {
     navigation.navigate(("UpdateGame"), {
-        game: route.params.item,
+        game: thisGame,
       });
   }
  
   async function handleDelete() {
     setLoading(true);
-    const toDelete = await DataStore.query(Game, thisGame.id);
-    DataStore.delete(toDelete);
-    setLoading(false);
-    navigation.navigate("HomeScreen");
+    try {
+      const toDelete = await DataStore.query(Game, thisGame.id);
+      DataStore.delete(toDelete);
+      setLoading(false);
+      navigation.navigate("HomeScreen");
+    } catch (error) {
+      console.log("error occurred in deleting game");
+      setLoading(false);
+    }
+    
+    
   }
 
   return (
