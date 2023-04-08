@@ -21,6 +21,7 @@ import rsvp from "../utils/rsvp";
 
 function GameDetails({ route, navigation }) {
   const details = route.params.item;
+  const [loading, setLoading] = useState(false);
   const [accepted, setAccepted] = useState([]);
   const [declined, setDeclined] = useState([]);
   const [thisPlayer, setThisPlayer] = useState([]);
@@ -104,6 +105,20 @@ function GameDetails({ route, navigation }) {
     );
   };
 
+  function handleEdit() {
+    navigation.navigate(("UpdateGame"), {
+        game: route.params.item,
+      });
+  }
+ 
+  async function handleDelete() {
+    setLoading(true);
+    const toDelete = await DataStore.query(Game, details.id);
+    DataStore.delete(toDelete);
+    setLoading(false);
+    navigation.navigate("HomeScreen");
+  }
+
   return (
     <View style={styles.container}>
       <BackArrow location="HomeScreen" />
@@ -169,8 +184,8 @@ function GameDetails({ route, navigation }) {
         </View>
       </View> :
       <View style={styles.buttonContainer}>
-        <Button title="Edit Game Details"  />
-        <Button title="Delete Game"  />
+        <Button title="Edit Game Details" onPress={handleEdit} />
+        <Button title="Delete Game" onPress={handleDelete} />
       </View>}
     </View>
   );
