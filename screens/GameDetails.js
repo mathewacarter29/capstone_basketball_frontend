@@ -32,17 +32,17 @@ function GameDetails({ route, navigation }) {
   const [gameOrganizer, setGameOrganizer] = useState([]);
 
   //gets current user
-  async function getPlayer() {
-    setLoading(true);
-    try {
-      const response = await Auth.currentUserInfo();
-      const player = await DataStore.query(Player, (p) => p.email.eq(response.attributes.email));
-      console.log("This player returned: ", player[0]);
-      return player[0];
-    } catch (error) {
-      console.log("Error getting player: ", error.message);
-    }
-  }
+  // async function getPlayer() {
+  //   setLoading(true);
+  //   try {
+  //     const response = await Auth.currentUserInfo();
+  //     const player = await DataStore.query(Player, (p) => p.email.eq(response.attributes.email));
+  //     console.log("This player returned: ", player[0]);
+  //     return player[0];
+  //   } catch (error) {
+  //     console.log("Error getting player: ", error.message);
+  //   }
+  // }
 
   async function getInvitedPlayers() {
     setLoading(true);

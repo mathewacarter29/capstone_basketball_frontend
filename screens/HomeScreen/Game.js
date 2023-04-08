@@ -8,7 +8,9 @@ import {epochToLocalTime} from '../../utils/TimeUtil';
 
 function Game({ item }) {
   const navigation = useNavigation();
-  console.log("item: ", item)
+  console.log("item: ", item);
+  const thisGame = item.game;
+  const thisPlayer = item.player;
 
   function clickedGame() {
     console.log("navigating to game screen:", item.id);
@@ -34,7 +36,7 @@ function Game({ item }) {
         {epochToLocalTime(item.game.datetime)}
       </Text>
 
-      <View style={styles.row}>
+      {thisPlayer.id != thisGame.organizer && <View style={styles.row}>
         <Text style={[styles.text, styles.bold]}>RSVP:</Text>
         <View style={styles.line} />
         <View
@@ -58,7 +60,7 @@ function Game({ item }) {
             <Text style={styles.text}>Reject</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </View>}
     </TouchableOpacity>
   );
 }
