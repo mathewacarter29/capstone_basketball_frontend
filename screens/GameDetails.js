@@ -26,6 +26,7 @@ function GameDetails({ route, navigation }) {
   const [declined, setDeclined] = useState([]);
   const [thisPlayer, setThisPlayer] = useState([]);
 
+  const [gameOrganizer, setGameOrganizer] = useState([]);
 
   //gets current user
   async function getPlayer() {
@@ -65,10 +66,22 @@ function GameDetails({ route, navigation }) {
     setDeclined(declinedPlayers);
   }
 
+  async function getGameOrganizer() {
+    if (thisPlayer.id == details.organizer) {
+      setGameOrganizer(thisPlayer.name);
+    }
+
+    else {
+      const organizer = await DataStore.query(Player, details.organizer);
+      console.log("organizer returned: ", organizer);
+      setGameOrganizer(organizer[0]);
+    }
+  }
 
 
   useEffect(() => {
     getPlayer();
+    getGameOrganizer();
     getInvitedPlayers();
   }, []);
 
@@ -132,7 +145,7 @@ function GameDetails({ route, navigation }) {
         </Text>
         <Text style={styles.text}>
           <Text style={styles.bold}>Organizer: </Text>
-          {thisPlayer.name}
+          {organizer}
         </Text>
         {showDescription() && (
           <Text style={styles.text}>
