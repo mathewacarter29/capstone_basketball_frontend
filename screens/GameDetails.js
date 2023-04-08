@@ -164,14 +164,14 @@ function GameDetails({ route, navigation }) {
         >
           <TouchableOpacity
             style={[styles.button, { backgroundColor: "lightgreen" }]}
-            onPress={() => rsvp("in", details)}
+            onPress={() => rsvp(details.id, thisPlayer.id, Rsvp.ACCEPTED)}
           >
             <Text style={styles.text}>Accept</Text>
           </TouchableOpacity>
           <View style={styles.line} />
           <TouchableOpacity
             style={[styles.button, styles.redButton]}
-            onPress={() => rsvp("out", details)}
+            onPress={() => rsvp(details.id, thisPlayer.id, Rsvp.DECLINED)}
           >
             <Text style={styles.text}>Reject</Text>
           </TouchableOpacity>

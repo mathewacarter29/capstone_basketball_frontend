@@ -8,6 +8,7 @@ import {epochToLocalTime} from '../../utils/TimeUtil';
 
 function Game({ item }) {
   const navigation = useNavigation();
+  console.log("item: ", item)
 
   function clickedGame() {
     console.log("navigating to game screen:", item.id);
@@ -47,14 +48,14 @@ function Game({ item }) {
             style={[styles.button, { backgroundColor: "lightgreen" }]}
             onPress={() => rsvp("in", item)}
           >
-            {/* <Text style={styles.text}>Accepted: {item.in.length}</Text> */}
+            <Text style={styles.text}>Accept</Text>
           </TouchableOpacity>
           <View style={styles.line} />
           <TouchableOpacity
             style={[styles.button, styles.redButton]}
             onPress={() => rsvp("out", item)}
           >
-            {/* <Text style={styles.text}>Rejected: {item.out.length}</Text> */}
+            <Text style={styles.text}>Reject</Text>
           </TouchableOpacity>
         </View>
       </View>

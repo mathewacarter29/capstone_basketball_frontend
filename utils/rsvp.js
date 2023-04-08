@@ -7,17 +7,21 @@ import {
   SkillLevel,
 } from "../src/models";
 
-function rsvp(status, player_id, details) {
+async function rsvp(gameId, playerId, newRsvp) {
+  const original = await DataStore.query(GamePlayer, (c) => c.and(c => [
+    c.game_id.eq(gameId),
+    c.player_id.eq(playerId)
+  ]));
 
-  gameId = details.id;
-  
+  if (original && original.rsvp != newRsvp) {
+    const updatedGamePlayer = await DataStore.save(
+      GamePlayer.copyOf(original, updated => {
+        updated.rsvp = newRsvp
+      })
+    );
 
-
-  if (status == RSV) {
-    console.log(`${gameItem.name}: RSVP Accepted`);
-  } else {
-    console.log(`${gameItem.name}: RSVP Rejected`);
   }
+  
 }
 
 export default rsvp;
