@@ -33,14 +33,6 @@ function CreateGame({ navigation }) {
   const [locations, setLocations] = useState([]);
   const [selectedPlayers, setSelected] = useState([]);
 
-  //dummy player data for testing UI for inviting
-  const data = [
-    { label: "Mathew Carter", value: "Mathew Carter" },
-    { label: "Rishi Murudkar", value: "Rishi Murudkar" },
-    { label: "Parker Harnack", value: "Parker Harnack" },
-    { label: "Peyton Dexter", value: "Peyton Dexter" },
-  ];
-
   //get all locations to populate the location picker
   async function getLocations() {
     setLoading(true);
