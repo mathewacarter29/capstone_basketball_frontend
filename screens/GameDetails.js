@@ -21,6 +21,7 @@ import rsvp from "../utils/rsvp";
 
 function GameDetails({ route, navigation }) {
   const details = route.params.item;
+  console.log("detuals", details)
   const [loading, setLoading] = useState(false);
   const [accepted, setAccepted] = useState([]);
   const [declined, setDeclined] = useState([]);
@@ -30,11 +31,14 @@ function GameDetails({ route, navigation }) {
 
   //gets current user
   async function getPlayer() {
+    setLoading(true);
     try {
       const response = await Auth.currentUserInfo();
       const player = await DataStore.query(Player, (p) => p.email.eq(response.attributes.email));
       console.log("This player returned: ", player[0]);
-      setThisPlayer(player[0]);
+      // setThisPlayer(player[0]);
+      return player[0];
+
 
     } catch (error) {
       console.log("Error getting player: ", error.message);
@@ -42,6 +46,7 @@ function GameDetails({ route, navigation }) {
   }
 
   async function getInvitedPlayers() {
+    setLoading(true);
     let playerids = details.invited_players;
     console.log("player ids: ", playerids);
 
@@ -49,7 +54,6 @@ function GameDetails({ route, navigation }) {
     declinedPlayers = [];
     for (let i = 0; i < playerids.length; i++) {
       let playerId = playerids[i];
-      console.log("player id in while loop: ", playerids)
       const gamePlayer = await DataStore.query(GamePlayer, (c) => c.and(c => [c.player_id.eq(playerId), c.game_id.eq(details.id)]));
       console.log("game player returned: ", gamePlayer);
       const player = await DataStore.query(Player, (c) => c.id.eq(playerId));
@@ -62,27 +66,59 @@ function GameDetails({ route, navigation }) {
       }
     }
 
-    setAccepted(acceptedPlayers);
-    setDeclined(declinedPlayers);
+    // setAccepted(acceptedPlayers);
+    // setDeclined(declinedPlayers);
+    // setLoading(false);
+    return {
+      accepted: acceptedPlayers,
+      declined: declinedPlayers
+    }
   }
 
-  async function getGameOrganizer() {
-    if (thisPlayer.id == details.organizer) {
-      setGameOrganizer(thisPlayer.name);
-    }
-
-    else {
+  async function getGameOrganizer(player) {
+    if (player.id == details.organizer) {
+      return player.name;
+    } else {
       const organizer = await DataStore.query(Player, details.organizer);
       console.log("organizer returned: ", organizer);
-      setGameOrganizer(organizer[0]);
+      return organizer.name;
     }
   }
 
 
   useEffect(() => {
-    getPlayer();
-    getGameOrganizer();
-    getInvitedPlayers();
+    async function fetchData() {
+      await getPlayer();
+      await getGameOrganizer();
+      await getInvitedPlayers();
+    }
+  
+    fetchData();
+  }, []);
+  
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setLoading(true);
+  
+        const playerRes = await getPlayer();
+        setThisPlayer(playerRes);
+  
+        const organizerRes = await getGameOrganizer(playerRes);
+        setGameOrganizer(organizerRes);
+  
+        const invitedPlayersRes = await getInvitedPlayers();
+        setAccepted(invitedPlayersRes.accepted);
+        setDeclined(invitedPlayersRes.declined);
+  
+        setLoading(false);
+      } catch (error) {
+        console.log("Error fetching data: ", error);
+        setLoading(false);
+      }
+    }
+  
+    fetchData();
   }, []);
 
 
@@ -145,7 +181,7 @@ function GameDetails({ route, navigation }) {
         </Text>
         <Text style={styles.text}>
           <Text style={styles.bold}>Organizer: </Text>
-          {organizer}
+          {loading ? "Loading..." : gameOrganizer}
         </Text>
         {showDescription() && (
           <Text style={styles.text}>
