@@ -19,7 +19,7 @@ import {
 import ErrorPopup from "../common/ErrorPopup";
 import "@azure/core-asynciterator-polyfill";
 
-function CreateGame({ route, navigation }) {
+function UpdateGame({ route, navigation }) {
   const { game } = route.params;
 
   const [loading, setLoading] = useState(false);
@@ -164,4 +164,4 @@ const customPickerStyles = EStyleSheet.create({
   },
 });
 
-export default CreateGame;
+export default UpdateGame;

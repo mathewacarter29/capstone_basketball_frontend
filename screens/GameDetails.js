@@ -54,10 +54,10 @@ function GameDetails({ route, navigation }) {
       const player = await DataStore.query(Player, (c) => c.id.eq(playerId));
       console.log("player returned: ", player);
       if (gamePlayer[0].rsvp == Rsvp.ACCEPTED) {
-        accepted.push(player[0].name);
+        acceptedPlayers.push({ id: player[0].id, name: player[0].name, status: "In" });
       }
       else {
-        declined.push(player[0].name);
+        declinedPlayers.push({ id: player[0].id, name: player[0].name, status: "Out" });
       }
     }
 
@@ -88,9 +88,9 @@ function GameDetails({ route, navigation }) {
     return details.description != "" && details.description != undefined;
   }
 
-  const renderItem = ({ item }) => {
+  const renderItem = ({ item, index }) => {
     return (
-      <View style={styles.nameContainer}>
+      <View key={index} style={styles.nameContainer}>
         <Text style={styles.text}>{item.name}</Text>
         <Text
           style={[
@@ -141,7 +141,6 @@ function GameDetails({ route, navigation }) {
           }
           data={[...accepted, ...declined]}
           renderItem={renderItem}
-          keyExtractor={(item) => item.id}
         />
       </View>
       {!isGameOwner() ? <View style={styles.row}>

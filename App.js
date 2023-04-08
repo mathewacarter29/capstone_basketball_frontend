@@ -4,7 +4,6 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Amplify } from "aws-amplify";
 import config from "./src/aws-exports";
-// import signUpConfig from "./config/signUpConfig";
 
 // navigation screens
 import EmailVerification from "./screens/EmailVerification";
