@@ -26,7 +26,6 @@ function GameDetails({ route, navigation }) {
   const [declined, setDeclined] = useState([]);
   const [thisPlayer, setThisPlayer] = useState([]);
 
-  console.log("details: ", details);
 
   //gets current user
   async function getPlayer() {
@@ -72,11 +71,6 @@ function GameDetails({ route, navigation }) {
     getPlayer();
     getInvitedPlayers();
   }, []);
-
-
-  // const declined = details.out.map((playerName, index) => {
-  //   return { id: index + accepted.length, name: playerName, status: "Out" };
-  // });
 
 
   function isGameOwner() {
