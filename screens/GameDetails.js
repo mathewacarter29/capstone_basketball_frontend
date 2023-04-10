@@ -15,9 +15,11 @@ import {
   SkillLevel,
 } from "../src/models";
 
-import {epochToLocalDate} from '../utils/TimeUtil';
-import {epochToLocalTime} from '../utils/TimeUtil';
+import { epochToLocalDate } from "../utils/TimeUtil";
+import { epochToLocalTime } from "../utils/TimeUtil";
 import rsvp from "../utils/rsvp";
+import LoadingScreen from "../common/LoadingScreen";
+import ErrorPopup from "../common/ErrorPopup";
 
 function GameDetails({ route, navigation }) {
   const details = route.params.item;
@@ -31,93 +33,87 @@ function GameDetails({ route, navigation }) {
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-
-
   async function getInvitedPlayers() {
-    // setLoading(true);
     let playerids = thisGame.invited_players;
     console.log("player ids: ", playerids);
 
     acceptedPlayers = [];
     declinedPlayers = [];
 
-
-    for (let i = 0; i < playerids.length; i++) {
-
-      try {
+    // entire loop should be in a try catch bc if we cant find 1 player, something is wrong and
+    // we dont want to keep going with getting players. If we catch an error in a try-catch inside a for loop,
+    // the loop will keep on iterating
+    try {
+      for (let i = 0; i < playerids.length; i++) {
         let playerId = playerids[i];
-        const gamePlayer = await DataStore.query(GamePlayer, (c) => c.and(c => 
-          [c.player_id.eq(playerId), c.game_id.eq(thisGame.id)]));
+        const gamePlayer = await DataStore.query(GamePlayer, (c) =>
+          c.and((c) => [c.player_id.eq(playerId), c.game_id.eq(thisGame.id)])
+        );
         console.log("game player returned: ", gamePlayer);
         const player = await DataStore.query(Player, (c) => c.id.eq(playerId));
         console.log("player returned: ", player);
         if (gamePlayer[0].rsvp == Rsvp.ACCEPTED) {
-          acceptedPlayers.push({ id: player[0].id, name: player[0].name, status: "In" });
-        }
-        else {
-          declinedPlayers.push({ id: player[0].id, name: player[0].name, status: "Out" });
+          acceptedPlayers.push({
+            id: player[0].id,
+            name: player[0].name,
+            status: "In",
+          });
+        } else {
+          declinedPlayers.push({
+            id: player[0].id,
+            name: player[0].name,
+            status: "Out",
+          });
         }
       }
-
-      catch (error) {
-        console.log("error occured in finding", i, "ith game player rsvp");
-      }
-      
-    }
-    // setLoading(false);
-    return {
-      accepted: acceptedPlayers,
-      declined: declinedPlayers
+      return {
+        accepted: acceptedPlayers,
+        declined: declinedPlayers,
+      };
+    } catch (error) {
+      console.log("error occured in finding a game player rsvp");
+      setShowError(true);
+      setErrorMessage(`error occured in finding a game player rsvp`);
+      setLoading(false);
+      return;
     }
   }
 
   async function getGameOrganizer() {
-    // setLoading(true);
     if (thisPlayer.id == thisGame.organizer) {
-      // setLoading(false);
       return thisPlayer.name;
-    } 
-    
-    else {
+    } else {
       try {
         const organizer = await DataStore.query(Player, thisGame.organizer);
         console.log("organizer returned: ", organizer);
-        // setLoading(false);
         return organizer.name;
-      } 
-      
-      catch (error) {
+      } catch (error) {
         console.log("error getting organizer");
         setErrorMessage("Error retrieving game organizer");
         setShowError(true);
-        // setLoading(false);
+        setLoading(false);
         return;
       }
     }
   }
-  
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        setLoading(true);
-  
-        const organizerRes = await getGameOrganizer();
-        setGameOrganizer(organizerRes);
-  
-        const invitedPlayersRes = await getInvitedPlayers();
-        setAccepted(invitedPlayersRes.accepted);
-        setDeclined(invitedPlayersRes.declined);
-  
-        setLoading(false);
-      } catch (error) {
-        console.log("Error fetching data: ", error);
-        setLoading(false);
-      }
-    }
-  
-    fetchData();
-  }, []);
 
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+
+      const organizerRes = await getGameOrganizer();
+      // Error check API call methods
+      if (typeof organizer === "undefined") return;
+      setGameOrganizer(organizerRes);
+
+      const invitedPlayersRes = await getInvitedPlayers();
+      if (typeof invitedPlayersRes === "undefined") return;
+      setAccepted(invitedPlayersRes.accepted);
+      setDeclined(invitedPlayersRes.declined);
+
+      setLoading(false);
+    })();
+  }, []);
 
   function isGameOwner() {
     // Use a dummy username until actual organizer names are used
@@ -146,30 +142,30 @@ function GameDetails({ route, navigation }) {
   };
 
   function handleEdit() {
-    navigation.navigate(("UpdateGame"), {
-        game: thisGame,
-        player: thisPlayer
-      });
+    navigation.navigate("UpdateGame", {
+      game: thisGame,
+      player: thisPlayer,
+    });
   }
- 
+
   async function handleDelete() {
     setLoading(true);
     try {
       const toDelete = await DataStore.query(Game, thisGame.id);
       DataStore.delete(toDelete);
-      setLoading(false);
       navigation.navigate("HomeScreen");
     } catch (error) {
       console.log("error occurred in deleting game");
-      setLoading(false);
+      setErrorMessage("Error deleting game");
+      setShowError(true);
     }
-    
-    
+    setLoading(false);
   }
 
   return (
     <View style={styles.container}>
       <BackArrow location="HomeScreen" />
+      {loading && <LoadingScreen />}
       <View style={styles.infoContainer}>
         <Text style={styles.topText}>{thisGame.name}</Text>
         <Text style={styles.text}>
@@ -206,43 +202,47 @@ function GameDetails({ route, navigation }) {
           renderItem={renderItem}
         />
       </View>
-      {!isGameOwner() ? <View style={styles.row}>
-        <Text style={[styles.text, styles.bold]}>RSVP:</Text>
-        <View style={styles.line} />
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-around",
-            flex: 1,
-          }}
-        >
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: "lightgreen" }]}
-            onPress={() => rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED)}
-          >
-            <Text style={styles.text}>Accept</Text>
-          </TouchableOpacity>
+      {!isGameOwner() ? (
+        <View style={styles.row}>
+          <Text style={[styles.text, styles.bold]}>RSVP:</Text>
           <View style={styles.line} />
-          <TouchableOpacity
-            style={[styles.button, styles.redButton]}
-            onPress={() => {
-              setLoading(true);
-              if (!rsvp(thisGame.id, thisPlayer.id, Rsvp.DECLINED)) {
-                setErrorMessage("Error saving RSVP.");
-                setShowError(true);
-              }
-              
-              setLoading(false);
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-around",
+              flex: 1,
             }}
           >
-            <Text style={styles.text}>Reject</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, { backgroundColor: "lightgreen" }]}
+              onPress={() => rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED)}
+            >
+              <Text style={styles.text}>Accept</Text>
+            </TouchableOpacity>
+            <View style={styles.line} />
+            <TouchableOpacity
+              style={[styles.button, styles.redButton]}
+              onPress={() => {
+                setLoading(true);
+                if (!rsvp(thisGame.id, thisPlayer.id, Rsvp.DECLINED)) {
+                  setErrorMessage("Error saving RSVP.");
+                  setShowError(true);
+                }
+
+                setLoading(false);
+              }}
+            >
+              <Text style={styles.text}>Reject</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View> :
-      <View style={styles.buttonContainer}>
-        <Button title="Edit Game Details" onPress={handleEdit} />
-        <Button title="Delete Game" onPress={handleDelete} />
-      </View>}
+      ) : (
+        <View style={styles.buttonContainer}>
+          <Button title="Edit Game Details" onPress={handleEdit} />
+          <Button title="Delete Game" onPress={handleDelete} />
+        </View>
+      )}
+      <ErrorPopup errorMessage={errorMessage} />
     </View>
   );
 }

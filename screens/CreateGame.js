@@ -170,7 +170,7 @@ function CreateGame({ route, navigation }) {
 
     let newGame = await storeGame();
     // NEED validation on if API calls go through before moving on to other API calls
-    if (newGame == null || newGame == undefined) return;
+    if (typeof newGame == "undefined") return;
     console.log("New created game: ", newGame);
 
     if (!(await storeGamePlayers(newGame.id))) return;
