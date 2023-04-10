@@ -34,7 +34,7 @@ function GameDetails({ route, navigation }) {
 
 
   async function getInvitedPlayers() {
-    setLoading(true);
+    // setLoading(true);
     let playerids = thisGame.invited_players;
     console.log("player ids: ", playerids);
 
@@ -64,6 +64,7 @@ function GameDetails({ route, navigation }) {
       }
       
     }
+    // setLoading(false);
     return {
       accepted: acceptedPlayers,
       declined: declinedPlayers
@@ -71,7 +72,9 @@ function GameDetails({ route, navigation }) {
   }
 
   async function getGameOrganizer() {
+    // setLoading(true);
     if (thisPlayer.id == thisGame.organizer) {
+      // setLoading(false);
       return thisPlayer.name;
     } 
     
@@ -79,11 +82,15 @@ function GameDetails({ route, navigation }) {
       try {
         const organizer = await DataStore.query(Player, thisGame.organizer);
         console.log("organizer returned: ", organizer);
+        // setLoading(false);
         return organizer.name;
       } 
       
       catch (error) {
         console.log("error getting organizer");
+        setErrorMessage("Error retrieving game organizer");
+        setShowError(true);
+        // setLoading(false);
         return;
       }
     }
