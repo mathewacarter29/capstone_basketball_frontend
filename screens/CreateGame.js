@@ -35,7 +35,6 @@ function CreateGame({ route, navigation }) {
 
   //get all locations to populate the location picker
   async function getLocations() {
-    setLoading(true);
     try {
       const allLocations = await DataStore.query(Location);
       //map the name to an array
@@ -44,38 +43,46 @@ function CreateGame({ route, navigation }) {
         label: value,
       }));
       setLocations(formatLocations);
-      setLoading(false);
+      return true;
     } catch (error) {
-      setErrorMessage("Error retrieving locations")
+      setErrorMessage("Error retrieving locations");
       setShowError(true);
       //if locations don't load for some reason then we should probably display an error message and route back
       console.log(error.message);
       setLoading(false);
+      return false;
     }
-    
   }
 
   async function getPlayers() {
-    setLoading(true);
     let toInvite = [];
     try {
-      const allPlayers = await DataStore.query(Player, (p) => p.email.ne(thisPlayer.email));
+      const allPlayers = await DataStore.query(Player, (p) =>
+        p.email.ne(thisPlayer.email)
+      );
       allPlayers.map((element) => {
-        toInvite.push({label: element.name, value: element.id});
+        toInvite.push({ label: element.name, value: element.id });
       });
       console.log("to invite: ", toInvite);
       setToInvite(toInvite);
-      setLoading(false);
+      return true;
     } catch (error) {
       setLoading(false);
       setErrorMessage("Invited invalid player");
       setShowError(true);
       console.log("Error occurred in getting all players: " + error.message);
+      return false;
     }
   }
   useEffect(() => {
-    getPlayers();
-    getLocations();
+    // This needs to be async so we can wait for results before rendering
+    (async () => {
+      setLoading(true);
+      // this will return if any function returns false
+      // getPlayers() being false will shortcut to the return
+      if (!(await getPlayers()) && !(await getLocations())) return;
+      setLoading(false);
+    })();
   }, []);
 
   //on change function to set user selected date
@@ -84,34 +91,8 @@ function CreateGame({ route, navigation }) {
     setChosenDate(currentDate);
   };
 
-
-  //gets the location for the game based on what the user specified
-  async function getLocation(locationName) {
-    try {
-      const location = await DataStore.query(Location, (l) =>
-        l.name.eq(locationName)
-      );
-      return location[0];
-    } catch (error) {
-      setShowError(true);
-      setErrorMessage(`Error getting location: ${error.message}`);
-      console.log("Error getting location: ", error.message);
-    }
-  }
-
   //saves a name game or returns an error
   async function storeGame() {
-
-    //convert chosen date to epoch timestamp in seconds
-    epochNow = Math.floor(Date.now() / 1000);
-    epochDate = Math.floor(chosenDate.getTime() / 1000);
-    //check if specified datetime is in the past
-    if (epochDate <= epochNow) {
-      setShowError(true);
-      setErrorMessage("Please select a valid future date and time");
-      return;
-    }
-    
     //form field validation
     try {
       const game = await DataStore.save(
@@ -131,14 +112,13 @@ function CreateGame({ route, navigation }) {
       setShowError(true);
       setErrorMessage(`Error saving game: ${error.message}`);
       console.log("Error saving game", error.message);
+      setLoading(false);
       return;
     }
   }
 
   //saves game player that represents each and every game and player association
   async function storeGamePlayers(gameId) {
-    setLoading(true);
-  
     for (let i = 0; i < selectedPlayers.length; i++) {
       try {
         const gamePlayer = await DataStore.save(
@@ -152,40 +132,53 @@ function CreateGame({ route, navigation }) {
       } catch (error) {
         setLoading(false);
         setShowError(true);
-        console.log("error: ", error.message, "storing player: ", selectedPlayers[i]);
+        console.log(
+          "error: ",
+          error.message,
+          "storing player: ",
+          selectedPlayers[i]
+        );
+        setErrorMessage(`Error storing player: ${selectedPlayers[i]}`);
+        return false;
       }
     }
-    setLoading(false);
+    return true;
   }
 
   //function to create the game
   async function create() {
+    // do input validation BEFORE API calls
     //if no location is selected display error message
     if (gameLocation == "") {
       setShowError(true);
       setErrorMessage("Please select a location");
       return;
     }
-    
+
+    //convert chosen date to epoch timestamp in seconds
+    epochNow = Math.floor(Date.now() / 1000);
+    epochDate = Math.floor(chosenDate.getTime() / 1000);
+    //check if specified datetime is in the past
+    if (epochDate <= epochNow) {
+      setShowError(true);
+      setErrorMessage("Please select a valid future date and time");
+      return;
+    }
+
     // START making API calls
     setLoading(true);
 
     let newGame = await storeGame();
-    if (newGame == null || newGame == undefined) {
-      setLoading(false);
-      setErrorMessage("Error creating game.")
-      setShowError(true);
-      return;
-    }
+    // NEED validation on if API calls go through before moving on to other API calls
+    if (newGame == null || newGame == undefined) return;
     console.log("New created game: ", newGame);
 
-    let gamePlayersStored = await storeGamePlayers(newGame.id);
-    console.log("Game Players Stored: ", gamePlayersStored);
-    
+    if (!(await storeGamePlayers(newGame.id))) return;
+
     setShowError(false);
+    setLoading(false);
     navigation.navigate("HomeScreen");
   }
-
 
   return (
     // This is the create event form
