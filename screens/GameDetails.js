@@ -27,9 +27,11 @@ function GameDetails({ route, navigation }) {
   const [loading, setLoading] = useState(false);
   const [accepted, setAccepted] = useState([]);
   const [declined, setDeclined] = useState([]);
-
-
   const [gameOrganizer, setGameOrganizer] = useState([]);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+
 
   async function getInvitedPlayers() {
     setLoading(true);
@@ -139,6 +141,7 @@ function GameDetails({ route, navigation }) {
   function handleEdit() {
     navigation.navigate(("UpdateGame"), {
         game: thisGame,
+        player: thisPlayer
       });
   }
  
@@ -215,7 +218,15 @@ function GameDetails({ route, navigation }) {
           <View style={styles.line} />
           <TouchableOpacity
             style={[styles.button, styles.redButton]}
-            onPress={() => rsvp(thisGame.id, thisPlayer.id, Rsvp.DECLINED)}
+            onPress={() => {
+              setLoading(true);
+              if (!rsvp(thisGame.id, thisPlayer.id, Rsvp.DECLINED)) {
+                setErrorMessage("Error saving RSVP.");
+                setShowError(true);
+              }
+              
+              setLoading(false);
+            }}
           >
             <Text style={styles.text}>Reject</Text>
           </TouchableOpacity>

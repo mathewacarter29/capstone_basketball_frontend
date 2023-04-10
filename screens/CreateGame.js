@@ -45,8 +45,12 @@ function CreateGame({ navigation }) {
       }));
       setLocations(formatLocations);
     } catch (error) {
+      setErrorMessage("Error retrieving locations")
+      setShowError(true);
+      setLoading(false);
       //if locations don't load for some reason then we should probably display an error message and route back
       console.log(error.message);
+      setLoading(false);
     }
     setLoading(false);
   }
@@ -62,6 +66,9 @@ function CreateGame({ navigation }) {
       console.log("to invite: ", toInvite);
       setToInvite(toInvite);
     } catch (error) {
+      setLoading(false);
+      setErrorMessage("Invited invalid player");
+      setShowError(true);
       console.log("Error occurred in getting all players: " + error.message);
     }
   }
@@ -87,6 +94,7 @@ function CreateGame({ navigation }) {
 
     } catch (error) {
       setShowError(true);
+      setLoading(false);
       setErrorMessage(`Error getting player: ${error.message}`);
       console.log("Error getting player: ", error.message);
     }

@@ -14,11 +14,21 @@ async function rsvp(gameId, playerId, newRsvp) {
   ]));
 
   if (original && original.rsvp != newRsvp) {
-    const updatedGamePlayer = await DataStore.save(
-      GamePlayer.copyOf(original, updated => {
-        updated.rsvp = newRsvp
-      })
-    );
+    try {
+      const updatedGamePlayer = await DataStore.save(
+        GamePlayer.copyOf(original, updated => {
+          updated.rsvp = newRsvp
+        })
+      );
+
+      return true;
+    }
+
+    catch (error) {
+      console.log("error saving rsvp for player: ", playerId);
+      return false;
+    }
+    
 
   }
   

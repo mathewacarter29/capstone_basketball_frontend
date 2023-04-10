@@ -20,8 +20,10 @@ import ErrorPopup from "../common/ErrorPopup";
 import "@azure/core-asynciterator-polyfill";
 
 function UpdateGame({ route, navigation }) {
-  const { game } = route.params;
-
+  const game  = route.params.game;
+  const player = route.params.player;
+  console.log("update game: ", game);
+  console.log("route params update", route.params)
   const [loading, setLoading] = useState(false);
   const [gameName, setGameName] = useState(game.name);
   const [gameDescription, setGameDescription] = useState(game.description);
@@ -40,19 +42,36 @@ function UpdateGame({ route, navigation }) {
  
   //function to update the game
   async function update() {
-    //const original = await DataStore.query(Game, id);
-    console.log("game: ", game);
+
     epochDate = Math.floor(chosenDate.getTime() / 1000);
-    const item = await DataStore.save(
-      Game.copyOf(game, updated => {
-        updated.name = gameName,
-        updated.description = gameDescription,
-        updated.skill_level = gameSkillLevel,
-        updated.datetime = epochDate
-      })
-    );
+    setLoading(true);
+    try {
+      const updatedGame = await DataStore.save(
+        Game.copyOf(game, updated => {
+          updated.name = gameName,
+          updated.description = gameDescription,
+          updated.skill_level = gameSkillLevel,
+          updated.datetime = epochDate
+        })
+      );
+      setLoading(false);
+      // navigation.navigate("GameDetails", {game: item , player: player});
+      let item = {
+        game: updatedGame,
+        player: player
+      }
+      
+      navigation.navigate("GameDetails", { item });
+
+    } catch (error) {
+      setErrorMessage("Error updating game details");
+      setShowError(true);
+      setLoading(false);
+      console.log("Error updating game details");
+    }
+    
     //console.log("updated game: ", updatedGame);
-    navigation.navigate("GameDetails", { item });
+    
   }
 
   return (
