@@ -44,15 +44,15 @@ function CreateGame({ route, navigation }) {
         label: value,
       }));
       setLocations(formatLocations);
+      setLoading(false);
     } catch (error) {
       setErrorMessage("Error retrieving locations")
       setShowError(true);
-      setLoading(false);
       //if locations don't load for some reason then we should probably display an error message and route back
       console.log(error.message);
       setLoading(false);
     }
-    setLoading(false);
+    
   }
 
   async function getPlayers() {
@@ -65,6 +65,7 @@ function CreateGame({ route, navigation }) {
       });
       console.log("to invite: ", toInvite);
       setToInvite(toInvite);
+      setLoading(false);
     } catch (error) {
       setLoading(false);
       setErrorMessage("Invited invalid player");
