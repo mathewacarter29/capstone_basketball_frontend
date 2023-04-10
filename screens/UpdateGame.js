@@ -70,8 +70,6 @@ function UpdateGame({ route, navigation }) {
       console.log("Error updating game details");
     }
     
-    //console.log("updated game: ", updatedGame);
-    
   }
 
   return (
