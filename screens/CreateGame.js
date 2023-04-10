@@ -19,8 +19,8 @@ import {
 import ErrorPopup from "../common/ErrorPopup";
 import "@azure/core-asynciterator-polyfill";
 
-function CreateGame({ navigation }) {
-  const [thisPlayer, setThisPlayer] = useState("");
+function CreateGame({ route, navigation }) {
+  const thisPlayer = route.params.thisPlayer;
   const [toInvite, setToInvite] = useState([]);
   const [loading, setLoading] = useState(false);
   const [gameName, setGameName] = useState("");
@@ -73,7 +73,6 @@ function CreateGame({ navigation }) {
     }
   }
   useEffect(() => {
-    getPlayer();
     getPlayers();
     getLocations();
   }, []);
@@ -84,21 +83,7 @@ function CreateGame({ navigation }) {
     setChosenDate(currentDate);
   };
 
-  //gets current user
-  async function getPlayer() {
-    try {
-      const response = await Auth.currentUserInfo();
-      const player = await DataStore.query(Player, (p) => p.email.eq(response.attributes.email));
-      console.log("This player returned: ", player[0]);
-      setThisPlayer(player[0]);
 
-    } catch (error) {
-      setShowError(true);
-      setLoading(false);
-      setErrorMessage(`Error getting player: ${error.message}`);
-      console.log("Error getting player: ", error.message);
-    }
-  }
   //gets the location for the game based on what the user specified
   async function getLocation(locationName) {
     try {

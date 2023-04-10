@@ -97,7 +97,7 @@ function HomeScreen({ navigation }) {
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.createButton}
-        onPress={() => navigation.navigate("CreateGame")}
+        onPress={() => navigation.navigate("CreateGame", {thisPlayer})}
       >
         <Image
           style={styles.image}
