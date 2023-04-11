@@ -12,6 +12,7 @@ function showCourtFeed(props) {
 function MapScreen() {
   return (
     <View style={styles.container}>
+      <Text style={styles.topText}>Map View</Text>
       <MapView
         style={styles.map}
         provider={PROVIDER_GOOGLE}
@@ -55,12 +56,19 @@ function MapScreen() {
 const styles = EStyleSheet.create({
   container: {
     flex: "1",
+    borderRadius: 1,
   },
   map: {
     marginLeft: "2%",
     marginRight: "2%",
-    height: "100%",
+    flex: 1,
     borderRadius: "1rem",
+  },
+  topText: {
+    fontSize: 30,
+    textAlign: "center",
+    fontWeight: "bold",
+    paddingBottom: "1rem",
   },
 });
 

@@ -5,7 +5,7 @@ import EStyleSheet from "react-native-extended-stylesheet";
 import LoadingScreen from "../../common/LoadingScreen";
 
 import GameFeed from "./GameFeed";
-import MapScreen from "../MapView/MapScreen";
+import MapScreen from "./MapScreen";
 
 import { Auth } from "aws-amplify";
 import { DataStore } from "aws-amplify";
@@ -155,19 +155,49 @@ function HomeScreen({ navigation }) {
       {/* BOTTOM NAV BUTTONS */}
       <View style={styles.row}>
         <TouchableOpacity
+          style={[
+            middleView == "MapScreen"
+              ? styles.selectedNavButton
+              : styles.navButton,
+            styles.leftNavButton,
+          ]}
           onPress={() => {
             setMiddleView("MapScreen");
           }}
         >
-          <Text style={styles.topText}> Map View </Text>
+          <Text
+            style={[
+              styles.topText,
+              middleView == "MapScreen" ? { color: "lightgray" } : null,
+            ]}
+          >
+            {" "}
+            Map View{" "}
+          </Text>
         </TouchableOpacity>
+        <View style={styles.line} />
 
         <TouchableOpacity
+          style={[
+            middleView == "GameFeed"
+              ? styles.selectedNavButton
+              : styles.navButton,
+            ,
+            styles.rightNavButton,
+          ]}
           onPress={() => {
             setMiddleView("GameFeed");
           }}
         >
-          <Text style={styles.topText}> Game Feed </Text>
+          <Text
+            style={[
+              styles.topText,
+              middleView == "GameFeed" ? { color: "lightgray" } : null,
+            ]}
+          >
+            {" "}
+            Game Feed{" "}
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -177,6 +207,11 @@ function HomeScreen({ navigation }) {
 const styles = EStyleSheet.create({
   container: {
     flex: "1",
+  },
+  line: {
+    width: 1,
+    height: "100%",
+    backgroundColor: "black",
   },
   profileButton: {
     position: "absolute",
@@ -199,13 +234,15 @@ const styles = EStyleSheet.create({
     marginTop: "6.5rem",
   },
   row: {
-    backgroundColor: "#ef9031",
     flexDirection: "row",
     borderRadius: "1rem",
     justifyContent: "space-around",
     marginTop: "1rem",
     marginLeft: "2%",
     marginRight: "2%",
+    height: "5rem",
+    borderWidth: 1,
+    overflow: "hidden",
   },
   topText: {
     color: "#2c3233",
@@ -214,6 +251,25 @@ const styles = EStyleSheet.create({
     textAlign: "center",
     paddingBottom: ".5rem",
     paddingTop: ".5rem",
+  },
+  navButton: {
+    backgroundColor: "#ef9031",
+    flex: 1,
+    justifyContent: "center",
+  },
+  leftNavButton: {
+    borderBottomLeftRadius: "1rem",
+    borderTopLeftRadius: "1rem",
+  },
+  rightNavButton: {
+    borderBottomRightRadius: "1rem",
+    borderTopRightRadius: "1rem",
+  },
+  selectedNavButton: {
+    backgroundColor: "#b06820",
+    flex: 1,
+    color: "white",
+    justifyContent: "center",
   },
 });
 
