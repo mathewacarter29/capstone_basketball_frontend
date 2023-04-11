@@ -13,10 +13,12 @@ async function rsvp(gameId, playerId, newRsvp) {
     c.player_id.eq(playerId)
   ]));
 
-  if (original && original.rsvp != newRsvp) {
+  console.log("original: ", original);
+  
+  if (original.length > 0 && original[0].rsvp != newRsvp) {
     try {
       const updatedGamePlayer = await DataStore.save(
-        GamePlayer.copyOf(original, updated => {
+        GamePlayer.copyOf(original[0], updated => {
           updated.rsvp = newRsvp
         })
       );
@@ -25,11 +27,27 @@ async function rsvp(gameId, playerId, newRsvp) {
     }
 
     catch (error) {
-      console.log("error saving rsvp for player: ", playerId);
+
+      console.log("error saving rsvp: ", error);
       return false;
     }
-    
+  }
 
+  // user rsvp to a game he was not invited to
+  else if (original.length == 0){
+    try {
+      const gamePlayer = await DataStore.save(
+        new GamePlayer({
+          player_id: playerId,
+          game_id: gameId,
+          rsvp: newRsvp,
+          invited: false,
+        })
+      );
+      console.log("game player stored: ", gamePlayer);
+    } catch (error) {
+      console.log("error: ", error.message, "storing player: ", playerId);
+    }
   }
   
 }

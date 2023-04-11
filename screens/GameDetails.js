@@ -40,42 +40,43 @@ function GameDetails({ route, navigation }) {
     acceptedPlayers = [];
     declinedPlayers = [];
 
-    // entire loop should be in a try catch bc if we cant find 1 player, something is wrong and
-    // we dont want to keep going with getting players. If we catch an error in a try-catch inside a for loop,
-    // the loop will keep on iterating
     try {
-      for (let i = 0; i < playerids.length; i++) {
-        let playerId = playerids[i];
-        const gamePlayer = await DataStore.query(GamePlayer, (c) =>
-          c.and((c) => [c.player_id.eq(playerId), c.game_id.eq(thisGame.id)])
-        );
-        console.log("game player returned: ", gamePlayer);
-        const player = await DataStore.query(Player, (c) => c.id.eq(playerId));
-        console.log("player returned: ", player);
-        if (gamePlayer[0].rsvp == Rsvp.ACCEPTED) {
-          acceptedPlayers.push({
-            id: player[0].id,
-            name: player[0].name,
-            status: "In",
-          });
-        } else {
-          declinedPlayers.push({
-            id: player[0].id,
-            name: player[0].name,
-            status: "Out",
-          });
+      // let playerId = playerids[i];
+      const gamePlayers = await DataStore.query(GamePlayer, (c) => c.and(c => 
+        [c.game_id.eq(thisGame.id)]));
+      console.log("game player returned: ", gamePlayers);
+
+      for (let i = 0; i < gamePlayers.length; i++) {
+        console.log("gameplayer i", gamePlayers[i])
+        const players = await DataStore.query(Player, (c) => c.id.eq(gamePlayers[i].player_id));
+        const player = players[0];
+        if (thisGame.invited_players.includes(player.id)) {
+          if (gamePlayers[i].rsvp == Rsvp.ACCEPTED) {
+            acceptedPlayers.push({ id: player.id, name: player.name, status: "In" });
+          }
+          else {
+            declinedPlayers.push({ id: player.id, name: player.name, status: "Out" });
+          }
+        }
+
+        else {
+          if (gamePlayers[i].rsvp == Rsvp.ACCEPTED) {
+            acceptedPlayers.push({ id: player.id, name: player.name, status: "In" });
+          }
         }
       }
-      return {
-        accepted: acceptedPlayers,
-        declined: declinedPlayers,
-      };
-    } catch (error) {
-      console.log("error occured in finding a game player rsvp");
+    }
+
+    catch (error) {
+      console.log("error occured in finding", i, "ith game player rsvp");
       setShowError(true);
       setErrorMessage(`error occured in finding a game player rsvp`);
       setLoading(false);
       return;
+    }
+    return {
+      accepted: acceptedPlayers,
+      declined: declinedPlayers
     }
   }
 
@@ -151,15 +152,14 @@ function GameDetails({ route, navigation }) {
   async function handleDelete() {
     setLoading(true);
     try {
-      const toDelete = await DataStore.query(Game, thisGame.id);
-      DataStore.delete(toDelete);
+      await DataStore.delete(Game, thisGame.id);
+      await DataStore.delete(GamePlayer, (gp) => gp.game_id.eq(thisGame.id));
+      setLoading(false);
       navigation.navigate("HomeScreen");
     } catch (error) {
       console.log("error occurred in deleting game");
-      setErrorMessage("Error deleting game");
-      setShowError(true);
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   return (
