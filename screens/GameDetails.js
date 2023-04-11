@@ -103,7 +103,7 @@ function GameDetails({ route, navigation }) {
 
       const organizerRes = await getGameOrganizer();
       // Error check API call methods
-      if (typeof organizer === "undefined") return;
+      if (typeof organizerRes === "undefined") return;
       setGameOrganizer(organizerRes);
 
       const invitedPlayersRes = await getInvitedPlayers();
