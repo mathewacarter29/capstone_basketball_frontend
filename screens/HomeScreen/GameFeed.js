@@ -1,27 +1,13 @@
 import React from "react";
-import {
-  SafeAreaView,
-  FlatList,
-  Text,
-  TouchableOpacity,
-  Image,
-  View,
-  ScrollView,
-} from "react-native";
+import { FlatList, Text, View } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
 import Game from "./Game";
 
 function GameFeed(props) {
-  // console.log("props: ", props);
   return (
     <View style={styles.container}>
       <Text style={styles.topText}>Game Feed</Text>
       <FlatList
-        // ListHeaderComponent={
-        //   <>
-        //     <Text style={styles.topText}>Game Feed</Text>
-        //   </>
-        // }
         data={props.data}
         renderItem={({ item }) => <Game item={item} />}
         keyExtractor={(item) => item.id}
@@ -33,7 +19,6 @@ function GameFeed(props) {
 const styles = EStyleSheet.create({
   container: {
     flex: "1",
-    // backgroundColor: "lightgray",
     alignItems: "center",
     borderRadius: "1rem",
     marginLeft: "2%",

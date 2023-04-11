@@ -171,8 +171,7 @@ function HomeScreen({ navigation }) {
               middleView == "MapScreen" ? { color: "lightgray" } : null,
             ]}
           >
-            {" "}
-            Map View{" "}
+            Map View
           </Text>
         </TouchableOpacity>
         <View style={styles.line} />
@@ -242,7 +241,6 @@ const styles = EStyleSheet.create({
     marginRight: "2%",
     height: "5rem",
     borderWidth: 1,
-    overflow: "hidden",
   },
   topText: {
     color: "#2c3233",
@@ -268,7 +266,6 @@ const styles = EStyleSheet.create({
   selectedNavButton: {
     backgroundColor: "#b06820",
     flex: 1,
-    color: "white",
     justifyContent: "center",
   },
 });
