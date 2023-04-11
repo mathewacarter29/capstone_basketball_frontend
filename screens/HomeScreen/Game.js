@@ -67,7 +67,7 @@ const styles = EStyleSheet.create({
     margin: "0.25rem",
   },
   item: {
-    backgroundColor: "#ef9031",
+    backgroundColor: "orange",
     marginTop: "1rem",
     padding: "0.5rem",
     borderRadius: "1rem",

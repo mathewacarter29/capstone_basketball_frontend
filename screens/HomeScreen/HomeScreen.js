@@ -243,7 +243,6 @@ const styles = EStyleSheet.create({
     borderWidth: 1,
   },
   topText: {
-    color: "#2c3233",
     fontSize: 30,
     fontWeight: "bold",
     textAlign: "center",
@@ -251,7 +250,7 @@ const styles = EStyleSheet.create({
     paddingTop: ".5rem",
   },
   navButton: {
-    backgroundColor: "#ef9031",
+    backgroundColor: "orange",
     flex: 1,
     justifyContent: "center",
   },

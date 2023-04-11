@@ -23,13 +23,13 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
-          name="HomeScreen"
-          component={HomeScreen}
+          name="GetStarted"
+          component={GetStarted}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="GetStarted"
-          component={GetStarted}
+          name="HomeScreen"
+          component={HomeScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
