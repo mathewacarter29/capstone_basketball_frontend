@@ -20,10 +20,10 @@ import ErrorPopup from "../common/ErrorPopup";
 import "@azure/core-asynciterator-polyfill";
 
 function UpdateGame({ route, navigation }) {
-  const game  = route.params.game;
+  const game = route.params.game;
   const player = route.params.player;
   console.log("update game: ", game);
-  console.log("route params update", route.params)
+  console.log("route params update", route.params);
   const [loading, setLoading] = useState(false);
   const [gameName, setGameName] = useState(game.name);
   const [gameDescription, setGameDescription] = useState(game.description);
@@ -39,43 +39,38 @@ function UpdateGame({ route, navigation }) {
     setChosenDate(currentDate);
   };
 
- 
   //function to update the game
   async function update() {
-
     epochDate = Math.floor(chosenDate.getTime() / 1000);
     setLoading(true);
     try {
       const updatedGame = await DataStore.save(
-        Game.copyOf(game, updated => {
-          updated.name = gameName,
-          updated.description = gameDescription,
-          updated.skill_level = gameSkillLevel,
-          updated.datetime = epochDate
+        Game.copyOf(game, (updated) => {
+          (updated.name = gameName),
+            (updated.description = gameDescription),
+            (updated.skill_level = gameSkillLevel),
+            (updated.datetime = epochDate);
         })
       );
       setLoading(false);
       // navigation.navigate("GameDetails", {game: item , player: player});
       let item = {
         game: updatedGame,
-        player: player
-      }
-      
-      navigation.navigate("GameDetails", { item });
+        player: player,
+      };
 
+      navigation.navigate("GameDetails", { item });
     } catch (error) {
       setErrorMessage("Error updating game details");
       setShowError(true);
       setLoading(false);
       console.log("Error updating game details");
     }
-    
   }
 
   return (
     // This is the create event form
-    <Container>
-      {loading && <LoadingScreen />}
+    <Container loadingState={loading}>
       <View style={styles.container}>
         <Text style={styles.text}>Update Your Game</Text>
         <TextInput
