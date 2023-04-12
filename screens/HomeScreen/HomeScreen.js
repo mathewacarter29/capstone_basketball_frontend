@@ -1,18 +1,11 @@
 import { React, useEffect, useState } from "react";
-import {
-  SafeAreaView,
-  FlatList,
-  Text,
-  TouchableOpacity,
-  Image,
-  View,
-  ScrollView,
-} from "react-native";
+import { Text, TouchableOpacity, Image, View, ScrollView } from "react-native";
+
 import EStyleSheet from "react-native-extended-stylesheet";
 import LoadingScreen from "../../common/LoadingScreen";
 
 import GameFeed from "./GameFeed";
-import Button from "../../common/Button";
+import MapScreen from "./MapScreen";
 
 import { Auth } from "aws-amplify";
 import { DataStore } from "aws-amplify";
@@ -88,9 +81,6 @@ const DATA = [
 ];
 
 function HomeScreen({ navigation }) {
-  const [data, dataSet] = useState([]);
-  const [loading, setLoading] = useState(false);
-
   // useEffect(() => {
   //   //this function will get all games this user is assoicated with to populate their game feed screen
   //   //*still in progress
@@ -135,9 +125,16 @@ function HomeScreen({ navigation }) {
   //   return null;
   // }
 
+  const [data, dataSet] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const [middleView, setMiddleView] = useState("GameFeed");
+
   return (
     <View style={styles.container}>
       {loading && <LoadingScreen />}
+
+      {/*PROFILE ICON*/}
       <TouchableOpacity
         style={styles.profileButton}
         onPress={() => navigation.navigate("Profile")}
@@ -148,6 +145,8 @@ function HomeScreen({ navigation }) {
         />
         <Text style={styles.text}>Profile</Text>
       </TouchableOpacity>
+
+      {/*CREATE GAME*/}
       <TouchableOpacity
         style={styles.createButton}
         onPress={() => navigation.navigate("CreateGame")}
@@ -157,38 +156,83 @@ function HomeScreen({ navigation }) {
           source={require("../../assets/plus_icon.png")}
         />
       </TouchableOpacity>
+
+      {/* RENDER LOCATION / FEED*/}
       <View style={styles.innerContainer}>
-        <GameFeed data={DATA} />
+        {middleView == "GameFeed" && <GameFeed data={DATA} />}
+        {middleView == "MapScreen" && <MapScreen />}
+      </View>
+
+      {/* BOTTOM NAV BUTTONS */}
+      <View style={styles.row}>
+        <TouchableOpacity
+          style={[
+            middleView == "MapScreen"
+              ? styles.selectedNavButton
+              : styles.navButton,
+            styles.leftNavButton,
+          ]}
+          onPress={() => {
+            setMiddleView("MapScreen");
+          }}
+        >
+          <Text
+            style={[
+              styles.topText,
+              middleView == "MapScreen" ? { color: "lightgray" } : null,
+            ]}
+          >
+            Map View
+          </Text>
+        </TouchableOpacity>
+        <View style={styles.line} />
+
+        <TouchableOpacity
+          style={[
+            middleView == "GameFeed"
+              ? styles.selectedNavButton
+              : styles.navButton,
+            ,
+            styles.rightNavButton,
+          ]}
+          onPress={() => {
+            setMiddleView("GameFeed");
+          }}
+        >
+          <Text
+            style={[
+              styles.topText,
+              middleView == "GameFeed" ? { color: "lightgray" } : null,
+            ]}
+          >
+            {" "}
+            Game Feed{" "}
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 }
 
 const styles = EStyleSheet.create({
-  wrapper: {
-    height: "80%",
-  },
   container: {
     flex: "1",
-    backgroundColor: "lightgray",
-    alignItems: "center",
   },
-  topText: {
-    fontSize: 30,
-    textAlign: "center",
-    fontWeight: "bold",
-    paddingBottom: "1rem",
+  line: {
+    width: 1,
+    height: "100%",
+    backgroundColor: "black",
   },
   profileButton: {
     position: "absolute",
     right: "4%",
-    top: "6%",
+    top: "4%",
     alignItems: "center",
   },
   createButton: {
     position: "absolute",
     left: "4%",
-    top: "6%",
+    top: "4%",
     alignItems: "center",
   },
   image: {
@@ -196,8 +240,43 @@ const styles = EStyleSheet.create({
     height: 52,
   },
   innerContainer: {
-    height: "78%",
-    marginTop: "7.5rem",
+    height: "75%",
+    marginTop: "6.5rem",
+  },
+  row: {
+    flexDirection: "row",
+    borderRadius: "1rem",
+    justifyContent: "space-around",
+    marginTop: "1rem",
+    marginLeft: "2%",
+    marginRight: "2%",
+    height: "5rem",
+    borderWidth: 1,
+  },
+  topText: {
+    fontSize: 30,
+    fontWeight: "bold",
+    textAlign: "center",
+    paddingBottom: ".5rem",
+    paddingTop: ".5rem",
+  },
+  navButton: {
+    backgroundColor: "orange",
+    flex: 1,
+    justifyContent: "center",
+  },
+  leftNavButton: {
+    borderBottomLeftRadius: "1rem",
+    borderTopLeftRadius: "1rem",
+  },
+  rightNavButton: {
+    borderBottomRightRadius: "1rem",
+    borderTopRightRadius: "1rem",
+  },
+  selectedNavButton: {
+    backgroundColor: "#b06820",
+    flex: 1,
+    justifyContent: "center",
   },
 });
 
