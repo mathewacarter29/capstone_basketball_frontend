@@ -1,6 +1,12 @@
 import React from "react";
 import EStyleSheet from "react-native-extended-stylesheet";
-import { View, Text, TouchableOpacity, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  FlatList,
+  ScrollView,
+} from "react-native";
 import Button from "../common/Button";
 import BackArrow from "../common/BackArrow";
 import rsvp from "../utils/rsvp";
@@ -44,30 +50,32 @@ function GameDetails({ route, navigation }) {
   return (
     <View style={styles.container}>
       <BackArrow location="HomeScreen" />
-      <View style={styles.infoContainer}>
-        <Text style={styles.topText}>{details.name}</Text>
-        <Text style={styles.text}>
-          <Text style={styles.bold}>Date: </Text>
-          {details.date}
-        </Text>
-        <Text style={styles.text}>
-          <Text style={styles.bold}>Location: </Text>
-          {details.location}
-        </Text>
-        <Text style={styles.text}>
-          <Text style={styles.bold}>Time: </Text>
-          {details.time}
-        </Text>
-        <Text style={styles.text}>
-          <Text style={styles.bold}>Organizer: </Text>
-          {details.organizer}
-        </Text>
-        {showDescription() && (
+      <View style={[styles.detailsContainer, styles.infoContainer]}>
+        <ScrollView>
+          <Text style={styles.topText}>{details.name}</Text>
           <Text style={styles.text}>
-            <Text style={styles.bold}>Description: </Text>
-            {details.description}
+            <Text style={styles.bold}>Date: </Text>
+            {details.date}
           </Text>
-        )}
+          <Text style={styles.text}>
+            <Text style={styles.bold}>Location: </Text>
+            {details.location}
+          </Text>
+          <Text style={styles.text}>
+            <Text style={styles.bold}>Time: </Text>
+            {details.time}
+          </Text>
+          <Text style={styles.text}>
+            <Text style={styles.bold}>Organizer: </Text>
+            {details.organizer}
+          </Text>
+          {showDescription() && (
+            <Text style={styles.text}>
+              <Text style={styles.bold}>Description: </Text>
+              {details.description}
+            </Text>
+          )}
+        </ScrollView>
       </View>
       <View style={[styles.infoContainer, styles.acceptedContainer]}>
         <FlatList
@@ -106,10 +114,12 @@ function GameDetails({ route, navigation }) {
           </TouchableOpacity>
         </View>
       </View>
-      <View style={styles.buttonContainer}>
-        <Button title="Edit Game Details" disabled={!isGameOwner()} />
-        <Button title="Delete Game" disabled={!isGameOwner()} />
-      </View>
+      {isGameOwner() && (
+        <View style={styles.buttonContainer}>
+          <Button title="Edit Game Details" />
+          <Button title="Delete Game" />
+        </View>
+      )}
     </View>
   );
 }
@@ -122,6 +132,11 @@ const styles = EStyleSheet.create({
     margin: "0.5rem",
     marginBottom: "1rem",
     textDecorationLine: "underline",
+  },
+  line: {
+    width: 1,
+    height: "100%",
+    backgroundColor: "black",
   },
   button: {
     flex: 1,
@@ -157,7 +172,7 @@ const styles = EStyleSheet.create({
     alignItems: "center",
     width: "100%",
     position: "absolute",
-    bottom: "5%",
+    bottom: "3%",
   },
   infoContainer: {
     borderWidth: 1,
@@ -175,6 +190,10 @@ const styles = EStyleSheet.create({
     borderRadius: "1rem",
     marginLeft: "1rem",
     marginRight: "1rem",
+  },
+  detailsContainer: {
+    maxHeight: "17rem",
+    width: "100%",
   },
 });
 
