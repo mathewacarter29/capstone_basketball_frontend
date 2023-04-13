@@ -68,3 +68,4 @@ src/models/index.d.ts
 src/aws-exports.js
 .vscode/settings.json
 src/models/schema.d.ts
+.vscode/settings.json
