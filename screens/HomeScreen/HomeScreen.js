@@ -232,7 +232,7 @@ const styles = EStyleSheet.create({
   createButton: {
     position: "absolute",
     left: "4%",
-    top: "4%",
+    top: "5%",
     alignItems: "center",
   },
   image: {
@@ -241,7 +241,7 @@ const styles = EStyleSheet.create({
   },
   innerContainer: {
     height: "75%",
-    marginTop: "6.5rem",
+    marginTop: "3.5rem",
   },
   row: {
     flexDirection: "row",
