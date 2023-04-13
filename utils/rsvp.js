@@ -48,9 +48,9 @@ async function rsvp(gameId, playerId, newRsvp) {
             invited: false,
           })
         );
+        console.log("game player stored: ", gamePlayer);
       }
       
-      console.log("game player stored: ", gamePlayer);
     } catch (error) {
       console.log("error: ", error.message, "storing player: ", playerId);
     }
