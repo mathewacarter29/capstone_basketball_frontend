@@ -6,6 +6,9 @@ import {
   Rsvp,
   SkillLevel,
 } from "../src/models";
+import { DataStore } from "aws-amplify";
+import "@azure/core-asynciterator-polyfill";
+
 
 async function rsvp(gameId, playerId, newRsvp) {
   const original = await DataStore.query(GamePlayer, (c) => c.and(c => [
