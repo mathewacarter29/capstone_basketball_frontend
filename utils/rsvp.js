@@ -36,14 +36,17 @@ async function rsvp(gameId, playerId, newRsvp) {
   // user rsvp to a game he was not invited to
   else if (original.length == 0){
     try {
-      const gamePlayer = await DataStore.save(
-        new GamePlayer({
-          player_id: playerId,
-          game_id: gameId,
-          rsvp: newRsvp,
-          invited: false,
-        })
-      );
+      if (newRsvp == Rsvp.ACCEPTED) {
+        const gamePlayer = await DataStore.save(
+          new GamePlayer({
+            player_id: playerId,
+            game_id: gameId,
+            rsvp: newRsvp,
+            invited: false,
+          })
+        );
+      }
+      
       console.log("game player stored: ", gamePlayer);
     } catch (error) {
       console.log("error: ", error.message, "storing player: ", playerId);

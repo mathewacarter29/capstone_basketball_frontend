@@ -42,6 +42,7 @@ function CreateGame({ route, navigation }) {
         value,
         label: value,
       }));
+      console.log("format locations: ", formatLocations)
       setLocations(formatLocations);
       return true;
     } catch (error) {
@@ -78,9 +79,9 @@ function CreateGame({ route, navigation }) {
     // This needs to be async so we can wait for results before rendering
     (async () => {
       setLoading(true);
-      // this will return if any function returns false
-      // getPlayers() being false will shortcut to the return
-      if (!(await getPlayers()) && !(await getLocations())) return;
+      await getPlayers();
+      await getLocations();
+
       setLoading(false);
     })();
   }, []);
