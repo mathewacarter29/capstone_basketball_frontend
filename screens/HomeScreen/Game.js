@@ -6,6 +6,14 @@ import rsvp from "../../utils/rsvp";
 import {epochToLocalDate} from '../../utils/TimeUtil';
 import {epochToLocalTime} from '../../utils/TimeUtil';
 
+import {
+  Player,
+  Location,
+  GamePlayer,
+  Rsvp,
+  SkillLevel,
+} from "../../src/models";
+
 function Game({ item }) {
   const navigation = useNavigation();
   console.log("item: ", item);
@@ -48,14 +56,14 @@ function Game({ item }) {
         >
           <TouchableOpacity
             style={[styles.button, { backgroundColor: "lightgreen" }]}
-            onPress={() => rsvp("in", thisGame)}
+            onPress={() => rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED)}
           >
             <Text style={styles.text}>Accept</Text>
           </TouchableOpacity>
           <View style={styles.line} />
           <TouchableOpacity
             style={[styles.button, styles.redButton]}
-            onPress={() => rsvp("out", thisGame)}
+            onPress={() => rsvp(thisGame.id, thisPlayer.id, Rsvp.DECLINED)}
           >
             <Text style={styles.text}>Reject</Text>
           </TouchableOpacity>
