@@ -228,20 +228,22 @@ const styles = EStyleSheet.create({
     right: "4%",
     top: "4%",
     alignItems: "center",
+    zIndex: 1,
   },
   createButton: {
     position: "absolute",
     left: "4%",
-    top: "4%",
+    top: "5%",
     alignItems: "center",
+    zIndex: 1,
   },
   image: {
     width: 50,
     height: 52,
   },
   innerContainer: {
-    height: "75%",
-    marginTop: "6.5rem",
+    height: "80%",
+    marginTop: "3.5rem",
   },
   row: {
     flexDirection: "row",
