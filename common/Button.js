@@ -4,7 +4,11 @@ import EStyleSheet from "react-native-extended-stylesheet";
 
 function Button(props) {
   return (
-    <TouchableOpacity style={styles.button} onPress={props.onPress}>
+    <TouchableOpacity
+      style={[styles.button, props.disabled ? styles.disabled : styles.enabled]}
+      onPress={props.onPress}
+      {...props}
+    >
       <Text style={styles.buttonText}>{props.title}</Text>
     </TouchableOpacity>
   );
@@ -14,7 +18,6 @@ const styles = EStyleSheet.create({
   button: {
     width: "80%",
     height: "3rem",
-    backgroundColor: "orange",
     justifyContent: "center",
     margin: "1rem",
     borderRadius: "1rem",
@@ -26,6 +29,12 @@ const styles = EStyleSheet.create({
   buttonText: {
     fontSize: 20,
     textAlign: "center",
+  },
+  enabled: {
+    backgroundColor: "orange",
+  },
+  disabled: {
+    backgroundColor: "gray",
   },
 });
 
