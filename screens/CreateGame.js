@@ -98,7 +98,7 @@ function CreateGame({ route, navigation }) {
     try {
       const game = await DataStore.save(
         new Game({
-          name: gameName ? gameName : "Pickup game at " + location.name,
+          name: gameName ? gameName : "Pickup game at " + gameLocation,
           description: gameDescription,
           location: gameLocation,
           datetime: epochDate,
