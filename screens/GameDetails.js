@@ -223,20 +223,32 @@ function GameDetails({ route, navigation }) {
         >
           <TouchableOpacity
             style={[styles.button, { backgroundColor: "lightgreen" }]}
-            onPress={() => rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED)}
+            onPress={async () => {
+              setLoading(true);
+              if (!(await rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED))) {
+                setErrorMessage("Error saving RSVP.");
+                setShowError(true);
+              }
+              const invitedPlayersRes = await getInvitedPlayers();
+              setAccepted(invitedPlayersRes.accepted);
+              setDeclined(invitedPlayersRes.declined);
+              setLoading(false);
+            }}
           >
             <Text style={styles.text}>Accept</Text>
           </TouchableOpacity>
           <View style={styles.line} />
           <TouchableOpacity
             style={[styles.button, styles.redButton]}
-            onPress={() => {
+            onPress={async () => {
               setLoading(true);
-              if (!rsvp(thisGame.id, thisPlayer.id, Rsvp.DECLINED)) {
+              if (!(await rsvp(thisGame.id, thisPlayer.id, Rsvp.DECLINED))) {
                 setErrorMessage("Error saving RSVP.");
                 setShowError(true);
               }
-
+              const invitedPlayersRes = await getInvitedPlayers();
+              setAccepted(invitedPlayersRes.accepted);
+              setDeclined(invitedPlayersRes.declined);
               setLoading(false);
             }}
           >
