@@ -70,7 +70,11 @@ function UpdateGame({ route, navigation }) {
 
   return (
     // This is the create event form
-    <Container loadingState={loading}>
+    <Container
+      loadingState={loading}
+      goBackTo="GameDetails"
+      routeParams={{ item: { game: game, player: player } }}
+    >
       <View style={styles.container}>
         <Text style={styles.text}>Update Your Game</Text>
         <TextInput

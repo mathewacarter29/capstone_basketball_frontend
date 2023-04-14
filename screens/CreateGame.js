@@ -42,7 +42,7 @@ function CreateGame({ route, navigation }) {
         value,
         label: value,
       }));
-      console.log("format locations: ", formatLocations)
+      console.log("format locations: ", formatLocations);
       setLocations(formatLocations);
       return true;
     } catch (error) {
@@ -98,10 +98,10 @@ function CreateGame({ route, navigation }) {
     try {
       const game = await DataStore.save(
         new Game({
-          name: gameName ? gameName : "Pickup game at " + location.name,
+          name: gameName ? gameName : "Pickup game at " + gameLocation,
           description: gameDescription,
           location: gameLocation,
-          datetime: epochDate,
+          datetime: Math.floor(chosenDate.getTime() / 1000),
           skill_level: gameSkillLevel ? gameSkillLevel : SkillLevel.ANY,
           organizer: thisPlayer.id,
           invited_players: selectedPlayers,
@@ -120,6 +120,22 @@ function CreateGame({ route, navigation }) {
 
   //saves game player that represents each and every game and player association
   async function storeGamePlayers(gameId) {
+    try {
+      const gamePlayer = await DataStore.save(
+        new GamePlayer({
+          player_id: thisPlayer.id,
+          game_id: gameId,
+          rsvp: Rsvp.ACCEPTED,
+          invited: true,
+        })
+      );
+    } catch (error) {
+      setLoading(false);
+      setShowError(true);
+      console.log("Error storing game organizer");
+      setErrorMessage(`Error storing game organizer`);
+      return false;
+    }
     for (let i = 0; i < selectedPlayers.length; i++) {
       try {
         const gamePlayer = await DataStore.save(

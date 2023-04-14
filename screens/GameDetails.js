@@ -49,42 +49,34 @@ function GameDetails({ route, navigation }) {
 
     try {
       // let playerId = playerids[i];
-      // const gamePlayers = await DataStore.query(GamePlayer, (c) => c.and(c => 
-      //   [c.game_id.eq(thisGame.id)]));
+      const gamePlayers = await DataStore.query(GamePlayer, (c) =>
+        c.and((c) => [c.game_id.eq(thisGame.id)])
+      );
       console.log("game player returned: ", gamePlayers);
 
-      // gamePlayers.map(async (gamePlayer) => {
-      for (let i = 0; i < gamePlayers.length; i++){
-        let gamePlayer = gamePlayers[i];
-      // console.log("gameplayer ", i, gamePlayers[i])
-        
-      // }
-        const players = await DataStore.query(Player, (c) => c.id.eq(gamePlayer.player_id));
+      for (let i = 0; i < gamePlayers.length; i++) {
+        console.log("gameplayer i", gamePlayers[i]);
+        const players = await DataStore.query(Player, (c) =>
+          c.id.eq(gamePlayers[i].player_id)
+        );
         const player = players[0];
         console.log("Player: invited: ", player);
-        
-        if (thisGame.invited_players.includes(player.id)) {
-          if (gamePlayer.rsvp == Rsvp.ACCEPTED) {
-            acceptedPlayers.push({ id: player.id, name: player.name, status: "In" });
-          }
-          else {
-            declinedPlayers.push({ id: player.id, name: player.name, status: "Out" });
-          }
-        }
-
-        else {
-          if (gamePlayer.rsvp == Rsvp.ACCEPTED) {
-            acceptedPlayers.push({ id: player.id, name: player.name, status: "In" });
-          }
+        if (gamePlayers[i].rsvp == Rsvp.ACCEPTED) {
+          acceptedPlayers.push({
+            id: player.id,
+            name: player.name,
+            status: "In",
+          });
+        } else {
+          declinedPlayers.push({
+            id: player.id,
+            name: player.name,
+            status: "Out",
+          });
         }
       }
-      
-        
-      
-    }
-
-    catch (error) {
-      console.log("error occured in finding, ith game player rsvp: ", error);
+    } catch (error) {
+      // console.log("error occured in finding", i, "ith game player rsvp");
       setShowError(true);
       setErrorMessage(`error occured in finding a game player rsvp`);
       setLoading(false);
@@ -194,31 +186,31 @@ function GameDetails({ route, navigation }) {
     <View style={styles.container}>
       <BackArrow location="HomeScreen" />
       {loading && <LoadingScreen />}
-      <View style={styles.infoContainer}>
-      <ScrollView>
-        <Text style={styles.topText}>{thisGame.name}</Text>
-        <Text style={styles.text}>
-          <Text style={styles.bold}>Date: </Text>
-          {epochToLocalDate(thisGame.datetime)}
-        </Text>
-        <Text style={styles.text}>
-          <Text style={styles.bold}>Location: </Text>
-          {thisGame.location}
-        </Text>
-        <Text style={styles.text}>
-          <Text style={styles.bold}>Time: </Text>
-          {epochToLocalTime(thisGame.datetime)}
-        </Text>
-        <Text style={styles.text}>
-          <Text style={styles.bold}>Organizer: </Text>
-          {loading ? "Loading..." : gameOrganizer}
-        </Text>
-        {showDescription() && (
+      <View style={[styles.infoContainer, styles.detailsContainer]}>
+        <ScrollView>
+          <Text style={styles.topText}>{thisGame.name}</Text>
           <Text style={styles.text}>
-            <Text style={styles.bold}>Description: </Text>
-            {thisGame.description}
-          </Text>)}
-
+            <Text style={styles.bold}>Date: </Text>
+            {epochToLocalDate(thisGame.datetime)}
+          </Text>
+          <Text style={styles.text}>
+            <Text style={styles.bold}>Location: </Text>
+            {thisGame.location}
+          </Text>
+          <Text style={styles.text}>
+            <Text style={styles.bold}>Time: </Text>
+            {epochToLocalTime(thisGame.datetime)}
+          </Text>
+          <Text style={styles.text}>
+            <Text style={styles.bold}>Organizer: </Text>
+            {loading ? "Loading..." : gameOrganizer}
+          </Text>
+          {showDescription() && (
+            <Text style={styles.text}>
+              <Text style={styles.bold}>Description: </Text>
+              {thisGame.description}
+            </Text>
+          )}
         </ScrollView>
       </View>
       <View style={[styles.infoContainer, styles.acceptedContainer]}>
@@ -232,41 +224,40 @@ function GameDetails({ route, navigation }) {
           renderItem={renderItem}
         />
       </View>
-      {!isGameOwner() ? (
-        <View style={styles.row}>
-          <Text style={[styles.text, styles.bold]}>RSVP:</Text>
+      <View style={styles.row}>
+        <Text style={[styles.text, styles.bold]}>RSVP:</Text>
+        <View style={styles.line} />
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-around",
+            flex: 1,
+          }}
+        >
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: "lightgreen" }]}
+            onPress={() => rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED)}
+          >
+            <Text style={styles.text}>Accept</Text>
+          </TouchableOpacity>
           <View style={styles.line} />
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-around",
-              flex: 1,
+          <TouchableOpacity
+            style={[styles.button, styles.redButton]}
+            onPress={() => {
+              setLoading(true);
+              if (!rsvp(thisGame.id, thisPlayer.id, Rsvp.DECLINED)) {
+                setErrorMessage("Error saving RSVP.");
+                setShowError(true);
+              }
+
+              setLoading(false);
             }}
           >
-            <TouchableOpacity
-              style={[styles.button, { backgroundColor: "lightgreen" }]}
-              onPress={() => rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED)}
-            >
-              <Text style={styles.text}>Accept</Text>
-            </TouchableOpacity>
-            <View style={styles.line} />
-            <TouchableOpacity
-              style={[styles.button, styles.redButton]}
-              onPress={() => {
-                setLoading(true);
-                if (!rsvp(thisGame.id, thisPlayer.id, Rsvp.DECLINED)) {
-                  setErrorMessage("Error saving RSVP.");
-                  setShowError(true);
-                }
-
-                setLoading(false);
-              }}
-            >
-              <Text style={styles.text}>Reject</Text>
-            </TouchableOpacity>
-          </View>
+            <Text style={styles.text}>Reject</Text>
+          </TouchableOpacity>
         </View>
-      ) : (
+      </View>
+      {isGameOwner() && (
         <View style={styles.buttonContainer}>
           <Button title="Edit Game Details" onPress={handleEdit} />
           <Button title="Delete Game" onPress={handleDelete} />
@@ -346,7 +337,7 @@ const styles = EStyleSheet.create({
   },
   detailsContainer: {
     maxHeight: "17rem",
-    width: "100%",
+    width: "90%",
   },
 });
 
