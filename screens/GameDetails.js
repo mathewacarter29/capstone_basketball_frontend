@@ -49,9 +49,9 @@ function GameDetails({ route, navigation }) {
 
     try {
       // let playerId = playerids[i];
-      const gamePlayers = await DataStore.query(GamePlayer, (c) =>
-        c.and((c) => [c.game_id.eq(thisGame.id)])
-      );
+      // const gamePlayers = await DataStore.query(GamePlayer, (c) =>
+      //   c.and((c) => [c.game_id.eq(thisGame.id)])
+      // );
       console.log("game player returned: ", gamePlayers);
 
       for (let i = 0; i < gamePlayers.length; i++) {
