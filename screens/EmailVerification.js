@@ -40,6 +40,11 @@ function EmailVerification({ route, navigation }) {
   }
 
   async function resendCode() {
+    if (email == "") {
+      setShowError(true);
+      setErrorMessage("Please enter username to resend verification code");
+      return;
+    }
     try {
       setLoading(true);
       const response = await Auth.resendSignUp(email);
