@@ -61,26 +61,23 @@ function HomeScreen({ navigation }) {
      * we will get that change reflected here with our subscriber
      */
     // TRY CATCH AROUND API CALLS
-    try {
-      setLoading(true);
-      // LOAD WHILE PERFORMING API CALLS
-      const subscriber = DataStore.observeQuery(Game, (c) =>
-        c.datetime.gt(Math.floor(Date.now() / 1000))
-      ).subscribe(({ items }) => {
-        console.log("items:", items);
-        setGames(items);
-        setUserGames(getPlayerGames(items));
-      });
-    } catch (error) {
-      console.log(error.message);
-    }
+
+    setLoading(true);
+    // LOAD WHILE PERFORMING API CALLS
+    const subscriber = DataStore.observeQuery(Game, (c) =>
+      c.datetime.gt(Math.floor(Date.now() / 1000))
+    ).subscribe(({ items }) => {
+      console.log("items:", items);
+      setGames(items);
+      setUserGames(getPlayerGames(items));
+    });
+
     setLoading(false);
 
     return () => {
       subscriber.unsubscribe();
     };
   }, []);
-
 
   const [middleView, setMiddleView] = useState("GameFeed");
 
@@ -113,7 +110,9 @@ function HomeScreen({ navigation }) {
 
       {/* RENDER LOCATION / FEED*/}
       <View style={styles.innerContainer}>
-        {middleView == "GameFeed" && <GameFeed data={{ games: games, thisPlayer: thisPlayer }} />}
+        {middleView == "GameFeed" && (
+          <GameFeed data={{ games: games, thisPlayer: thisPlayer }} />
+        )}
         {middleView == "MapScreen" && <MapScreen />}
       </View>
 
@@ -159,8 +158,7 @@ function HomeScreen({ navigation }) {
               middleView == "GameFeed" ? { color: "lightgray" } : null,
             ]}
           >
-            
-            Game Feed 
+            Game Feed
           </Text>
         </TouchableOpacity>
         {/* <GameFeed data={{ games: games, thisPlayer: thisPlayer }} /> */}
@@ -197,7 +195,7 @@ const styles = EStyleSheet.create({
     height: 52,
   },
   innerContainer: {
-    height: "80%",
+    height: "82%",
     marginTop: "3.5rem",
   },
   row: {
@@ -207,7 +205,7 @@ const styles = EStyleSheet.create({
     marginTop: "1rem",
     marginLeft: "2%",
     marginRight: "2%",
-    height: "5rem",
+    height: "4rem",
     borderWidth: 1,
   },
   topText: {

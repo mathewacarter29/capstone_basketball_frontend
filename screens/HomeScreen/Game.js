@@ -86,6 +86,7 @@ const styles = EStyleSheet.create({
     shadowRadius: 3,
     shadowOpacity: 0.2,
     shadowOffset: { width: -2, height: 4 },
+    width: "23rem",
   },
   title: {
     fontSize: 32,
