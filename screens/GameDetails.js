@@ -39,7 +39,8 @@ function GameDetails({ route, navigation }) {
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  async function getInvitedPlayers() {
+
+  async function getInvitedPlayers(gamePlayers) {
     let playerids = thisGame.invited_players;
     console.log("player ids: ", playerids);
 
@@ -48,17 +49,22 @@ function GameDetails({ route, navigation }) {
 
     try {
       // let playerId = playerids[i];
-      const gamePlayers = await DataStore.query(GamePlayer, (c) => c.and(c => 
-        [c.game_id.eq(thisGame.id)]));
+      // const gamePlayers = await DataStore.query(GamePlayer, (c) => c.and(c => 
+      //   [c.game_id.eq(thisGame.id)]));
       console.log("game player returned: ", gamePlayers);
 
-      for (let i = 0; i < gamePlayers.length; i++) {
-        console.log("gameplayer i", gamePlayers[i])
-        const players = await DataStore.query(Player, (c) => c.id.eq(gamePlayers[i].player_id));
+      // gamePlayers.map(async (gamePlayer) => {
+      for (let i = 0; i < gamePlayers.length; i++){
+        let gamePlayer = gamePlayers[i];
+      // console.log("gameplayer ", i, gamePlayers[i])
+        
+      // }
+        const players = await DataStore.query(Player, (c) => c.id.eq(gamePlayer.player_id));
         const player = players[0];
         console.log("Player: invited: ", player);
+        
         if (thisGame.invited_players.includes(player.id)) {
-          if (gamePlayers[i].rsvp == Rsvp.ACCEPTED) {
+          if (gamePlayer.rsvp == Rsvp.ACCEPTED) {
             acceptedPlayers.push({ id: player.id, name: player.name, status: "In" });
           }
           else {
@@ -67,24 +73,31 @@ function GameDetails({ route, navigation }) {
         }
 
         else {
-          if (gamePlayers[i].rsvp == Rsvp.ACCEPTED) {
+          if (gamePlayer.rsvp == Rsvp.ACCEPTED) {
             acceptedPlayers.push({ id: player.id, name: player.name, status: "In" });
           }
         }
       }
+      
+        
+      
     }
 
     catch (error) {
-      // console.log("error occured in finding", i, "ith game player rsvp");
+      console.log("error occured in finding, ith game player rsvp: ", error);
       setShowError(true);
       setErrorMessage(`error occured in finding a game player rsvp`);
       setLoading(false);
       return;
     }
-    return {
-      accepted: acceptedPlayers,
-      declined: declinedPlayers
-    }
+    // return {
+    //   accepted: acceptedPlayers,
+    //   declined: declinedPlayers
+    // }
+    console.log("accepted: ", acceptedPlayers);
+    console.log("declined: ", declinedPlayers);
+    setAccepted(acceptedPlayers);
+    setDeclined(declinedPlayers);
   }
 
   async function getGameOrganizer() {
@@ -114,10 +127,18 @@ function GameDetails({ route, navigation }) {
       if (typeof organizerRes === "undefined") return;
       setGameOrganizer(organizerRes);
 
-      const invitedPlayersRes = await getInvitedPlayers();
-      if (typeof invitedPlayersRes === "undefined") return;
-      setAccepted(invitedPlayersRes.accepted);
-      setDeclined(invitedPlayersRes.declined);
+      const subscription = DataStore.observeQuery(
+        GamePlayer,
+        (c) => c.and(c => [c.game_id.eq(thisGame.id)])).subscribe(snapshot => {
+          const { items, isSynced } = snapshot;
+          console.log(`[Snapshot] item count: ${items.length}, isSynced: ${isSynced}`);
+          getInvitedPlayers(items);
+      });
+
+      // const invitedPlayersRes = await getInvitedPlayers();
+      // if (typeof invitedPlayersRes === "undefined") return;
+      // setAccepted(invitedPlayersRes.accepted);
+      // setDeclined(invitedPlayersRes.declined);
 
       setLoading(false);
     })();
