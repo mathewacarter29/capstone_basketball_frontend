@@ -120,6 +120,22 @@ function CreateGame({ route, navigation }) {
 
   //saves game player that represents each and every game and player association
   async function storeGamePlayers(gameId) {
+    try {
+      const gamePlayer = await DataStore.save(
+        new GamePlayer({
+          player_id: thisPlayer.id,
+          game_id: gameId,
+          rsvp: Rsvp.ACCEPTED,
+          invited: true,
+        })
+      );
+    } catch (error) {
+      setLoading(false);
+      setShowError(true);
+      console.log("Error storing game organizer");
+      setErrorMessage(`Error storing game organizer`);
+      return false;
+    }
     for (let i = 0; i < selectedPlayers.length; i++) {
       try {
         const gamePlayer = await DataStore.save(

@@ -3,8 +3,8 @@ import EStyleSheet from "react-native-extended-stylesheet";
 import { View, Text, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import rsvp from "../../utils/rsvp";
-import {epochToLocalDate} from '../../utils/TimeUtil';
-import {epochToLocalTime} from '../../utils/TimeUtil';
+import { epochToLocalDate } from "../../utils/TimeUtil";
+import { epochToLocalTime } from "../../utils/TimeUtil";
 
 import {
   Player,
@@ -43,7 +43,7 @@ function Game({ item }) {
         {epochToLocalTime(thisGame.datetime)}
       </Text>
 
-      {thisPlayer.id != thisGame.organizer && <View style={styles.row}>
+      <View style={styles.row}>
         <Text style={[styles.text, styles.bold]}>RSVP:</Text>
         <View style={styles.line} />
         <View
@@ -67,7 +67,7 @@ function Game({ item }) {
             <Text style={styles.text}>Reject</Text>
           </TouchableOpacity>
         </View>
-      </View>}
+      </View>
     </TouchableOpacity>
   );
 }
