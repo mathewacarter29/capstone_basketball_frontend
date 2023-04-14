@@ -42,7 +42,7 @@ function CreateGame({ route, navigation }) {
         value,
         label: value,
       }));
-      console.log("format locations: ", formatLocations)
+      console.log("format locations: ", formatLocations);
       setLocations(formatLocations);
       return true;
     } catch (error) {
@@ -98,10 +98,10 @@ function CreateGame({ route, navigation }) {
     try {
       const game = await DataStore.save(
         new Game({
-          name: gameName ? gameName : "Pickup game at " + location.name,
+          name: gameName ? gameName : "Pickup game at " + gameLocation,
           description: gameDescription,
           location: gameLocation,
-          datetime: epochDate,
+          datetime: Math.floor(chosenDate.getTime() / 1000),
           skill_level: gameSkillLevel ? gameSkillLevel : SkillLevel.ANY,
           organizer: thisPlayer.id,
           invited_players: selectedPlayers,

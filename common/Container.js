@@ -13,7 +13,9 @@ import LoadingScreen from "./LoadingScreen";
 function Container(props) {
   return (
     <View style={{ flex: 1 }}>
-      {props.goBackTo && <BackArrow location={props.goBackTo} />}
+      {props.goBackTo && (
+        <BackArrow location={props.goBackTo} routeParams={props.routeParams} />
+      )}
       {props.loadingState && <LoadingScreen />}
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <KeyboardAvoidingView
