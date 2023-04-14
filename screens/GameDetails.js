@@ -251,7 +251,7 @@ function GameDetails({ route, navigation }) {
           <Button title="Delete Game" onPress={handleDelete} />
         </View>
       )}
-      <ErrorPopup errorMessage={errorMessage} />
+      {showError && <ErrorPopup errorMessage={errorMessage} />}
     </View>
   );
 }
