@@ -21,7 +21,6 @@ function Game({ item }) {
   const thisPlayer = item.player;
 
   function clickedGame() {
-    console.log("navigating to game screen:", item.id);
     navigation.navigate("GameDetails", { item });
   }
 
