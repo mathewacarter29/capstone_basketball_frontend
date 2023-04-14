@@ -40,12 +40,12 @@ function HomeScreen({ navigation }) {
       const userGameIds = gamePlayers.map((gamePlayer) => {
         return gamePlayer.id;
       });
-      console.log("ALL GAMES: ", allGames);
+      // console.log("ALL GAMES: ", allGames);
       //console.log("user game ids: ", userGameIds);
       const userGames = allGames.filter((game) => {
         return userGameIds.includes(game.id);
       });
-      console.log("userGames: ", userGames);
+      // console.log("userGames: ", userGames);
 
       setPlayerGames(userGames);
     } catch (error) {
@@ -67,7 +67,7 @@ function HomeScreen({ navigation }) {
     const subscriber = DataStore.observeQuery(Game, (c) =>
       c.datetime.gt(Math.floor(Date.now() / 1000))
     ).subscribe(({ items }) => {
-      console.log("items:", items);
+      // console.log("items:", items);
       setGames(items);
       setUserGames(getPlayerGames(items));
     });

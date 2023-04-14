@@ -15,7 +15,7 @@ async function rsvp(gameId, playerId, newRsvp) {
     const original = await DataStore.query(GamePlayer, (c) =>
       c.and((c) => [c.game_id.eq(gameId), c.player_id.eq(playerId)])
     );
-    console.log(original);
+    // console.log(original);
 
     // if the player has RSVPd before or invited
     if (original.length > 0 && original[0].rsvp != newRsvp) {
@@ -38,7 +38,7 @@ async function rsvp(gameId, playerId, newRsvp) {
           invited: false,
         })
       );
-      console.log("game player stored: ", gamePlayer);
+      // console.log("game player stored: ", gamePlayer);
     }
   } catch (error) {
     console.log("error retrieving game player: ", error.message);

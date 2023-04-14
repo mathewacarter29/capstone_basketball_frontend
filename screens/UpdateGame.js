@@ -22,8 +22,6 @@ import "@azure/core-asynciterator-polyfill";
 function UpdateGame({ route, navigation }) {
   const game = route.params.game;
   const player = route.params.player;
-  console.log("update game: ", game);
-  console.log("route params update", route.params);
   const [loading, setLoading] = useState(false);
   const [gameName, setGameName] = useState(game.name);
   const [gameDescription, setGameDescription] = useState(game.description);

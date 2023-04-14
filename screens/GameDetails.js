@@ -33,16 +33,14 @@ function GameDetails({ route, navigation }) {
   const thisGame = details.game;
 
   const [loading, setLoading] = useState(false);
-  const [accepted, setAccepted] = useState([]);
-  const [declined, setDeclined] = useState([]);
+  const [statuses, setStatuses] = useState({ accepted: [], declined: [] });
   const [gameOrganizer, setGameOrganizer] = useState([]);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   async function getInvitedPlayers() {
     let playerids = thisGame.invited_players;
-    console.log("player ids: ", playerids);
-
+    // console.log("player ids: ", playerids);
     acceptedPlayers = [];
     declinedPlayers = [];
 
@@ -51,15 +49,15 @@ function GameDetails({ route, navigation }) {
       const gamePlayers = await DataStore.query(GamePlayer, (c) =>
         c.and((c) => [c.game_id.eq(thisGame.id)])
       );
-      console.log("game player returned: ", gamePlayers);
+      // console.log("game player returned: ", gamePlayers);
 
       for (let i = 0; i < gamePlayers.length; i++) {
-        console.log("gameplayer i", gamePlayers[i]);
+        // console.log("gameplayer i", gamePlayers[i]);
         const players = await DataStore.query(Player, (c) =>
           c.id.eq(gamePlayers[i].player_id)
         );
         const player = players[0];
-        console.log("Player: invited: ", player);
+        // console.log("Player: invited: ", player);
         if (gamePlayers[i].rsvp == Rsvp.ACCEPTED) {
           acceptedPlayers.push({
             id: player.id,
@@ -93,7 +91,7 @@ function GameDetails({ route, navigation }) {
     } else {
       try {
         const organizer = await DataStore.query(Player, thisGame.organizer);
-        console.log("organizer returned: ", organizer);
+        // console.log("organizer returned: ", organizer);
         return organizer.name;
       } catch (error) {
         console.log("error getting organizer");
@@ -116,9 +114,7 @@ function GameDetails({ route, navigation }) {
 
       const invitedPlayersRes = await getInvitedPlayers();
       if (typeof invitedPlayersRes === "undefined") return;
-      setAccepted(invitedPlayersRes.accepted);
-      setDeclined(invitedPlayersRes.declined);
-
+      setStatuses(invitedPlayersRes);
       setLoading(false);
     })();
   }, []);
@@ -207,7 +203,7 @@ function GameDetails({ route, navigation }) {
               <Text style={[styles.text, styles.bold]}>Players Attending</Text>
             </>
           }
-          data={[...accepted, ...declined]}
+          data={[...statuses.accepted, ...statuses.declined]}
           renderItem={renderItem}
         />
       </View>
@@ -228,10 +224,11 @@ function GameDetails({ route, navigation }) {
               if (!(await rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED))) {
                 setErrorMessage("Error saving RSVP.");
                 setShowError(true);
+              } else {
+                const invitedPlayersRes = await getInvitedPlayers();
+                setStatuses(invitedPlayersRes);
               }
-              const invitedPlayersRes = await getInvitedPlayers();
-              setAccepted(invitedPlayersRes.accepted);
-              setDeclined(invitedPlayersRes.declined);
+              setShowError(false);
               setLoading(false);
             }}
           >
@@ -245,10 +242,11 @@ function GameDetails({ route, navigation }) {
               if (!(await rsvp(thisGame.id, thisPlayer.id, Rsvp.DECLINED))) {
                 setErrorMessage("Error saving RSVP.");
                 setShowError(true);
+              } else {
+                const invitedPlayersRes = await getInvitedPlayers();
+                setStatuses(invitedPlayersRes);
               }
-              const invitedPlayersRes = await getInvitedPlayers();
-              setAccepted(invitedPlayersRes.accepted);
-              setDeclined(invitedPlayersRes.declined);
+              setShowError(false);
               setLoading(false);
             }}
           >
@@ -301,7 +299,6 @@ const styles = EStyleSheet.create({
     flex: 1,
     alignItems: "center",
     backgroundColor: "lightgray",
-    paddingTop: "6rem",
   },
   text: {
     fontSize: 20,
@@ -337,6 +334,7 @@ const styles = EStyleSheet.create({
   detailsContainer: {
     maxHeight: "17rem",
     width: "90%",
+    marginTop: "6.5rem",
   },
 });
 
