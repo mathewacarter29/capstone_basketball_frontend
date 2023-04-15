@@ -40,7 +40,6 @@ function GameDetails({ route, navigation }) {
 
   async function getInvitedPlayers() {
     let playerids = thisGame.invited_players;
-    // console.log("player ids: ", playerids);
     acceptedPlayers = [];
     declinedPlayers = [];
 
@@ -49,15 +48,12 @@ function GameDetails({ route, navigation }) {
       const gamePlayers = await DataStore.query(GamePlayer, (c) =>
         c.and((c) => [c.game_id.eq(thisGame.id)])
       );
-      // console.log("game player returned: ", gamePlayers);
 
       for (let i = 0; i < gamePlayers.length; i++) {
-        // console.log("gameplayer i", gamePlayers[i]);
         const players = await DataStore.query(Player, (c) =>
           c.id.eq(gamePlayers[i].player_id)
         );
         const player = players[0];
-        // console.log("Player: invited: ", player);
         if (gamePlayers[i].rsvp == Rsvp.ACCEPTED) {
           acceptedPlayers.push({
             id: player.id,
@@ -73,7 +69,6 @@ function GameDetails({ route, navigation }) {
         }
       }
     } catch (error) {
-      // console.log("error occured in finding", i, "ith game player rsvp");
       setShowError(true);
       setErrorMessage(`error occured in finding a game player rsvp`);
       setLoading(false);
@@ -91,7 +86,6 @@ function GameDetails({ route, navigation }) {
     } else {
       try {
         const organizer = await DataStore.query(Player, thisGame.organizer);
-        // console.log("organizer returned: ", organizer);
         return organizer.name;
       } catch (error) {
         console.log("error getting organizer");

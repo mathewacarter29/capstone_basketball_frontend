@@ -36,16 +36,12 @@ function HomeScreen({ navigation }) {
       const gamePlayers = await DataStore.query(GamePlayer, (gp) =>
         gp.player_id.eq(player.id)
       );
-      //console.log("Game players: ", gamePlayers);
       const userGameIds = gamePlayers.map((gamePlayer) => {
         return gamePlayer.id;
       });
-      // console.log("ALL GAMES: ", allGames);
-      //console.log("user game ids: ", userGameIds);
       const userGames = allGames.filter((game) => {
         return userGameIds.includes(game.id);
       });
-      // console.log("userGames: ", userGames);
 
       setPlayerGames(userGames);
     } catch (error) {
@@ -67,7 +63,6 @@ function HomeScreen({ navigation }) {
     const subscriber = DataStore.observeQuery(Game, (c) =>
       c.datetime.gt(Math.floor(Date.now() / 1000))
     ).subscribe(({ items }) => {
-      // console.log("items:", items);
       setGames(items);
       setUserGames(getPlayerGames(items));
     });

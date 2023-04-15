@@ -16,7 +16,6 @@ import {
 
 function Game({ item }) {
   const navigation = useNavigation();
-  console.log("item: ", item);
   const thisGame = item.game;
   const thisPlayer = item.player;
 

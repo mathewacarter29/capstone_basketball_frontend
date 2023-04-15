@@ -42,7 +42,6 @@ function CreateGame({ route, navigation }) {
         value,
         label: value,
       }));
-      // console.log("format locations: ", formatLocations);
       setLocations(formatLocations);
       return true;
     } catch (error) {
@@ -64,7 +63,6 @@ function CreateGame({ route, navigation }) {
       allPlayers.map((element) => {
         toInvite.push({ label: element.name, value: element.id });
       });
-      // console.log("to invite: ", toInvite);
       setToInvite(toInvite);
       return true;
     } catch (error) {
@@ -107,7 +105,6 @@ function CreateGame({ route, navigation }) {
           invited_players: selectedPlayers,
         })
       );
-      // console.log("Game created: ", game);
       return game;
     } catch (error) {
       setShowError(true);
@@ -188,7 +185,6 @@ function CreateGame({ route, navigation }) {
     let newGame = await storeGame();
     // NEED validation on if API calls go through before moving on to other API calls
     if (typeof newGame == "undefined") return;
-    // console.log("New created game: ", newGame);
 
     if (!(await storeGamePlayers(newGame.id))) return;
 
