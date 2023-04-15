@@ -28,7 +28,7 @@ async function rsvp(gameId, playerId, newRsvp) {
     }
 
     // user rsvp to a game he was not invited to
-    else if (original.length == 0) {
+    else {
       const gamePlayer = await DataStore.save(
         new GamePlayer({
           player_id: playerId,
