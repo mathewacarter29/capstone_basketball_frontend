@@ -11,7 +11,7 @@ import { Auth } from "aws-amplify";
 import { DataStore } from "aws-amplify";
 import { Player, Game, Location, GamePlayer, Rsvp } from "../../src/models";
 import "@azure/core-asynciterator-polyfill";
-
+import { SortDirection } from "@aws-amplify/datastore";
 function HomeScreen({ navigation }) {
   const [games, setGames] = useState([]);
   const [userGames, setUserGames] = useState([]);
@@ -60,8 +60,12 @@ function HomeScreen({ navigation }) {
 
     setLoading(true);
     // LOAD WHILE PERFORMING API CALLS
-    const subscriber = DataStore.observeQuery(Game, (c) =>
-      c.datetime.gt(Math.floor(Date.now() / 1000))
+    const subscriber = DataStore.observeQuery(
+      Game,
+      (c) => c.datetime.gt(Math.floor(Date.now() / 1000)),
+      {
+        sort: (s) => s.datetime(SortDirection.ASCENDING),
+      }
     ).subscribe(({ items }) => {
       setGames(items);
       setUserGames(getPlayerGames(items));
