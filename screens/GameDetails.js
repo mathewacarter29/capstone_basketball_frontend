@@ -40,8 +40,7 @@ function GameDetails({ route, navigation }) {
 
   async function getInvitedPlayers() {
     let playerids = thisGame.invited_players;
-    acceptedPlayers = [];
-    declinedPlayers = [];
+    playerStatuses = [];
 
     try {
       // let playerId = playerids[i];
@@ -55,13 +54,13 @@ function GameDetails({ route, navigation }) {
         );
         const player = players[0];
         if (gamePlayers[i].rsvp == Rsvp.ACCEPTED) {
-          acceptedPlayers.push({
+          playerStatuses.push({
             id: player.id,
             name: player.name,
             status: "In",
           });
         } else {
-          declinedPlayers.push({
+          playerStatuses.push({
             id: player.id,
             name: player.name,
             status: "Out",
@@ -74,10 +73,7 @@ function GameDetails({ route, navigation }) {
       setLoading(false);
       return;
     }
-    return {
-      accepted: acceptedPlayers,
-      declined: declinedPlayers,
-    };
+    return playerStatuses;
   }
 
   async function getGameOrganizer() {
@@ -108,6 +104,7 @@ function GameDetails({ route, navigation }) {
 
       const invitedPlayersRes = await getInvitedPlayers();
       if (typeof invitedPlayersRes === "undefined") return;
+      console.log("invtedPlayers:",  invitedPlayersRes)
       setStatuses(invitedPlayersRes);
       setLoading(false);
     })();
@@ -197,7 +194,7 @@ function GameDetails({ route, navigation }) {
               <Text style={[styles.text, styles.bold]}>Players Attending</Text>
             </>
           }
-          data={[...statuses.accepted, ...statuses.declined]}
+          data={statuses}
           renderItem={renderItem}
         />
       </View>
@@ -215,14 +212,15 @@ function GameDetails({ route, navigation }) {
             style={[styles.button, { backgroundColor: "lightgreen" }]}
             onPress={async () => {
               setLoading(true);
-              if (!(await rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED))) {
-                setErrorMessage("Error saving RSVP.");
-                setShowError(true);
-              } else {
+              let success = await rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED)
+              if (success) {
                 const invitedPlayersRes = await getInvitedPlayers();
                 setStatuses(invitedPlayersRes);
+                
+              } else {
+                setErrorMessage("Error saving RSVP.");
+                setShowError(true);
               }
-              setShowError(false);
               setLoading(false);
             }}
           >
