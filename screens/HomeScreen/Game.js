@@ -3,32 +3,43 @@ import EStyleSheet from "react-native-extended-stylesheet";
 import { View, Text, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import rsvp from "../../utils/rsvp";
+import { epochToLocalDate } from "../../utils/TimeUtil";
+import { epochToLocalTime } from "../../utils/TimeUtil";
+
+import {
+  Player,
+  Location,
+  GamePlayer,
+  Rsvp,
+  SkillLevel,
+} from "../../src/models";
 
 function Game({ item }) {
   const navigation = useNavigation();
+  const thisGame = item.game;
+  const thisPlayer = item.player;
 
   function clickedGame() {
-    console.log("navigating to game screen:", item.id);
     navigation.navigate("GameDetails", { item });
   }
 
   return (
     <TouchableOpacity style={styles.item} onPress={() => clickedGame()}>
-      <Text style={styles.title}>{item.name}</Text>
+      <Text style={styles.title}>{thisGame.name}</Text>
 
       <Text style={styles.text}>
         <Text style={{ fontWeight: "bold" }}>Location: </Text>
-        {item.location}
+        {thisGame.location}
       </Text>
 
       <Text style={styles.text}>
         <Text style={{ fontWeight: "bold" }}>Date: </Text>
-        {item.date}
+        {epochToLocalDate(thisGame.datetime)}
       </Text>
 
       <Text style={styles.text}>
         <Text style={{ fontWeight: "bold" }}>Time: </Text>
-        {item.time}
+        {epochToLocalTime(thisGame.datetime)}
       </Text>
 
       <View style={styles.row}>
@@ -43,16 +54,16 @@ function Game({ item }) {
         >
           <TouchableOpacity
             style={[styles.button, { backgroundColor: "lightgreen" }]}
-            onPress={() => rsvp("in", item)}
+            onPress={() => rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED)}
           >
-            <Text style={styles.text}>Accepted: {item.in.length}</Text>
+            <Text style={styles.text}>Accept</Text>
           </TouchableOpacity>
           <View style={styles.line} />
           <TouchableOpacity
             style={[styles.button, styles.redButton]}
-            onPress={() => rsvp("out", item)}
+            onPress={() => rsvp(thisGame.id, thisPlayer.id, Rsvp.DECLINED)}
           >
-            <Text style={styles.text}>Rejected: {item.out.length}</Text>
+            <Text style={styles.text}>Reject</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -74,6 +85,7 @@ const styles = EStyleSheet.create({
     shadowRadius: 3,
     shadowOpacity: 0.2,
     shadowOffset: { width: -2, height: 4 },
+    width: "23rem",
   },
   title: {
     fontSize: 32,

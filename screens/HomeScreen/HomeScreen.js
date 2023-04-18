@@ -11,122 +11,72 @@ import { Auth } from "aws-amplify";
 import { DataStore } from "aws-amplify";
 import { Player, Game, Location, GamePlayer, Rsvp } from "../../src/models";
 import "@azure/core-asynciterator-polyfill";
-import Container from "../../common/Container";
-
-//const [loading, setLoading] = useState(false);
-let userGames;
-// let DATA = [];
-
-const DATA = [
-  {
-    id: "1",
-    name: "First Game",
-    organizer: "Mat",
-    location: "The Village Basketball Courts",
-    date: "6/30/2023",
-    time: "12:00 PM",
-    in: [
-      "Abir",
-      "Mat",
-      "Peyton",
-      "Rishi",
-      "Parker",
-      "Parker",
-      "Parker",
-      "Parker",
-    ],
-    out: ["Seyam", "David"],
-    description: "This is a test description to see if the field will show up",
-  },
-  {
-    id: "2",
-    name: "Second Game",
-    organizer: "Peyton",
-    location: "McCommas",
-    date: "6/29/2023",
-    time: "10:00 AM",
-    in: ["Abir"],
-    out: ["Seyam", "David", "Rishi", "Parker"],
-  },
-  {
-    id: "3",
-    name: "Third Game",
-    organizer: "Parker",
-    location: "The Bubble",
-    date: "8/1/2023",
-    time: "3:00 PM",
-    in: ["Abir", "Mat", "Peyton", "Seyam", "David", "Rishi", "Parker"],
-    out: [],
-  },
-  {
-    id: "4",
-    name: "Forth Game",
-    organizer: "Parker",
-    location: "The Bubble",
-    date: "8/1/2023",
-    time: "3:00 PM",
-    in: ["Abir", "Mat", "Peyton", "Seyam", "David", "Rishi", "Parker"],
-    out: [],
-  },
-  {
-    id: "5",
-    name: "Fifth Game",
-    organizer: "Parker",
-    location: "The Bubble",
-    date: "8/1/2023",
-    time: "3:00 PM",
-    in: ["Abir", "Mat", "Peyton", "Seyam", "David", "Rishi", "Parker"],
-    out: [],
-  },
-];
-
+import { SortDirection } from "@aws-amplify/datastore";
 function HomeScreen({ navigation }) {
-  // useEffect(() => {
-  //   //this function will get all games this user is assoicated with to populate their game feed screen
-  //   //*still in progress
-  //   // TODO: to get all games, just make a query with the model name as the arg: DataStore.query(Game)
-  //   async function getPlayerGames() {
-  //     setLoading(true);
-  //     // from auth lib get user details
-  //     // get player object
-  //     // query player by email
-  //     let userEmail = "test@gmail.com";
-  //     const authObj = await Auth.currentUserInfo();
-  //     console.log("Auth Object returned: ", authObj);
-  //     // const userEmail = authObj.attributes.email;
-
-  //     // get Player object from email
-  //     const players = await DataStore.query(Player, (p) =>
-  //       p.email.eq(userEmail)
-  //     );
-  //     const player = players[0];
-  //     console.log("Player returned: ", player);
-  //     // query GamePlayer to find games player is invited to or created
-  //     const gamePlayers = await DataStore.query(GamePlayer, (gp) =>
-  //       gp.player_id.eq(player.id)
-  //     );
-  //     //const userGames = [];
-  //     let startDate = new Date();
-
-  //     for (let i = 0; i < gamePlayers.length; i++) {
-  //       let game_id = gamePlayers[i].game_id;
-  //       //use this game_id to get the corresponding game
-  //       userGames = await DataStore.query(Game, (c) => c.id.eq(game_id));
-  //       //userGames.push(Game);
-  //       //as each game is retrieved, add it to the data array
-  //       //DATA[i] = {id: userGames[i].id}
-  //     }
-  //     dataSet(userGames);
-  //     setLoading(false);
-  //   }
-  //   getPlayerGames();
-  // }, []);
-  // if (!data) {
-  //   return null;
-  // }
-
-  const [data, dataSet] = useState([]);
+  const [games, setGames] = useState([]);
+  const [userGames, setUserGames] = useState([]);
+  const [playerGames, setPlayerGames] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [thisPlayer, setThisPlayer] = useState([]);
+
+  async function getPlayerGames(allGames) {
+    // NEED TRY CATCH AROUND ALL API CALLS
+    try {
+      const authObj = await Auth.currentUserInfo();
+      const userEmail = authObj.attributes.email;
+
+      // get Player object from email
+      const players = await DataStore.query(Player, (p) =>
+        p.email.eq(userEmail)
+      );
+      const player = players[0];
+      setThisPlayer(player);
+
+      // query GamePlayer to find games player is invited to or created
+      const gamePlayers = await DataStore.query(GamePlayer, (gp) =>
+        gp.player_id.eq(player.id)
+      );
+      const userGameIds = gamePlayers.map((gamePlayer) => {
+        return gamePlayer.id;
+      });
+      const userGames = allGames.filter((game) => {
+        return userGameIds.includes(game.id);
+      });
+
+      setPlayerGames(userGames);
+    } catch (error) {
+      setLoading(false);
+      console.log(error.message);
+    }
+  }
+
+  useEffect(() => {
+    /**
+     * This keeps `Games` fresh.
+     * if another user makes a change to the game details,
+     * we will get that change reflected here with our subscriber
+     */
+    // TRY CATCH AROUND API CALLS
+
+    setLoading(true);
+    // LOAD WHILE PERFORMING API CALLS
+    const subscriber = DataStore.observeQuery(
+      Game,
+      (c) => c.datetime.gt(Math.floor(Date.now() / 1000)),
+      {
+        sort: (s) => s.datetime(SortDirection.ASCENDING),
+      }
+    ).subscribe(({ items }) => {
+      setGames(items);
+      setUserGames(getPlayerGames(items));
+    });
+
+    setLoading(false);
+
+    return () => {
+      subscriber.unsubscribe();
+    };
+  }, []);
 
   const [middleView, setMiddleView] = useState("GameFeed");
 
@@ -149,7 +99,7 @@ function HomeScreen({ navigation }) {
       {/*CREATE GAME*/}
       <TouchableOpacity
         style={styles.createButton}
-        onPress={() => navigation.navigate("CreateGame")}
+        onPress={() => navigation.navigate("CreateGame", { thisPlayer })}
       >
         <Image
           style={styles.image}
@@ -159,7 +109,9 @@ function HomeScreen({ navigation }) {
 
       {/* RENDER LOCATION / FEED*/}
       <View style={styles.innerContainer}>
-        {middleView == "GameFeed" && <GameFeed data={DATA} />}
+        {middleView == "GameFeed" && (
+          <GameFeed data={{ games: games, thisPlayer: thisPlayer }} />
+        )}
         {middleView == "MapScreen" && <MapScreen />}
       </View>
 
@@ -205,10 +157,10 @@ function HomeScreen({ navigation }) {
               middleView == "GameFeed" ? { color: "lightgray" } : null,
             ]}
           >
-            {" "}
-            Game Feed{" "}
+            Game Feed
           </Text>
         </TouchableOpacity>
+        {/* <GameFeed data={{ games: games, thisPlayer: thisPlayer }} /> */}
       </View>
     </View>
   );
@@ -242,7 +194,7 @@ const styles = EStyleSheet.create({
     height: 52,
   },
   innerContainer: {
-    height: "80%",
+    height: "82%",
     marginTop: "3.5rem",
   },
   row: {
@@ -252,7 +204,7 @@ const styles = EStyleSheet.create({
     marginTop: "1rem",
     marginLeft: "2%",
     marginRight: "2%",
-    height: "5rem",
+    height: "4rem",
     borderWidth: 1,
   },
   topText: {
