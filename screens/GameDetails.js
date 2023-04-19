@@ -1,7 +1,29 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import EStyleSheet from "react-native-extended-stylesheet";
-import { View, ScrollView, SafeAreaView } from "react-native";
+
+import { Auth } from "aws-amplify";
+import { DataStore } from "aws-amplify";
+import "@azure/core-asynciterator-polyfill";
+
 import rsvp from "../utils/rsvp";
+import { epochToLocalDate } from "../utils/TimeUtil";
+import { epochToLocalTime } from "../utils/TimeUtil";
+import LoadingScreen from "../common/LoadingScreen";
+import ErrorPopup from "../common/ErrorPopup";
+
+import {
+  Player,
+  Game,
+  Location,
+  GamePlayer,
+  Rsvp,
+  SkillLevel,
+} from "../src/models";
+import {
+  ScrollView,
+  SafeAreaView,
+  View
+} from "react-native";
 import {
   Text,
   TopNavigation,
@@ -15,30 +37,102 @@ import {
 } from "@ui-kitten/components";
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
-
 function GameDetails({ route, navigation }) {
   const details = route.params.item;
-  const accepted = details.in.map((playerName, index) => {
-    return { id: index, name: playerName, status: "In" };
-  });
-  const declined = details.out.map((playerName, index) => {
-    return { id: index + accepted.length, name: playerName, status: "Out" };
-  });
-  const DUMMY_USERNAME = "Parker";
+  const thisPlayer = details.player;
+  const thisGame = details.game;
+
+  const [loading, setLoading] = useState(false);
+  const [statuses, setStatuses] = useState({ accepted: [], declined: [] });
+  const [gameOrganizer, setGameOrganizer] = useState([]);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  async function getInvitedPlayers() {
+    let playerids = thisGame.invited_players;
+    playerStatuses = [];
+
+    try {
+      // let playerId = playerids[i];
+      const gamePlayers = await DataStore.query(GamePlayer, (c) =>
+        c.and((c) => [c.game_id.eq(thisGame.id)])
+      );
+
+      for (let i = 0; i < gamePlayers.length; i++) {
+        const players = await DataStore.query(Player, (c) =>
+          c.id.eq(gamePlayers[i].player_id)
+        );
+        const player = players[0];
+        if (gamePlayers[i].rsvp == Rsvp.ACCEPTED) {
+          playerStatuses.push({
+            id: player.id,
+            name: player.name,
+            status: "In",
+          });
+        } else {
+          playerStatuses.push({
+            id: player.id,
+            name: player.name,
+            status: "Out",
+          });
+        }
+      }
+    } catch (error) {
+      setShowError(true);
+      setErrorMessage(`error occured in finding a game player rsvp`);
+      setLoading(false);
+      return;
+    }
+    return playerStatuses;
+  }
+
+  async function getGameOrganizer() {
+    if (thisPlayer.id == thisGame.organizer) {
+      return thisPlayer.name;
+    } else {
+      try {
+        const organizer = await DataStore.query(Player, thisGame.organizer);
+        return organizer.name;
+      } catch (error) {
+        console.log("error getting organizer");
+        setErrorMessage("Error retrieving game organizer");
+        setShowError(true);
+        setLoading(false);
+        return;
+      }
+    }
+  }
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+
+      const organizerRes = await getGameOrganizer();
+      // Error check API call methods
+      if (typeof organizerRes === "undefined") return;
+      setGameOrganizer(organizerRes);
+
+      const invitedPlayersRes = await getInvitedPlayers();
+      if (typeof invitedPlayersRes === "undefined") return;
+      console.log("invtedPlayers:",  invitedPlayersRes)
+      setStatuses(invitedPlayersRes);
+      setLoading(false);
+    })();
+  }, []);
 
   function isGameOwner() {
     // Use a dummy username until actual organizer names are used
     // We would need DUMMY_USERNAME to be the name of the current user
-    return DUMMY_USERNAME == details.organizer;
+    return thisPlayer.id == thisGame.organizer;
   }
 
   function showDescription() {
-    return details.description != "" && details.description != undefined;
+    return thisGame.description != "" && thisGame.description != undefined;
   }
 
-  const renderItem = ({ item }) => {
+  const renderItem = ({ item, index }) => {
     return (
-      <View style={styles.nameContainer}>
+      <View key={index} style={styles.nameContainer}>
         <Text style={styles.text}>{item.name}</Text>
         <Text
           style={[
@@ -52,6 +146,26 @@ function GameDetails({ route, navigation }) {
     );
   };
 
+  function handleEdit() {
+    navigation.navigate("UpdateGame", {
+      game: thisGame,
+      player: thisPlayer,
+    });
+  }
+
+  async function handleDelete() {
+    setLoading(true);
+    try {
+      await DataStore.delete(Game, thisGame.id);
+      await DataStore.delete(GamePlayer, (gp) => gp.game_id.eq(thisGame.id));
+      setLoading(false);
+      navigation.navigate("HomeScreen");
+    } catch (error) {
+      console.log("error occurred in deleting game");
+      setLoading(false);
+    }
+  }
+
   const navigateBack = () => {
     navigation.navigate("HomeScreen");
   };
@@ -61,7 +175,7 @@ function GameDetails({ route, navigation }) {
   );
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{flex: 1}}>
       <TopNavigation
         alignment="center"
         title="Game Details"
@@ -70,41 +184,40 @@ function GameDetails({ route, navigation }) {
 
       <ScrollView style={styles.container}>
         <Card>
-          <Text style={styles.topText} category="h1">
-            {details.name}
+          <Text style={styles.topText} category="h3">
+            {thisGame.name}
           </Text>
           <Text style={styles.text}>
             <Text style={styles.bold}>Date: </Text>
-            {details.date}
+            {epochToLocalDate(thisGame.datetime)}
           </Text>
           <Text style={styles.text}>
             <Text style={styles.bold}>Location: </Text>
-            {details.location}
+            {thisGame.location}
           </Text>
           <Text style={styles.text}>
             <Text style={styles.bold}>Time: </Text>
-            {details.time}
+            {epochToLocalTime(thisGame.datetime)}
           </Text>
           <Text style={styles.text}>
             <Text style={styles.bold}>Organizer: </Text>
-            {details.organizer}
+            {loading ? "Loading..." : gameOrganizer}
           </Text>
           {showDescription() && (
             <Text style={styles.text}>
               <Text style={styles.bold}>Description: </Text>
-              {details.description}
+              {thisGame.description}
             </Text>
           )}
         </Card>
       </ScrollView>
 
-      <View style={{ maxHeight: "33%" }}>
-        <Text style={styles.topText} category="h5">
-          {" "}
-          Attending Players{" "}
+      <View style={{ maxHeight: "25%" }}>
+        <Text style={styles.topText} category="h6">
+          Attending Players
         </Text>
         <List
-          data={[...accepted, ...declined]}
+          data={statuses}
           ItemSeparatorComponent={Divider}
           renderItem={renderItem}
         ></List>
@@ -128,10 +241,11 @@ function GameDetails({ route, navigation }) {
 
       {isGameOwner() && (
         <View>
-          <Button style={{ margin: "2%" }}>Edit Game Details</Button>
-          <Button style={{ margin: "2%" }}>Delete Game</Button>
-        </View>
+        <Button style={{ margin: "2%" }} onPress={handleEdit}>Edit Game Details</Button>
+        <Button style={{ margin: "2%" }} onPress={handleDelete}>Delete Game</Button>
+      </View>
       )}
+      {showError && <ErrorPopup errorMessage={errorMessage} />}
     </SafeAreaView>
   );
 }
@@ -141,12 +255,12 @@ const styles = EStyleSheet.create({
     margin: "0.5rem",
   },
   topText: {
-    margin: "0.5rem",
+    margin: "0.2rem",
     textAlign: "center",
   },
   container: {
     margin: "1rem",
-    maxHeight: "33%",
+    maxHeight: "40%",
   },
   bold: {
     fontWeight: "bold",

@@ -4,34 +4,45 @@ import { View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import rsvp from "../../utils/rsvp";
 import { Text, Card, Button, ButtonGroup } from "@ui-kitten/components";
+import { epochToLocalDate } from "../../utils/TimeUtil";
+import { epochToLocalTime } from "../../utils/TimeUtil";
+
+import {
+  Player,
+  Location,
+  GamePlayer,
+  Rsvp,
+  SkillLevel,
+} from "../../src/models";
 
 function Game({ item }) {
   const navigation = useNavigation();
+  const thisGame = item.game;
+  const thisPlayer = item.player;
 
   function clickedGame() {
-    console.log("navigating to game screen:", item.id);
     navigation.navigate("GameDetails", { item });
   }
 
   return (
     <Card style={styles.card} onPress={() => clickedGame()}>
       <Text style={styles.text} category="h4">
-        {item.name}
+        {thisGame.name}
       </Text>
 
       <Text style={styles.text}>
         <Text style={{ fontWeight: "bold" }}>Location: </Text>
-        {item.location}
+        {thisGame.location}
       </Text>
 
       <Text style={styles.text}>
         <Text style={{ fontWeight: "bold" }}>Date: </Text>
-        {item.date}
+        {epochToLocalDate(thisGame.datetime)}
       </Text>
 
       <Text style={styles.text}>
         <Text style={{ fontWeight: "bold" }}>Time: </Text>
-        {item.time}
+        {epochToLocalTime(thisGame.datetime)}
       </Text>
 
       <View style={{ alignItems: "center", flexDirection: "row" }}>
@@ -40,16 +51,16 @@ function Game({ item }) {
         <ButtonGroup style={{ justifyContent: "center", margin: "5%" }}>
           <Button
             style={{ backgroundColor: "#3D9B2C" }}
-            onPress={() => rsvp("in", item)}
+            onPress={() => rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED)}
           >
-            Accepted: {item.in.length}
+            Accept
           </Button>
 
           <Button
             style={{ backgroundColor: "#B74840" }}
-            onPress={() => rsvp("out", item)}
+            onPress={() => rsvp(thisGame.id, thisPlayer.id, Rsvp.DECLINED)}
           >
-            Rejected: {item.out.length}
+            Reject
           </Button>
         </ButtonGroup>
       </View>

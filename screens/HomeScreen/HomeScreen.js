@@ -1,6 +1,10 @@
-import { React, useState } from "react";
-import { View, SafeAreaView } from "react-native";
+import { React, useState, useEffect } from "react";
 import EStyleSheet from "react-native-extended-stylesheet";
+
+import { 
+  View, 
+  SafeAreaView 
+} from "react-native";
 import {
   Button,
   ButtonGroup,
@@ -10,81 +14,93 @@ import {
   TopNavigationAction,
   Text,
 } from "@ui-kitten/components";
+import { 
+  Player, 
+  Game, 
+  Location,
+  GamePlayer, 
+  Rsvp 
+} from "../../src/models";
 
 import LoadingScreen from "../../common/LoadingScreen";
 import GameFeed from "./GameFeed";
 import MapScreen from "./MapScreen";
-import "@azure/core-asynciterator-polyfill";
 
-const DATA = [
-  {
-    id: "1",
-    name: "First Game",
-    organizer: "Mat",
-    location: "The Village Basketball Courts",
-    date: "6/30/2023",
-    time: "12:00 PM",
-    in: [
-      "Abir",
-      "Mat",
-      "Peyton",
-      "Rishi",
-      "Parker",
-      "Parker",
-      "Parker",
-      "Parker",
-    ],
-    out: ["Seyam", "David"],
-    description: "This is a test description to see if the field will show up",
-  },
-  {
-    id: "2",
-    name: "Second Game",
-    organizer: "Peyton",
-    location: "McCommas",
-    date: "6/29/2023",
-    time: "10:00 AM",
-    in: ["Abir"],
-    out: ["Seyam", "David", "Rishi", "Parker"],
-  },
-  {
-    id: "3",
-    name: "Third Game",
-    organizer: "Parker",
-    location: "The Bubble",
-    date: "8/1/2023",
-    time: "3:00 PM",
-    in: ["Abir", "Mat", "Peyton", "Seyam", "David", "Rishi", "Parker"],
-    out: [],
-  },
-  {
-    id: "4",
-    name: "Forth Game",
-    organizer: "Parker",
-    location: "The Bubble",
-    date: "8/1/2023",
-    time: "3:00 PM",
-    in: ["Abir", "Mat", "Peyton", "Seyam", "David", "Rishi", "Parker"],
-    out: [],
-  },
-  {
-    id: "5",
-    name: "Fifth Game",
-    organizer: "Parker",
-    location: "The Bubble",
-    date: "8/1/2023",
-    time: "3:00 PM",
-    in: ["Abir", "Mat", "Peyton", "Seyam", "David", "Rishi", "Parker"],
-    out: [],
-  },
-];
+import "@azure/core-asynciterator-polyfill";
+import { SortDirection } from "@aws-amplify/datastore";
+import { DataStore } from "aws-amplify";
+import { Auth } from "aws-amplify";
 
 const CreateIcon = (props) => <Icon {...props} name="plus-square-outline" />;
 const ProfileIcon = (props) => <Icon {...props} name="person-outline" />;
 
-export const HomeScreen = ({ navigation }) => {
-  const [data, dataSet] = useState([]);
+
+function HomeScreen({ navigation }) {
+  const [games, setGames] = useState([]);
+  const [userGames, setUserGames] = useState([]);
+  const [playerGames, setPlayerGames] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [thisPlayer, setThisPlayer] = useState([]);
+
+  async function getPlayerGames(allGames) {
+    // NEED TRY CATCH AROUND ALL API CALLS
+    try {
+      const authObj = await Auth.currentUserInfo();
+      const userEmail = authObj.attributes.email;
+
+      // get Player object from email
+      const players = await DataStore.query(Player, (p) =>
+        p.email.eq(userEmail)
+      );
+      const player = players[0];
+      setThisPlayer(player);
+
+      // query GamePlayer to find games player is invited to or created
+      const gamePlayers = await DataStore.query(GamePlayer, (gp) =>
+        gp.player_id.eq(player.id)
+      );
+      const userGameIds = gamePlayers.map((gamePlayer) => {
+        return gamePlayer.id;
+      });
+      const userGames = allGames.filter((game) => {
+        return userGameIds.includes(game.id);
+      });
+
+      setPlayerGames(userGames);
+    } catch (error) {
+      setLoading(false);
+      console.log(error.message);
+    }
+  }
+
+  useEffect(() => {
+    /**
+     * This keeps `Games` fresh.
+     * if another user makes a change to the game details,
+     * we will get that change reflected here with our subscriber
+     */
+    // TRY CATCH AROUND API CALLS
+
+    setLoading(true);
+    // LOAD WHILE PERFORMING API CALLS
+    const subscriber = DataStore.observeQuery(
+      Game,
+      (c) => c.datetime.gt(Math.floor(Date.now() / 1000)),
+      {
+        sort: (s) => s.datetime(SortDirection.ASCENDING),
+      }
+    ).subscribe(({ items }) => {
+      setGames(items);
+      setUserGames(getPlayerGames(items));
+    });
+
+    setLoading(false);
+
+    return () => {
+      subscriber.unsubscribe();
+    };
+  }, []);
+
   const [middleView, setMiddleView] = useState("Game Feed");
 
   const navigateProfile = () => {
@@ -92,7 +108,7 @@ export const HomeScreen = ({ navigation }) => {
   };
 
   const navigateCreateGame = () => {
-    navigation.navigate("CreateGame");
+    navigation.navigate("CreateGame", {thisPlayer});
   };
 
   const renderCreateAction = () => (
@@ -117,7 +133,9 @@ export const HomeScreen = ({ navigation }) => {
 
       {/* RENDER LOCATION / FEED*/}
       <View style={styles.innerContainer}>
-        {middleView == "Game Feed" && <GameFeed data={DATA} />}
+        {middleView == "Game Feed" && (
+          <GameFeed data={{ games: games, thisPlayer: thisPlayer }} />
+        )}
         {middleView == "Map View" && <MapScreen />}
       </View>
 

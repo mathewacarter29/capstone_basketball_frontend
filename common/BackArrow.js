@@ -8,7 +8,7 @@ function BackArrow(props) {
   return (
     <TouchableOpacity
       style={styles.back}
-      onPress={() => navigation.navigate(props.location)}
+      onPress={() => navigation.navigate(props.location, props.routeParams)}
     >
       <Image source={require("../assets/back_arrow_icon.png")} />
     </TouchableOpacity>

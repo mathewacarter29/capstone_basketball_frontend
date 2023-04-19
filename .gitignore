@@ -1,3 +1,4 @@
+amplify/
 build/
 dist/
 node_modules/
@@ -9,7 +10,15 @@ amplify/
 
 .vscode/*
 
-src/*
+src/models/schema.js
+src/models/index.d.ts
+amplify/cli.json
+amplify/backend/api/campuscourts/schema.graphql
+amplify/backend/amplify-meta.json
+amplify/.config/project-config.json
+amplify/.config/local-env-info.json
+amplify/.config/local-aws-info.json
+.vscode/settings.json
 
 #amplify-do-not-edit-begin
 amplify/\#current-cloud-backend
@@ -32,3 +41,32 @@ amplifytools.xcconfig
 .secret-*
 **.sample
 #amplify-do-not-edit-end
+.vscode/settings.json
+amplify/\#current-cloud-backend/amplify-meta.json
+amplify/\#current-cloud-backend/api/campuscourts/cli-inputs.json
+amplify/\#current-cloud-backend/api/campuscourts/parameters.json
+amplify/\#current-cloud-backend/auth/campuscourts/cli-inputs.json
+amplify/\#current-cloud-backend/backend-config.json
+amplify/.config/local-aws-info.json
+amplify/.config/project-config.json
+amplify/.config/local-env-info.json
+amplify/backend/amplify-meta.json
+amplify/backend/api/campuscourts/parameters.json
+amplify/backend/api/campuscourts/schema.graphql
+amplify/backend/auth/campuscourts/cli-inputs.json
+amplify/backend/types/amplify-dependent-resources-ref.d.ts
+amplify/backend/backend-config.json
+amplify/backend/api/campuscourts/cli-inputs.json
+amplify/team-provider-info.json
+amplify/cli.json
+amplify/backend/api/CampusCourts/resolvers/README.md
+amplify/backend/api/CampusCourts/stacks/CustomResources.json
+amplify/backend/api/CampusCourts/transform.conf.json
+amplify/backend/tags.json
+src/models/schema.js
+src/models/index.js
+src/models/index.d.ts
+src/aws-exports.js
+.vscode/settings.json
+src/models/schema.d.ts
+.vscode/settings.json
