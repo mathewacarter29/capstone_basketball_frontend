@@ -1,12 +1,22 @@
 import { React, useState } from "react";
 import EStyleSheet from "react-native-extended-stylesheet";
-import { Keyboard, View, Text, Image } from "react-native";
-import Button from "../common/Button";
+
 import { Auth } from "aws-amplify";
+import "@azure/core-asynciterator-polyfill";
+
 import ErrorPopup from "../common/ErrorPopup";
 import TextInput from "../common/TextInput";
-import Container from "../common/Container";
-import "@azure/core-asynciterator-polyfill";
+
+import { Keyboard, Image, SafeAreaView, View } from "react-native";
+import {
+  Text,
+  Button,
+  TopNavigation,
+  TopNavigationAction,
+  Icon,
+} from "@ui-kitten/components";
+
+const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 
 function LogIn({ navigation }) {
   const [username, setUsername] = useState("");
@@ -14,6 +24,14 @@ function LogIn({ navigation }) {
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const navigateGetStarted = () => {
+    navigation.navigate("GetStarted");
+  };
+
+  const renderBackAction = () => (
+    <TopNavigationAction icon={BackIcon} onPress={navigateGetStarted} />
+  );
 
   async function login() {
     if (username == "") {
@@ -29,7 +47,6 @@ function LogIn({ navigation }) {
 
     setLoading(true);
 
-    // const players = await DataStore.query(Player);
     // using amplify API call to validate user
     try {
       response = await Auth.signIn(loginData.username, loginData.password);
@@ -40,50 +57,57 @@ function LogIn({ navigation }) {
       return;
     }
     // if we make it here, we have a correct username and password
-
     setShowError(false);
     setLoading(false);
     // navigate to the main screen below
     console.log(`Logged in as ${username}`);
-
     navigation.navigate("HomeScreen");
   }
 
   return (
-    <Container goBackTo="GetStarted" loadingState={loading}>
-      <View style={styles.container}>
-        <Text style={styles.text}>Welcome Back!</Text>
+    <SafeAreaView style={styles.container}>
+      <TopNavigation
+        alignment="center"
+        title="Login"
+        accessoryLeft={renderBackAction}
+      />
+
+      <View style={{ alignItems: "center" }}>
+        <Text style={[styles.text, styles.title]} category="h1">
+          Welcome Back!
+        </Text>
+
         <Image source={require("../assets/basketballPlayerArms.png")} />
+
         <TextInput
           value={username}
           placeholder="Enter your email"
           onChangeText={(text) => setUsername(text)}
         ></TextInput>
+
         <TextInput
           value={password}
           placeholder="Enter your password"
           onChangeText={(text) => setPassword(text)}
           secureTextEntry
         ></TextInput>
-        <Button title="Log In" onPress={() => login()} />
+
+        <Button title="Log In" onPress={() => login()}>
+          Log In
+        </Button>
+
         {showError && <ErrorPopup errorMessage={errorMessage} />}
       </View>
-      <View style={{ flex: 1, backgroundColor: "lightgray" }}></View>
-    </Container>
+    </SafeAreaView>
   );
 }
 
 const styles = EStyleSheet.create({
   container: {
-    alignItems: "center",
-    paddingTop: "2rem",
-    justifyContent: "flex-end",
+    flex: 1,
   },
-  text: {
+  title: {
     margin: "1rem",
-    marginTop: "7rem",
-    fontSize: 30,
-    width: "80%",
     textAlign: "center",
   },
 });

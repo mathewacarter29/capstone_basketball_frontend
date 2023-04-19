@@ -1,15 +1,20 @@
 import React from "react";
 import EStyleSheet from "react-native-extended-stylesheet";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  FlatList,
-  ScrollView,
-} from "react-native";
-import Button from "../common/Button";
-import BackArrow from "../common/BackArrow";
+import { View, ScrollView, SafeAreaView } from "react-native";
 import rsvp from "../utils/rsvp";
+import {
+  Text,
+  TopNavigation,
+  TopNavigationAction,
+  Icon,
+  Card,
+  List,
+  Divider,
+  Button,
+  ButtonGroup,
+} from "@ui-kitten/components";
+
+const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 
 function GameDetails({ route, navigation }) {
   const details = route.params.item;
@@ -47,12 +52,27 @@ function GameDetails({ route, navigation }) {
     );
   };
 
+  const navigateBack = () => {
+    navigation.navigate("HomeScreen");
+  };
+
+  const renderBackAction = () => (
+    <TopNavigationAction icon={BackIcon} onPress={navigateBack} />
+  );
+
   return (
-    <View style={styles.container}>
-      <BackArrow location="HomeScreen" />
-      <View style={[styles.detailsContainer, styles.infoContainer]}>
-        <ScrollView>
-          <Text style={styles.topText}>{details.name}</Text>
+    <SafeAreaView>
+      <TopNavigation
+        alignment="center"
+        title="Game Details"
+        accessoryLeft={renderBackAction}
+      />
+
+      <ScrollView style={styles.container}>
+        <Card>
+          <Text style={styles.topText} category="h1">
+            {details.name}
+          </Text>
           <Text style={styles.text}>
             <Text style={styles.bold}>Date: </Text>
             {details.date}
@@ -75,113 +95,61 @@ function GameDetails({ route, navigation }) {
               {details.description}
             </Text>
           )}
-        </ScrollView>
-      </View>
-      <View style={[styles.infoContainer, styles.acceptedContainer]}>
-        <FlatList
-          ListHeaderComponent={
-            <>
-              <Text style={[styles.text, styles.bold]}>Players Attending</Text>
-            </>
-          }
+        </Card>
+      </ScrollView>
+
+      <View style={{ maxHeight: "33%" }}>
+        <Text style={styles.topText} category="h5">
+          {" "}
+          Attending Players{" "}
+        </Text>
+        <List
           data={[...accepted, ...declined]}
+          ItemSeparatorComponent={Divider}
           renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-        />
+        ></List>
       </View>
-      <View style={styles.row}>
-        <Text style={[styles.text, styles.bold]}>RSVP:</Text>
-        <View style={styles.line} />
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-around",
-            flex: 1,
-          }}
+
+      <ButtonGroup style={{ justifyContent: "center", marginTop: "5%" }}>
+        <Button
+          style={{ backgroundColor: "#3D9B2C" }}
+          onPress={() => rsvp("in", details)}
         >
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: "lightgreen" }]}
-            onPress={() => rsvp("in", details)}
-          >
-            <Text style={styles.text}>Accept</Text>
-          </TouchableOpacity>
-          <View style={styles.line} />
-          <TouchableOpacity
-            style={[styles.button, styles.redButton]}
-            onPress={() => rsvp("out", details)}
-          >
-            <Text style={styles.text}>Reject</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+          Accept
+        </Button>
+
+        <Button
+          style={{ backgroundColor: "#B74840" }}
+          onPress={() => rsvp("out", details)}
+        >
+          Reject
+        </Button>
+      </ButtonGroup>
+
       {isGameOwner() && (
-        <View style={styles.buttonContainer}>
-          <Button title="Edit Game Details" />
-          <Button title="Delete Game" />
+        <View>
+          <Button style={{ margin: "2%" }}>Edit Game Details</Button>
+          <Button style={{ margin: "2%" }}>Delete Game</Button>
         </View>
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = EStyleSheet.create({
-  topText: {
-    fontSize: 30,
-    textAlign: "center",
-    fontWeight: "bold",
+  text: {
     margin: "0.5rem",
-    marginBottom: "1rem",
-    textDecorationLine: "underline",
   },
-  line: {
-    width: 1,
-    height: "100%",
-    backgroundColor: "black",
-  },
-  button: {
-    flex: 1,
-    alignItems: "center",
-  },
-  row: {
-    width: "90%",
-    flexDirection: "row",
-    borderWidth: 1,
-    borderRadius: "1rem",
-    margin: "1rem",
-  },
-  redButton: {
-    backgroundColor: "#FAA0A0",
-    borderBottomRightRadius: "1rem",
-    borderTopRightRadius: "1rem",
+  topText: {
+    margin: "0.5rem",
+    textAlign: "center",
   },
   container: {
-    flex: 1,
-    alignItems: "center",
-    backgroundColor: "lightgray",
-    paddingTop: "6rem",
-  },
-  text: {
-    fontSize: 20,
-    margin: "0.5rem",
-    textAlign: "center",
+    margin: "1rem",
+    maxHeight: "33%",
   },
   bold: {
     fontWeight: "bold",
-  },
-  buttonContainer: {
-    alignItems: "center",
-    width: "100%",
-    position: "absolute",
-    bottom: "3%",
-  },
-  infoContainer: {
-    borderWidth: 1,
-    borderRadius: "1rem",
-    margin: "1rem",
-    width: "90%",
-  },
-  acceptedContainer: {
-    height: "10rem",
   },
   nameContainer: {
     borderBottomWidth: 1,
@@ -190,10 +158,6 @@ const styles = EStyleSheet.create({
     borderRadius: "1rem",
     marginLeft: "1rem",
     marginRight: "1rem",
-  },
-  detailsContainer: {
-    maxHeight: "17rem",
-    width: "100%",
   },
 });
 

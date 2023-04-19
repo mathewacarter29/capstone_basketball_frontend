@@ -1,6 +1,5 @@
 import React from "react";
-import { Text, View } from "react-native";
-
+import { View } from "react-native";
 import MapView from "react-native-maps";
 import { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import EStyleSheet from "react-native-extended-stylesheet";
@@ -12,7 +11,6 @@ function showCourtFeed(props) {
 function MapScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.topText}>Map View</Text>
       <MapView
         style={styles.map}
         provider={PROVIDER_GOOGLE}
@@ -63,12 +61,6 @@ const styles = EStyleSheet.create({
     marginRight: "2%",
     flex: 1,
     borderRadius: "1rem",
-  },
-  topText: {
-    fontSize: 30,
-    textAlign: "center",
-    fontWeight: "bold",
-    paddingBottom: "1rem",
   },
 });
 

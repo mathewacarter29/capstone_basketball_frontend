@@ -1,21 +1,20 @@
-import { React, useEffect, useState } from "react";
-import { Text, TouchableOpacity, Image, View, ScrollView } from "react-native";
-
+import { React, useState } from "react";
+import { View, SafeAreaView } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
-import LoadingScreen from "../../common/LoadingScreen";
+import {
+  Button,
+  ButtonGroup,
+  Divider,
+  TopNavigation,
+  Icon,
+  TopNavigationAction,
+  Text,
+} from "@ui-kitten/components";
 
+import LoadingScreen from "../../common/LoadingScreen";
 import GameFeed from "./GameFeed";
 import MapScreen from "./MapScreen";
-
-import { Auth } from "aws-amplify";
-import { DataStore } from "aws-amplify";
-import { Player, Game, Location, GamePlayer, Rsvp } from "../../src/models";
 import "@azure/core-asynciterator-polyfill";
-import Container from "../../common/Container";
-
-//const [loading, setLoading] = useState(false);
-let userGames;
-// let DATA = [];
 
 const DATA = [
   {
@@ -80,205 +79,79 @@ const DATA = [
   },
 ];
 
-function HomeScreen({ navigation }) {
-  // useEffect(() => {
-  //   //this function will get all games this user is assoicated with to populate their game feed screen
-  //   //*still in progress
-  //   // TODO: to get all games, just make a query with the model name as the arg: DataStore.query(Game)
-  //   async function getPlayerGames() {
-  //     setLoading(true);
-  //     // from auth lib get user details
-  //     // get player object
-  //     // query player by email
-  //     let userEmail = "test@gmail.com";
-  //     const authObj = await Auth.currentUserInfo();
-  //     console.log("Auth Object returned: ", authObj);
-  //     // const userEmail = authObj.attributes.email;
+const CreateIcon = (props) => <Icon {...props} name="plus-square-outline" />;
+const ProfileIcon = (props) => <Icon {...props} name="person-outline" />;
 
-  //     // get Player object from email
-  //     const players = await DataStore.query(Player, (p) =>
-  //       p.email.eq(userEmail)
-  //     );
-  //     const player = players[0];
-  //     console.log("Player returned: ", player);
-  //     // query GamePlayer to find games player is invited to or created
-  //     const gamePlayers = await DataStore.query(GamePlayer, (gp) =>
-  //       gp.player_id.eq(player.id)
-  //     );
-  //     //const userGames = [];
-  //     let startDate = new Date();
-
-  //     for (let i = 0; i < gamePlayers.length; i++) {
-  //       let game_id = gamePlayers[i].game_id;
-  //       //use this game_id to get the corresponding game
-  //       userGames = await DataStore.query(Game, (c) => c.id.eq(game_id));
-  //       //userGames.push(Game);
-  //       //as each game is retrieved, add it to the data array
-  //       //DATA[i] = {id: userGames[i].id}
-  //     }
-  //     dataSet(userGames);
-  //     setLoading(false);
-  //   }
-  //   getPlayerGames();
-  // }, []);
-  // if (!data) {
-  //   return null;
-  // }
-
+export const HomeScreen = ({ navigation }) => {
   const [data, dataSet] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [middleView, setMiddleView] = useState("Game Feed");
 
-  const [middleView, setMiddleView] = useState("GameFeed");
+  const navigateProfile = () => {
+    navigation.navigate("Profile");
+  };
+
+  const navigateCreateGame = () => {
+    navigation.navigate("CreateGame");
+  };
+
+  const renderCreateAction = () => (
+    <TopNavigationAction icon={CreateIcon} onPress={navigateCreateGame} />
+  );
+  const renderProfileAction = () => (
+    <TopNavigationAction icon={ProfileIcon} onPress={navigateProfile} />
+  );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={{ flex: 1 }}>
+      <TopNavigation
+        alignment="center"
+        title={middleView}
+        accessoryLeft={renderCreateAction}
+        accessoryRight={renderProfileAction}
+      />
+
+      <Divider />
+
       {loading && <LoadingScreen />}
-
-      {/*PROFILE ICON*/}
-      <TouchableOpacity
-        style={styles.profileButton}
-        onPress={() => navigation.navigate("Profile")}
-      >
-        <Image
-          style={styles.image}
-          source={require("../../assets/profile_icon.png")}
-        />
-        <Text style={styles.text}>Profile</Text>
-      </TouchableOpacity>
-
-      {/*CREATE GAME*/}
-      <TouchableOpacity
-        style={styles.createButton}
-        onPress={() => navigation.navigate("CreateGame")}
-      >
-        <Image
-          style={styles.image}
-          source={require("../../assets/plus_icon.png")}
-        />
-      </TouchableOpacity>
 
       {/* RENDER LOCATION / FEED*/}
       <View style={styles.innerContainer}>
-        {middleView == "GameFeed" && <GameFeed data={DATA} />}
-        {middleView == "MapScreen" && <MapScreen />}
+        {middleView == "Game Feed" && <GameFeed data={DATA} />}
+        {middleView == "Map View" && <MapScreen />}
       </View>
 
-      {/* BOTTOM NAV BUTTONS */}
-      <View style={styles.row}>
-        <TouchableOpacity
-          style={[
-            middleView == "MapScreen"
-              ? styles.selectedNavButton
-              : styles.navButton,
-            styles.leftNavButton,
-          ]}
-          onPress={() => {
-            setMiddleView("MapScreen");
-          }}
+      <ButtonGroup style={{ justifyContent: "center", margin: "5%" }}>
+        <Button
+          onPress={() => setMiddleView("Map View")}
+          style={[middleView == "Map View" ? styles.selected : styles.nav]}
         >
-          <Text
-            style={[
-              styles.topText,
-              middleView == "MapScreen" ? { color: "lightgray" } : null,
-            ]}
-          >
-            Map View
-          </Text>
-        </TouchableOpacity>
-        <View style={styles.line} />
-
-        <TouchableOpacity
-          style={[
-            middleView == "GameFeed"
-              ? styles.selectedNavButton
-              : styles.navButton,
-            ,
-            styles.rightNavButton,
-          ]}
-          onPress={() => {
-            setMiddleView("GameFeed");
-          }}
+          <Text>Map View</Text>
+        </Button>
+        <Button
+          onPress={() => setMiddleView("Game Feed")}
+          style={[middleView == "Game Feed" ? styles.selected : styles.nav]}
         >
-          <Text
-            style={[
-              styles.topText,
-              middleView == "GameFeed" ? { color: "lightgray" } : null,
-            ]}
-          >
-            {" "}
-            Game Feed{" "}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+          <Text>Game Feed</Text>
+        </Button>
+      </ButtonGroup>
+    </SafeAreaView>
   );
-}
+};
 
 const styles = EStyleSheet.create({
-  container: {
-    flex: "1",
-  },
-  line: {
-    width: 1,
-    height: "100%",
-    backgroundColor: "black",
-  },
-  profileButton: {
-    position: "absolute",
-    right: "4%",
-    top: "4%",
-    alignItems: "center",
-    zIndex: 1,
-  },
-  createButton: {
-    position: "absolute",
-    left: "4%",
-    top: "5%",
-    alignItems: "center",
-    zIndex: 1,
-  },
-  image: {
-    width: 50,
-    height: 52,
-  },
   innerContainer: {
-    height: "80%",
-    marginTop: "3.5rem",
+    height: "83%",
+    marginTop: ".5rem",
   },
-  row: {
-    flexDirection: "row",
-    borderRadius: "1rem",
-    justifyContent: "space-around",
-    marginTop: "1rem",
-    marginLeft: "2%",
-    marginRight: "2%",
-    height: "5rem",
-    borderWidth: 1,
-  },
-  topText: {
-    fontSize: 30,
-    fontWeight: "bold",
-    textAlign: "center",
-    paddingBottom: ".5rem",
-    paddingTop: ".5rem",
-  },
-  navButton: {
-    backgroundColor: "orange",
+  nav: {
     flex: 1,
     justifyContent: "center",
   },
-  leftNavButton: {
-    borderBottomLeftRadius: "1rem",
-    borderTopLeftRadius: "1rem",
-  },
-  rightNavButton: {
-    borderBottomRightRadius: "1rem",
-    borderTopRightRadius: "1rem",
-  },
-  selectedNavButton: {
-    backgroundColor: "#b06820",
+  selected: {
     flex: 1,
     justifyContent: "center",
+    backgroundColor: "#9A4924",
   },
 });
 

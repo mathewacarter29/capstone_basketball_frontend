@@ -1,55 +1,62 @@
 import React from "react";
-import { View, Text, Image } from "react-native";
+import { Image, SafeAreaView } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
-import Button from "../common/Button";
+import { Text, Button } from "@ui-kitten/components";
 
 function GetStarted({ navigation }) {
   return (
-    <View style={styles.container}>
-      <Image source={require("../assets/basketballPlayer.png")}></Image>
-      <Text style={styles.topText}>
+    <SafeAreaView style={styles.container}>
+      <Image
+        source={require("../assets/basketballPlayer.png")}
+        style={{ marginTop: "10%" }}
+      ></Image>
+
+      <Text style={[styles.text, styles.title]} category="h1">
         Plan your next basketball game with CampusCourts
       </Text>
-      <Text style={styles.bottomText}>
+
+      <Text style={[styles.text, styles.subtitle]} category="p1">
         An easy way to plan pickup basketball games and join a whole new
         community
       </Text>
-      <Button onPress={() => navigation.navigate("LogIn")} title="Log In" />
+
+      <Button
+        onPress={() => navigation.navigate("LogIn")}
+        title="Log In"
+        style={styles.button}
+      >
+        Log In
+      </Button>
+
       <Text
         style={styles.clickableText}
         onPress={() => navigation.navigate("SignUp")}
       >
         Don't have an account? Sign Up here
       </Text>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = EStyleSheet.create({
-  topText: {
+  title: {
     margin: "1rem",
-    fontSize: 30,
-    width: "80%",
     textAlign: "center",
-    fontWeight: "bold",
   },
-  bottomText: {
+  subtitle: {
     margin: "1rem",
-    fontSize: 20,
-    width: "80%",
     textAlign: "center",
   },
   container: {
-    backgroundColor: "lightgray",
+    flex: 1,
     alignItems: "center",
-    paddingTop: "10rem",
-    height: "100%",
-    width: "100%",
   },
   clickableText: {
     color: "darkorange",
-    fontSize: 15,
     textDecorationLine: "underline",
+  },
+  button: {
+    margin: "1rem",
   },
 });
 

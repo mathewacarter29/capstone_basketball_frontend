@@ -1,8 +1,9 @@
 import React from "react";
 import EStyleSheet from "react-native-extended-stylesheet";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import rsvp from "../../utils/rsvp";
+import { Text, Card, Button, ButtonGroup } from "@ui-kitten/components";
 
 function Game({ item }) {
   const navigation = useNavigation();
@@ -13,8 +14,10 @@ function Game({ item }) {
   }
 
   return (
-    <TouchableOpacity style={styles.item} onPress={() => clickedGame()}>
-      <Text style={styles.title}>{item.name}</Text>
+    <Card style={styles.card} onPress={() => clickedGame()}>
+      <Text style={styles.text} category="h4">
+        {item.name}
+      </Text>
 
       <Text style={styles.text}>
         <Text style={{ fontWeight: "bold" }}>Location: </Text>
@@ -31,75 +34,33 @@ function Game({ item }) {
         {item.time}
       </Text>
 
-      <View style={styles.row}>
-        <Text style={[styles.text, styles.bold]}>RSVP:</Text>
-        <View style={styles.line} />
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-around",
-            flex: 1,
-          }}
-        >
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: "lightgreen" }]}
+      <View style={{ alignItems: "center", flexDirection: "row" }}>
+        <Text style={{ fontWeight: "bold" }}>RSVP:</Text>
+
+        <ButtonGroup style={{ justifyContent: "center", margin: "5%" }}>
+          <Button
+            style={{ backgroundColor: "#3D9B2C" }}
             onPress={() => rsvp("in", item)}
           >
-            <Text style={styles.text}>Accepted: {item.in.length}</Text>
-          </TouchableOpacity>
-          <View style={styles.line} />
-          <TouchableOpacity
-            style={[styles.button, styles.redButton]}
+            Accepted: {item.in.length}
+          </Button>
+
+          <Button
+            style={{ backgroundColor: "#B74840" }}
             onPress={() => rsvp("out", item)}
           >
-            <Text style={styles.text}>Rejected: {item.out.length}</Text>
-          </TouchableOpacity>
-        </View>
+            Rejected: {item.out.length}
+          </Button>
+        </ButtonGroup>
       </View>
-    </TouchableOpacity>
+    </Card>
   );
 }
 
 const styles = EStyleSheet.create({
-  text: {
-    fontSize: 18,
-    margin: "0.25rem",
-  },
-  item: {
-    backgroundColor: "orange",
-    marginTop: "1rem",
-    padding: "0.5rem",
-    borderRadius: "1rem",
-    shadowColor: "#171717",
-    shadowRadius: 3,
-    shadowOpacity: 0.2,
-    shadowOffset: { width: -2, height: 4 },
-  },
-  title: {
-    fontSize: 32,
-    margin: "0.25rem",
-  },
-  row: {
-    flexDirection: "row",
-    borderWidth: 1,
-    borderRadius: "1rem",
-  },
-  bold: {
-    fontWeight: "bold",
-  },
-  line: {
-    width: 1,
-    height: "100%",
-    backgroundColor: "black",
-  },
-  button: {
+  card: {
     flex: 1,
-    alignItems: "center",
-  },
-  redButton: {
-    backgroundColor: "#FAA0A0",
-    borderBottomRightRadius: "1rem",
-    borderTopRightRadius: "1rem",
+    margin: 2,
   },
 });
 
