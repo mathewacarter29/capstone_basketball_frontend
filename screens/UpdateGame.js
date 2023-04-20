@@ -29,7 +29,7 @@ function UpdateGame({ route, navigation }) {
   const [toInvite, setToInvite] = useState([]);
   const [gameDescription, setGameDescription] = useState(game.description);
   const [locations, setLocations] = useState([]);
-  const [gameLocation, setLocation] = useState("");
+  const [gameLocation, setLocation] = useState(game.location);
   const [gameSkillLevel, setSkillLevel] = useState(game.skill_level);
   const [chosenDate, setChosenDate] = useState(new Date(game.datetime * 1000));
   const [showError, setShowError] = useState(false);
