@@ -6,35 +6,33 @@ import {
   Rsvp,
   SkillLevel,
 } from "../src/models";
+import { DataStore, Auth } from "aws-amplify";
+import "@azure/core-asynciterator-polyfill";
 
 async function rsvp(gameId, playerId, newRsvp) {
-  const original = await DataStore.query(GamePlayer, (c) => c.and(c => [
-    c.game_id.eq(gameId),
-    c.player_id.eq(playerId)
-  ]));
+  const original = await DataStore.query(GamePlayer, (c) =>
+    c.and((c) => [c.game_id.eq(gameId), c.player_id.eq(playerId)])
+  );
 
   console.log("original: ", original);
-  
+
   if (original.length > 0 && original[0].rsvp != newRsvp) {
     try {
       const updatedGamePlayer = await DataStore.save(
-        GamePlayer.copyOf(original[0], updated => {
-          updated.rsvp = newRsvp
+        GamePlayer.copyOf(original[0], (updated) => {
+          updated.rsvp = newRsvp;
         })
       );
 
       return true;
-    }
-
-    catch (error) {
-
+    } catch (error) {
       console.log("error saving rsvp: ", error);
       return false;
     }
   }
 
   // user rsvp to a game he was not invited to
-  else if (original.length == 0){
+  else if (original.length == 0) {
     try {
       const gamePlayer = await DataStore.save(
         new GamePlayer({
@@ -49,7 +47,6 @@ async function rsvp(gameId, playerId, newRsvp) {
       console.log("error: ", error.message, "storing player: ", playerId);
     }
   }
-  
 }
 
 export default rsvp;

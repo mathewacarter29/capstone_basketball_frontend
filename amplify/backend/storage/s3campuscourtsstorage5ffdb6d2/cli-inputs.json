@@ -1,0 +1,16 @@
+{
+  "resourceName": "s3campuscourtsstorage5ffdb6d2",
+  "bucketName": "campuscourts-storage-5ffdb6d2",
+  "policyUUID": "2d85cfb1",
+  "storageAccess": "authAndGuest",
+  "guestAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ]
+}

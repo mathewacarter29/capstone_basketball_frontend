@@ -35,39 +35,49 @@ function GameDetails({ route, navigation }) {
 
   async function getInvitedPlayers() {
     let playerids = thisGame.invited_players;
-    console.log("player ids: ", playerids);
+    //console.log("player ids: ", playerids);
 
     acceptedPlayers = [];
     declinedPlayers = [];
 
     try {
       // let playerId = playerids[i];
-      const gamePlayers = await DataStore.query(GamePlayer, (c) => c.and(c => 
-        [c.game_id.eq(thisGame.id)]));
-      console.log("game player returned: ", gamePlayers);
+      const gamePlayers = await DataStore.query(GamePlayer, (c) =>
+        c.and((c) => [c.game_id.eq(thisGame.id)])
+      );
+      //console.log("game player returned: ", gamePlayers);
 
       for (let i = 0; i < gamePlayers.length; i++) {
-        console.log("gameplayer i", gamePlayers[i])
-        const players = await DataStore.query(Player, (c) => c.id.eq(gamePlayers[i].player_id));
+        //console.log("gameplayer i", gamePlayers[i])
+        const players = await DataStore.query(Player, (c) =>
+          c.id.eq(gamePlayers[i].player_id)
+        );
         const player = players[0];
         if (thisGame.invited_players.includes(player.id)) {
           if (gamePlayers[i].rsvp == Rsvp.ACCEPTED) {
-            acceptedPlayers.push({ id: player.id, name: player.name, status: "In" });
+            acceptedPlayers.push({
+              id: player.id,
+              name: player.name,
+              status: "In",
+            });
+          } else {
+            declinedPlayers.push({
+              id: player.id,
+              name: player.name,
+              status: "Out",
+            });
           }
-          else {
-            declinedPlayers.push({ id: player.id, name: player.name, status: "Out" });
-          }
-        }
-
-        else {
+        } else {
           if (gamePlayers[i].rsvp == Rsvp.ACCEPTED) {
-            acceptedPlayers.push({ id: player.id, name: player.name, status: "In" });
+            acceptedPlayers.push({
+              id: player.id,
+              name: player.name,
+              status: "In",
+            });
           }
         }
       }
-    }
-
-    catch (error) {
+    } catch (error) {
       console.log("error occured in finding", i, "ith game player rsvp");
       setShowError(true);
       setErrorMessage(`error occured in finding a game player rsvp`);
@@ -76,8 +86,8 @@ function GameDetails({ route, navigation }) {
     }
     return {
       accepted: acceptedPlayers,
-      declined: declinedPlayers
-    }
+      declined: declinedPlayers,
+    };
   }
 
   async function getGameOrganizer() {

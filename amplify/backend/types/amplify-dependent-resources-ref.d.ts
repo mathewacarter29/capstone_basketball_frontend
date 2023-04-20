@@ -1,13 +1,13 @@
 export type AmplifyDependentResourcesAttributes = {
   "api": {
-    "campuscourts": {
+    "CampusCourts": {
       "GraphQLAPIEndpointOutput": "string",
       "GraphQLAPIIdOutput": "string",
       "GraphQLAPIKeyOutput": "string"
     }
   },
   "auth": {
-    "campuscourts": {
+    "CampusCourts": {
       "AppClientID": "string",
       "AppClientIDWeb": "string",
       "CreatedSNSRole": "string",

@@ -2,17 +2,17 @@ import { ModelInit, MutableModel, __modelMeta__, ManagedIdentifier } from "@aws-
 // @ts-ignore
 import { LazyLoading, LazyLoadingDisabled } from "@aws-amplify/datastore";
 
-export enum SkillLevel {
-  BEGINNER = "BEGINNER",
-  INTERMEDIATE = "INTERMEDIATE",
-  EXPERIENCED = "EXPERIENCED",
-  ANY = "ANY"
-}
-
 export enum Rsvp {
   ACCEPTED = "ACCEPTED",
   DECLINED = "DECLINED",
   PENDING = "PENDING"
+}
+
+export enum SkillLevel {
+  ANY = "ANY",
+  BEGINNER = "BEGINNER",
+  INTERMEDIATE = "INTERMEDIATE",
+  EXPERIENCED = "EXPERIENCED"
 }
 
 
@@ -25,7 +25,7 @@ type EagerGamePlayer = {
   readonly id: string;
   readonly player_id: string;
   readonly game_id: string;
-  readonly rsvp?: Rsvp | keyof typeof Rsvp | null;
+  readonly rsvp: Rsvp | keyof typeof Rsvp;
   readonly invited?: boolean | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -39,7 +39,7 @@ type LazyGamePlayer = {
   readonly id: string;
   readonly player_id: string;
   readonly game_id: string;
-  readonly rsvp?: Rsvp | keyof typeof Rsvp | null;
+  readonly rsvp: Rsvp | keyof typeof Rsvp;
   readonly invited?: boolean | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -57,10 +57,10 @@ type EagerLocation = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
-  readonly latitude?: number | null;
-  readonly longitude?: number | null;
-  readonly name?: string | null;
-  readonly address?: string | null;
+  readonly name: string;
+  readonly address: string;
+  readonly latitude: number;
+  readonly longitude: number;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -71,10 +71,10 @@ type LazyLocation = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
-  readonly latitude?: number | null;
-  readonly longitude?: number | null;
-  readonly name?: string | null;
-  readonly address?: string | null;
+  readonly name: string;
+  readonly address: string;
+  readonly latitude: number;
+  readonly longitude: number;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -92,12 +92,14 @@ type EagerPlayer = {
   };
   readonly id: string;
   readonly name: string;
+  readonly email: string;
   readonly skill_level?: SkillLevel | keyof typeof SkillLevel | null;
-  readonly email?: string | null;
-  readonly phone_number: string;
+  readonly phone_number?: string | null;
+  readonly bio?: string | null;
   readonly instagram?: string | null;
   readonly twitter?: string | null;
-  readonly bio?: string | null;
+  readonly friends?: (string | null)[] | null;
+  readonly expo_notification_token?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -109,12 +111,14 @@ type LazyPlayer = {
   };
   readonly id: string;
   readonly name: string;
+  readonly email: string;
   readonly skill_level?: SkillLevel | keyof typeof SkillLevel | null;
-  readonly email?: string | null;
-  readonly phone_number: string;
+  readonly phone_number?: string | null;
+  readonly bio?: string | null;
   readonly instagram?: string | null;
   readonly twitter?: string | null;
-  readonly bio?: string | null;
+  readonly friends?: (string | null)[] | null;
+  readonly expo_notification_token?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -131,14 +135,13 @@ type EagerGame = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
-  readonly name?: string | null;
+  readonly name: string;
   readonly description?: string | null;
-  readonly location?: string | null;
-  readonly datetime?: number | null;
-  readonly skill_level?: SkillLevel | keyof typeof SkillLevel | null;
-  readonly organizer?: string | null;
+  readonly datetime: number;
+  readonly skill_level: SkillLevel | keyof typeof SkillLevel;
+  readonly organizer: string;
+  readonly location: string;
   readonly invited_players?: (string | null)[] | null;
-  readonly min_size?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -149,14 +152,13 @@ type LazyGame = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
-  readonly name?: string | null;
+  readonly name: string;
   readonly description?: string | null;
-  readonly location?: string | null;
-  readonly datetime?: number | null;
-  readonly skill_level?: SkillLevel | keyof typeof SkillLevel | null;
-  readonly organizer?: string | null;
+  readonly datetime: number;
+  readonly skill_level: SkillLevel | keyof typeof SkillLevel;
+  readonly organizer: string;
+  readonly location: string;
   readonly invited_players?: (string | null)[] | null;
-  readonly min_size?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

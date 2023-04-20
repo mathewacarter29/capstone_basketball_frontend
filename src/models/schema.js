@@ -30,7 +30,7 @@ export const schema = {
                     "type": {
                         "enum": "Rsvp"
                     },
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": []
                 },
                 "invited": {
@@ -92,32 +92,32 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "latitude": {
-                    "name": "latitude",
-                    "isArray": false,
-                    "type": "Float",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "longitude": {
-                    "name": "longitude",
-                    "isArray": false,
-                    "type": "Float",
-                    "isRequired": false,
-                    "attributes": []
-                },
                 "name": {
                     "name": "name",
                     "isArray": false,
                     "type": "String",
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": []
                 },
                 "address": {
                     "name": "address",
                     "isArray": false,
                     "type": "String",
-                    "isRequired": false,
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "latitude": {
+                    "name": "latitude",
+                    "isArray": false,
+                    "type": "Float",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "longitude": {
+                    "name": "longitude",
+                    "isArray": false,
+                    "type": "Float",
+                    "isRequired": true,
                     "attributes": []
                 },
                 "createdAt": {
@@ -179,6 +179,13 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
+                "email": {
+                    "name": "email",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
                 "skill_level": {
                     "name": "skill_level",
                     "isArray": false,
@@ -188,18 +195,18 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "email": {
-                    "name": "email",
+                "phone_number": {
+                    "name": "phone_number",
                     "isArray": false,
                     "type": "String",
                     "isRequired": false,
                     "attributes": []
                 },
-                "phone_number": {
-                    "name": "phone_number",
+                "bio": {
+                    "name": "bio",
                     "isArray": false,
                     "type": "String",
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": []
                 },
                 "instagram": {
@@ -216,8 +223,16 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "bio": {
-                    "name": "bio",
+                "friends": {
+                    "name": "friends",
+                    "isArray": true,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true
+                },
+                "expo_notification_token": {
+                    "name": "expo_notification_token",
                     "isArray": false,
                     "type": "String",
                     "isRequired": false,
@@ -279,7 +294,7 @@ export const schema = {
                     "name": "name",
                     "isArray": false,
                     "type": "String",
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": []
                 },
                 "description": {
@@ -289,18 +304,11 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "location": {
-                    "name": "location",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
                 "datetime": {
                     "name": "datetime",
                     "isArray": false,
                     "type": "AWSTimestamp",
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": []
                 },
                 "skill_level": {
@@ -309,14 +317,21 @@ export const schema = {
                     "type": {
                         "enum": "SkillLevel"
                     },
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": []
                 },
                 "organizer": {
                     "name": "organizer",
                     "isArray": false,
                     "type": "String",
-                    "isRequired": false,
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "location": {
+                    "name": "location",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
                     "attributes": []
                 },
                 "invited_players": {
@@ -326,13 +341,6 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "isArrayNullable": true
-                },
-                "min_size": {
-                    "name": "min_size",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
                 },
                 "createdAt": {
                     "name": "createdAt",
@@ -378,15 +386,6 @@ export const schema = {
         }
     },
     "enums": {
-        "SkillLevel": {
-            "name": "SkillLevel",
-            "values": [
-                "BEGINNER",
-                "INTERMEDIATE",
-                "EXPERIENCED",
-                "ANY"
-            ]
-        },
         "Rsvp": {
             "name": "Rsvp",
             "values": [
@@ -394,9 +393,18 @@ export const schema = {
                 "DECLINED",
                 "PENDING"
             ]
+        },
+        "SkillLevel": {
+            "name": "SkillLevel",
+            "values": [
+                "ANY",
+                "BEGINNER",
+                "INTERMEDIATE",
+                "EXPERIENCED"
+            ]
         }
     },
     "nonModels": {},
     "codegenVersion": "3.4.0",
-    "version": "2842792a8a4c717a3a9b7a59ebbf25ba"
+    "version": "7993672c796156aa4641e852546cfda5"
 };

@@ -57,13 +57,13 @@ function CreateGame({ route, navigation }) {
   async function getPlayers() {
     let toInvite = [];
     try {
-      const allPlayers = await DataStore.query(Player, (p) =>
-        p.email.ne(thisPlayer.email)
-      );
+      const allPlayers = await DataStore.query(Player);
+      // const allPlayers = await DataStore.query(Player, (p) =>
+      //   p.email.ne(thisPlayer.email)
       allPlayers.map((element) => {
         toInvite.push({ label: element.name, value: element.id });
       });
-      console.log("to invite: ", toInvite);
+      //console.log("to invite: ", toInvite);
       setToInvite(toInvite);
       return true;
     } catch (error) {
@@ -74,13 +74,16 @@ function CreateGame({ route, navigation }) {
       return false;
     }
   }
+
   useEffect(() => {
     // This needs to be async so we can wait for results before rendering
     (async () => {
       setLoading(true);
       // this will return if any function returns false
       // getPlayers() being false will shortcut to the return
-      if (!(await getPlayers()) && !(await getLocations())) return;
+      //if (!(await getPlayers()) && !(await getLocations())) return;
+      await getPlayers();
+      await getLocations();
       setLoading(false);
     })();
   }, []);
@@ -99,14 +102,14 @@ function CreateGame({ route, navigation }) {
         new Game({
           name: gameName ? gameName : "Pickup game at " + location.name,
           description: gameDescription,
-          location: gameLocation,
+          location: "McComas Hall",
           datetime: epochDate,
           skill_level: gameSkillLevel ? gameSkillLevel : SkillLevel.ANY,
           organizer: thisPlayer.id,
           invited_players: selectedPlayers,
         })
       );
-      console.log("Game created: ", game);
+      //console.log("Game created: ", game);
       return game;
     } catch (error) {
       setShowError(true);
@@ -115,6 +118,27 @@ function CreateGame({ route, navigation }) {
       setLoading(false);
       return;
     }
+  }
+
+  //method to send push notificatons for   game invitations
+  async function sendGameInvitationNotification(expoPushToken, invitedGame) {
+    const message = {
+      to: expoPushToken,
+      sound: "default",
+      title: "Game Invitation",
+      body: "You have been invited to a game!",
+      data: { item: { game: invitedGame, player: thisPlayer } },
+    };
+    //console.log(message);
+    await fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Accept-encoding": "gzip, deflate",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(message),
+    });
   }
 
   //saves game player that represents each and every game and player association
@@ -128,6 +152,15 @@ function CreateGame({ route, navigation }) {
             rsvp: Rsvp.PENDING,
             invited: true,
           })
+        );
+        //send invitation notifications now
+        //query player table to get the invited player and grab their expo token
+        const recepient = await DataStore.query(Player, selectedPlayers[i]);
+        //also send game information for routing
+        const invitedGame = await DataStore.query(Game, gameId);
+        sendGameInvitationNotification(
+          recepient.expo_notification_token,
+          invitedGame
         );
       } catch (error) {
         setLoading(false);
@@ -147,6 +180,7 @@ function CreateGame({ route, navigation }) {
 
   //function to create the game
   async function create() {
+    //console.log(thisPlayer);
     // do input validation BEFORE API calls
     //if no location is selected display error message
     if (gameLocation == "") {
@@ -171,7 +205,7 @@ function CreateGame({ route, navigation }) {
     let newGame = await storeGame();
     // NEED validation on if API calls go through before moving on to other API calls
     if (typeof newGame == "undefined") return;
-    console.log("New created game: ", newGame);
+    //console.log("New created game: ", newGame);
 
     if (!(await storeGamePlayers(newGame.id))) return;
 

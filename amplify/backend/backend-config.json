@@ -1,6 +1,6 @@
 {
   "api": {
-    "campuscourts": {
+    "CampusCourts": {
       "dependsOn": [],
       "output": {
         "authConfig": {
@@ -23,7 +23,7 @@
     }
   },
   "auth": {
-    "campuscourts": {
+    "CampusCourts": {
       "customAuth": false,
       "dependsOn": [],
       "frontendAuthConfig": {
@@ -40,8 +40,8 @@
           "passwordPolicyMinLength": 8
         },
         "signupAttributes": [
-          "NAME",
           "EMAIL",
+          "NAME",
           "PHONE_NUMBER"
         ],
         "socialProviders": [],

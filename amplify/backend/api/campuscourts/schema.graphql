@@ -1,51 +1,53 @@
-enum SkillLevel {
-  BEGINNER
-  INTERMEDIATE
-  EXPERIENCED
-  ANY
-}
-
 enum RSVP {
   ACCEPTED
   DECLINED
   PENDING
 }
 
-type GamePlayer @model @auth(rules: [{ allow: public }]) {
+type GamePlayer @model @auth(rules: [{allow: public}]) {
   id: ID!
   player_id: String!
   game_id: String!
-  rsvp: RSVP
+  rsvp: RSVP!
   invited: Boolean
 }
 
-type Location @model @auth(rules: [{ allow: public }]) {
-  id: ID!
-  latitude: Float
-  longitude: Float
-  name: String
-  address: String
-}
-
-type Player @model @auth(rules: [{ allow: public }]) {
+type Location @model @auth(rules: [{allow: public}]) {
   id: ID!
   name: String!
-  skill_level: SkillLevel
-  email: String
-  phone_number: String!
-  instagram: String
-  twitter: String
-  bio: String
+  address: String!
+  latitude: Float!
+  longitude: Float!
 }
 
-type Game @model @auth(rules: [{ allow: public }]) {
+type Player @model @auth(rules: [{allow: public}]) {
   id: ID!
-  name: String
-  description: String
-  location: String
-  datetime: AWSTimestamp
+  name: String!
+  email: String!
   skill_level: SkillLevel
-  organizer: String
-  invited_players: [String]
-  min_size: Int
+  phone_number: String
+  bio: String
+  instagram: String
+  twitter: String
+  friends: [String]
+  expo_notification_token: String
 }
+
+enum SkillLevel {
+  ANY
+  BEGINNER
+  INTERMEDIATE
+  EXPERIENCED
+}
+
+type Game @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String!
+  description: String
+  datetime: AWSTimestamp!
+  skill_level: SkillLevel!
+  organizer: String!
+  location: String!
+  invited_players: [String]
+}
+ 

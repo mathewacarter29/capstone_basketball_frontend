@@ -12,7 +12,6 @@ import EStyleSheet from "react-native-extended-stylesheet";
 import Game from "./Game";
 
 function GameFeed(props) {
-  //  console.log("props: ", props);
   return (
     <View style={styles.container}>
       <FlatList
@@ -22,7 +21,9 @@ function GameFeed(props) {
           </>
         }
         data={props.data.games}
-        renderItem={({ item }) => <Game item={{game: item, player: props.data.thisPlayer}} />}
+        renderItem={({ item }) => (
+          <Game item={{ game: item, player: props.data.thisPlayer }} />
+        )}
         keyExtractor={(item) => item.id}
       />
     </View>

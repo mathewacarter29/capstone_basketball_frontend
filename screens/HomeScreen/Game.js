@@ -3,17 +3,17 @@ import EStyleSheet from "react-native-extended-stylesheet";
 import { View, Text, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import rsvp from "../../utils/rsvp";
-import {epochToLocalDate} from '../../utils/TimeUtil';
-import {epochToLocalTime} from '../../utils/TimeUtil';
+import { epochToLocalDate } from "../../utils/TimeUtil";
+import { epochToLocalTime } from "../../utils/TimeUtil";
 
 function Game({ item }) {
   const navigation = useNavigation();
-  console.log("item: ", item);
+  //console.log("item: ", item);
   const thisGame = item.game;
   const thisPlayer = item.player;
 
   function clickedGame() {
-    console.log("navigating to game screen:", item.id);
+    console.log("navigating to game screen:", item);
     navigation.navigate("GameDetails", { item });
   }
 
@@ -36,31 +36,33 @@ function Game({ item }) {
         {epochToLocalTime(thisGame.datetime)}
       </Text>
 
-      {thisPlayer.id != thisGame.organizer && <View style={styles.row}>
-        <Text style={[styles.text, styles.bold]}>RSVP:</Text>
-        <View style={styles.line} />
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-around",
-            flex: 1,
-          }}
-        >
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: "lightgreen" }]}
-            onPress={() => rsvp("in", thisGame)}
-          >
-            <Text style={styles.text}>Accept</Text>
-          </TouchableOpacity>
+      {thisPlayer.id != thisGame.organizer && (
+        <View style={styles.row}>
+          <Text style={[styles.text, styles.bold]}>RSVP:</Text>
           <View style={styles.line} />
-          <TouchableOpacity
-            style={[styles.button, styles.redButton]}
-            onPress={() => rsvp("out", thisGame)}
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-around",
+              flex: 1,
+            }}
           >
-            <Text style={styles.text}>Reject</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, { backgroundColor: "lightgreen" }]}
+              onPress={() => rsvp("in", thisGame)}
+            >
+              <Text style={styles.text}>Accept</Text>
+            </TouchableOpacity>
+            <View style={styles.line} />
+            <TouchableOpacity
+              style={[styles.button, styles.redButton]}
+              onPress={() => rsvp("out", thisGame)}
+            >
+              <Text style={styles.text}>Reject</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>}
+      )}
     </TouchableOpacity>
   );
 }

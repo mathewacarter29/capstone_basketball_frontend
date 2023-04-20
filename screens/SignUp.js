@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { View, Text } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
 import Button from "../common/Button";
@@ -9,6 +9,40 @@ import Container from "../common/Container";
 import "@azure/core-asynciterator-polyfill";
 import { Player, SkillLevel } from "../src/models";
 import { DataStore } from "aws-amplify";
+import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
+
+async function registerForPushNotificationsAsync() {
+  let token;
+  if (Device.isDevice) {
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== "granted") {
+      alert("Failed to get push token for push notification!");
+      return;
+    }
+    token = (await Notifications.getExpoPushTokenAsync()).data;
+    console.log(token);
+  } else {
+    alert("Must use physical device for Push Notifications");
+  }
+
+  if (Platform.OS === "android") {
+    Notifications.setNotificationChannelAsync("default", {
+      name: "default",
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: "#FF231F7C",
+    });
+  }
+
+  return token;
+}
 
 function SignIn({ navigation }) {
   const [name, setName] = useState("");
@@ -19,6 +53,14 @@ function SignIn({ navigation }) {
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [expoPushToken, setExpoPushToken] = useState("");
+
+  //generate and set expo token for the newly created user
+  useEffect(() => {
+    registerForPushNotificationsAsync().then((token) =>
+      setExpoPushToken(token)
+    );
+  }, []);
 
   async function signup() {
     // make sure no fields are empty
@@ -52,6 +94,8 @@ function SignIn({ navigation }) {
       setErrorMessage("Passwords do not match - please re-enter");
       return;
     }
+
+    //check if expo notification token was generated
     try {
       setLoading(true);
       const player = await DataStore.save(
@@ -63,6 +107,7 @@ function SignIn({ navigation }) {
           instagram: "String",
           twitter: "String",
           bio: "String",
+          expo_notification_token: expoPushToken,
         })
       );
       console.log("Player saved successfully!", player);

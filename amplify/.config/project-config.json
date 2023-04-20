@@ -1,6 +1,8 @@
 {
-  "providers": ["awscloudformation"],
-  "projectName": "campuscourts",
+  "providers": [
+    "awscloudformation"
+  ],
+  "projectName": "CampusCourts",
   "version": "3.1",
   "frontend": "javascript",
   "javascript": {
