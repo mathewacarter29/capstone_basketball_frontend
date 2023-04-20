@@ -119,16 +119,16 @@ function UpdateGame({ route, navigation }) {
       setErrorMessage("Error updating game details");
       setShowError(true);
       setLoading(false);
-      console.log("Error updating game details");
+      console.log("Error updating game details: ", error);
     }
 
     
   }
 
   async function storeGamePlayers(gameId) {
+    // filter players we already invited
+    const filteredToInvite = selectedPlayers.filter((player) => !game.invited_players.includes(player));
 
-    const filteredToInvite = toInvite.filter((player) => !invitedPlayers.includes(player));
-    
     for (let i = 0; i < filteredToInvite.length; i++) {
       try {
         const gamePlayer = await DataStore.save(
