@@ -175,7 +175,7 @@ function GameDetails({ route, navigation }) {
   );
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={{flex: 1, justifyContent:"flex-start"}}>
       <TopNavigation
         alignment="center"
         title="Game Details"
@@ -246,6 +246,7 @@ function GameDetails({ route, navigation }) {
       </View>
       )}
       {showError && <ErrorPopup errorMessage={errorMessage} />}
+
     </SafeAreaView>
   );
 }
@@ -261,6 +262,7 @@ const styles = EStyleSheet.create({
   container: {
     margin: "1rem",
     maxHeight: "40%",
+    flexGrow: "0",
   },
   bold: {
     fontWeight: "bold",
