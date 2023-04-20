@@ -17,6 +17,7 @@ import {
   SkillLevel,
 } from "../src/models";
 import ErrorPopup from "../common/ErrorPopup";
+import rsvp from "../utils/rsvp";
 // import getPlayers from "../utils/Players";
 // import getLocations from "../utils/Locations";
 import "@azure/core-asynciterator-polyfill";
@@ -103,10 +104,11 @@ function UpdateGame({ route, navigation }) {
           (updated.name = gameName),
             (updated.description = gameDescription),
             (updated.skill_level = gameSkillLevel),
-            (updated.datetime = epochDate);
+            (updated.datetime = epochDate),
+            (updated.invited_players = selectedPlayers);
         })
       );
-      
+      console.log("updated game: ", updatedGame);
       if (!(await storeGamePlayers(updatedGame.id))) return;
       let item = {
         game: updatedGame,
@@ -128,27 +130,38 @@ function UpdateGame({ route, navigation }) {
   async function storeGamePlayers(gameId) {
     // filter players we already invited
     const filteredToInvite = selectedPlayers.filter((player) => !game.invited_players.includes(player));
-
+    console.log("original invited players: ", game.invited_players)
+    console.log("selected players: ", selectedPlayers);
+    console.log("filtered to invirte: ", filteredToInvite);
     for (let i = 0; i < filteredToInvite.length; i++) {
       try {
-        const gamePlayer = await DataStore.save(
-          new GamePlayer({
-            player_id: filteredToInvite[i],
-            game_id: gameId,
-            rsvp: Rsvp.PENDING,
-            invited: true,
-          })
+        // player's original RSVP
+        const original = await DataStore.query(GamePlayer, (c) =>
+          c.and((c) => [c.game_id.eq(gameId), c.player_id.eq(filteredToInvite[i])])
         );
+    
+        console.log("Original game Player object: ", original);
+    
+        // its possible that the player already rsvp'd
+        if (original.length > 0 && original[0].rsvp != newRsvp) {
+          continue;
+        }
+    
+        // user rsvp to a game he was not invited to
+        else if (original.length == 0){
+          const gamePlayer = await DataStore.save(
+            new GamePlayer({
+              player_id: filteredToInvite[i],
+              game_id: gameId,
+              rsvp: newRsvp,
+              invited: true,
+            })
+          );
+          console.log("Saved game player: ", gamePlayer);
+          return true;
+        }
       } catch (error) {
-
-        setShowError(true);
-        console.log(
-          "error: ",
-          error.message,
-          "storing player: ",
-          filteredToInvite[i]
-        );
-        setErrorMessage(`Error storing player: ${filteredToInvite[i]}`);
+        console.log("error retrieving game player: ", error.message);
         return false;
       }
     }
