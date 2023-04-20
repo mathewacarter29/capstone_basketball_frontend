@@ -48,16 +48,18 @@ function Game({ item }) {
       <View style={{ alignItems: "center", flexDirection: "row" }}>
         <Text style={{ fontWeight: "bold" }}>RSVP:</Text>
 
-        <ButtonGroup style={{ justifyContent: "center", margin: "5%" }}>
+        <ButtonGroup
+          style={{ justifyContent: "center", margin: "5%", width: "90%" }}
+        >
           <Button
-            style={{ backgroundColor: "#3D9B2C" }}
+            style={{ backgroundColor: "#3D9B2C", width: "40%" }}
             onPress={() => rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED)}
           >
             Accept
           </Button>
 
           <Button
-            style={{ backgroundColor: "#B74840" }}
+            style={{ backgroundColor: "#B74840", width: "40%" }}
             onPress={() => rsvp(thisGame.id, thisPlayer.id, Rsvp.DECLINED)}
           >
             Reject

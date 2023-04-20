@@ -19,11 +19,7 @@ import {
   Rsvp,
   SkillLevel,
 } from "../src/models";
-import {
-  ScrollView,
-  SafeAreaView,
-  View
-} from "react-native";
+import { ScrollView, SafeAreaView, View } from "react-native";
 import {
   Text,
   TopNavigation,
@@ -114,7 +110,7 @@ function GameDetails({ route, navigation }) {
 
       const invitedPlayersRes = await getInvitedPlayers();
       if (typeof invitedPlayersRes === "undefined") return;
-      console.log("invtedPlayers:",  invitedPlayersRes)
+      console.log("invtedPlayers:", invitedPlayersRes);
       setStatuses(invitedPlayersRes);
       setLoading(false);
     })();
@@ -175,7 +171,7 @@ function GameDetails({ route, navigation }) {
   );
 
   return (
-    <SafeAreaView style={{flex: 1, justifyContent:"flex-start"}}>
+    <SafeAreaView style={{ flex: 1, justifyContent: "flex-start" }}>
       <TopNavigation
         alignment="center"
         title="Game Details"
@@ -225,14 +221,14 @@ function GameDetails({ route, navigation }) {
 
       <ButtonGroup style={{ justifyContent: "center", marginTop: "5%" }}>
         <Button
-          style={{ backgroundColor: "#3D9B2C" }}
+          style={{ backgroundColor: "#3D9B2C", width: "40%" }}
           onPress={() => rsvp("in", details)}
         >
           Accept
         </Button>
 
         <Button
-          style={{ backgroundColor: "#B74840" }}
+          style={{ backgroundColor: "#B74840", width: "40%" }}
           onPress={() => rsvp("out", details)}
         >
           Reject
@@ -241,12 +237,15 @@ function GameDetails({ route, navigation }) {
 
       {isGameOwner() && (
         <View>
-        <Button style={{ margin: "2%" }} onPress={handleEdit}>Edit Game Details</Button>
-        <Button style={{ margin: "2%" }} onPress={handleDelete}>Delete Game</Button>
-      </View>
+          <Button style={{ margin: "2%" }} onPress={handleEdit}>
+            Edit Game Details
+          </Button>
+          <Button style={{ margin: "2%" }} onPress={handleDelete}>
+            Delete Game
+          </Button>
+        </View>
       )}
       {showError && <ErrorPopup errorMessage={errorMessage} />}
-
     </SafeAreaView>
   );
 }

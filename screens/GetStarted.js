@@ -15,7 +15,7 @@ function GetStarted({ navigation }) {
         Plan your next basketball game with CampusCourts
       </Text>
 
-      <Text style={[styles.text, styles.subtitle]} category="p1">
+      <Text style={[styles.text, styles.subtitle]} category="h6">
         An easy way to plan pickup basketball games and join a whole new
         community
       </Text>
