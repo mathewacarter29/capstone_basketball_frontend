@@ -38,7 +38,7 @@ const ProfileIcon = (props) => <Icon {...props} name="person-outline" />;
 function HomeScreen({ navigation }) {
   const [games, setGames] = useState([]);
   const [userGames, setUserGames] = useState([]);
-  const [playerGames, setPlayerGames] = useState([]);
+  // const [playerGames, setPlayerGames] = useState([]);
   const [loading, setLoading] = useState(false);
   const [thisPlayer, setThisPlayer] = useState([]);
 
@@ -60,13 +60,13 @@ function HomeScreen({ navigation }) {
         gp.player_id.eq(player.id)
       );
       const userGameIds = gamePlayers.map((gamePlayer) => {
-        return gamePlayer.id;
+        return gamePlayer.game_id;
       });
       const userGames = allGames.filter((game) => {
         return userGameIds.includes(game.id);
       });
 
-      setPlayerGames(userGames);
+      setUserGames(userGames);
     } catch (error) {
       setLoading(false);
       console.log(error.message);
@@ -133,9 +133,11 @@ function HomeScreen({ navigation }) {
 
       {/* RENDER LOCATION / FEED*/}
       <View style={styles.innerContainer}>
-        {middleView == "Game Feed" && (
-          <GameFeed data={{ games: games, thisPlayer: thisPlayer }} />
-        )}
+        {middleView == "Game Feed" ? 
+          <GameFeed data={{ games: games, thisPlayer: thisPlayer }} /> 
+          :
+          <GameFeed data={{ games: userGames, thisPlayer: thisPlayer }} /> 
+        }
         {middleView == "Map View" && <MapScreen />}
       </View>
 
@@ -151,6 +153,12 @@ function HomeScreen({ navigation }) {
           style={[middleView == "Game Feed" ? styles.selected : styles.nav]}
         >
           <Text>Game Feed</Text>
+        </Button>
+        <Button
+          onPress={() => setMiddleView("Your Games")}
+          style={[middleView == "Your Games" ? styles.selected : styles.nav]}
+        >
+          <Text>Your Games</Text>
         </Button>
       </ButtonGroup>
     </SafeAreaView>
