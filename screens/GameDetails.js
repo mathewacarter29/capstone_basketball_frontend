@@ -177,7 +177,7 @@ function GameDetails({ route, navigation }) {
         title="Game Details"
         accessoryLeft={renderBackAction}
       />
-
+      {loading && <LoadingScreen />}
       <ScrollView style={styles.container}>
         <Card>
           <Text style={styles.topText} category="h3">
@@ -222,14 +222,37 @@ function GameDetails({ route, navigation }) {
       <ButtonGroup style={{ justifyContent: "center", marginTop: "5%" }}>
         <Button
           style={{ backgroundColor: "#3D9B2C", width: "40%" }}
-          onPress={() => rsvp("in", details)}
+          onPress={async () => {
+            setLoading(true);
+            let success = await rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED)
+            if (success) {
+              const invitedPlayersRes = await getInvitedPlayers();
+              setStatuses(invitedPlayersRes);
+              
+            } else {
+              setErrorMessage("Error saving RSVP.");
+              setShowError(true);
+            }
+            setLoading(false);
+          }}
         >
           Accept
         </Button>
 
         <Button
           style={{ backgroundColor: "#B74840", width: "40%" }}
-          onPress={() => rsvp("out", details)}
+          onPress={async () => {
+            setLoading(true);
+            if (!(await rsvp(thisGame.id, thisPlayer.id, Rsvp.DECLINED))) {
+              setErrorMessage("Error saving RSVP.");
+              setShowError(true);
+            } else {
+              const invitedPlayersRes = await getInvitedPlayers();
+              setStatuses(invitedPlayersRes);
+            }
+            setShowError(false);
+            setLoading(false);
+          }}
         >
           Reject
         </Button>
