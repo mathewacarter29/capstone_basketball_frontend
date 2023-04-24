@@ -116,58 +116,59 @@ function SignIn({ navigation }) {
         title="Sign Up"
         accessoryLeft={renderBackAction}
       />
+      <ScrollView contentContainerStyle={styles.contentContainer}>
+        <View style={{ alignItems: "center" }}>
+          <Text style={{ textAlign: "center", margin: "2%" }} category="h1">
+            Lets play some Basketball!
+          </Text>
 
-      <View style={{ alignItems: "center" }}>
-        <Text style={{ textAlign: "center", margin: "2%" }} category="h1">
-          Lets play some Basketball!
-        </Text>
+          <TextInput
+            value={name}
+            placeholder="Enter your full name"
+            onChangeText={(text) => setName(text)}
+          ></TextInput>
 
-        <TextInput
-          value={name}
-          placeholder="Enter your full name"
-          onChangeText={(text) => setName(text)}
-        ></TextInput>
+          <TextInput
+            value={email}
+            placeholder="Enter your email"
+            onChangeText={(text) => setEmail(text)}
+          ></TextInput>
 
-        <TextInput
-          value={email}
-          placeholder="Enter your email"
-          onChangeText={(text) => setEmail(text)}
-        ></TextInput>
+          <TextInput
+            value={phone}
+            keyboardType="numeric"
+            placeholder="Enter your phone number"
+            onChangeText={(text) => setPhone(text)}
+          ></TextInput>
 
-        <TextInput
-          value={phone}
-          keyboardType="numeric"
-          placeholder="Enter your phone number"
-          onChangeText={(text) => setPhone(text)}
-        ></TextInput>
+          <TextInput
+            value={password}
+            placeholder="Enter your password"
+            onChangeText={(text) => setPassword(text)}
+            secureTextEntry
+          ></TextInput>
 
-        <TextInput
-          value={password}
-          placeholder="Enter your password"
-          onChangeText={(text) => setPassword(text)}
-          secureTextEntry
-        ></TextInput>
+          <TextInput
+            value={confirm}
+            placeholder="Confirm your password"
+            onChangeText={(text) => setConfirm(text)}
+            secureTextEntry
+          ></TextInput>
 
-        <TextInput
-          value={confirm}
-          placeholder="Confirm your password"
-          onChangeText={(text) => setConfirm(text)}
-          secureTextEntry
-        ></TextInput>
+          <Button onPress={() => signup()} style={{ margin: "2%" }}>
+            Sign Up!
+          </Button>
 
-        <Button onPress={() => signup()} style={{ margin: "2%" }}>
-          Sign Up!
-        </Button>
+          <Text
+            style={styles.clickableText}
+            onPress={() => navigation.navigate("EmailVerification")}
+          >
+            I was sent a verification code - verify my account
+          </Text>
 
-        <Text
-          style={styles.clickableText}
-          onPress={() => navigation.navigate("EmailVerification")}
-        >
-          I was sent a verification code - verify my account
-        </Text>
-
-        {showError && <ErrorPopup errorMessage={errorMessage} />}
-      </View>
+          {showError && <ErrorPopup errorMessage={errorMessage} />}
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -175,6 +176,10 @@ function SignIn({ navigation }) {
 const styles = EStyleSheet.create({
   container: {
     flex: 1,
+  },
+  contentContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
   },
   clickableText: {
     color: "darkorange",

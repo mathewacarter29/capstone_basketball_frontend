@@ -7,7 +7,7 @@ import "@azure/core-asynciterator-polyfill";
 import ErrorPopup from "../common/ErrorPopup";
 import TextInput from "../common/TextInput";
 
-import { Keyboard, Image, SafeAreaView, View } from "react-native";
+import { Keyboard, Image, SafeAreaView, ScrollView, View } from "react-native";
 import {
   Text,
   Button,
@@ -71,33 +71,34 @@ function LogIn({ navigation }) {
         title="Login"
         accessoryLeft={renderBackAction}
       />
+      <ScrollView contentContainerStyle={styles.contentContainer}>
+        <View style={{ alignItems: "center" }}>
+          <Text style={[styles.text, styles.title]} category="h1">
+            Welcome Back!
+          </Text>
 
-      <View style={{ alignItems: "center" }}>
-        <Text style={[styles.text, styles.title]} category="h1">
-          Welcome Back!
-        </Text>
+          <Image source={require("../assets/basketballPlayerArms.png")} />
 
-        <Image source={require("../assets/basketballPlayerArms.png")} />
+          <TextInput
+            value={username}
+            placeholder="Enter your email"
+            onChangeText={(text) => setUsername(text)}
+          ></TextInput>
 
-        <TextInput
-          value={username}
-          placeholder="Enter your email"
-          onChangeText={(text) => setUsername(text)}
-        ></TextInput>
+          <TextInput
+            value={password}
+            placeholder="Enter your password"
+            onChangeText={(text) => setPassword(text)}
+            secureTextEntry
+          ></TextInput>
 
-        <TextInput
-          value={password}
-          placeholder="Enter your password"
-          onChangeText={(text) => setPassword(text)}
-          secureTextEntry
-        ></TextInput>
+          <Button title="Log In" onPress={() => login()}>
+            Log In
+          </Button>
 
-        <Button title="Log In" onPress={() => login()}>
-          Log In
-        </Button>
-
-        {showError && <ErrorPopup errorMessage={errorMessage} />}
-      </View>
+          {showError && <ErrorPopup errorMessage={errorMessage} />}
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -105,6 +106,10 @@ function LogIn({ navigation }) {
 const styles = EStyleSheet.create({
   container: {
     flex: 1,
+  },
+  contentContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
   },
   title: {
     margin: "1rem",

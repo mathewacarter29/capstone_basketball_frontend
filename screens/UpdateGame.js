@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, SafeAreaView } from "react-native";
+import { View, SafeAreaView, ScrollView } from "react-native";
 import EStyleSheet, { value } from "react-native-extended-stylesheet";
 import { MultiSelect } from "react-native-element-dropdown";
 // import Button from "../common/Button";
@@ -42,7 +42,7 @@ function UpdateGame({ route, navigation }) {
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [locations, setLocations] = useState([]);
-  const [selectedPlayers, setSelected] = useState();
+  const [selectedPlayers, setSelected] = useState([]);
 
   useEffect(() => {
     // This needs to be async so we can wait for results before rendering
@@ -152,66 +152,68 @@ function UpdateGame({ route, navigation }) {
         title="Update Game"
         accessoryLeft={renderBackAction}
       />
-      <View style={styles.container}>
-        <Text style={styles.text}>Update {gameName}</Text>
-        <TextInput
-          value={gameName}
-          placeholder="Enter a name for the game"
-          onChangeText={(text) => setGameName(text)}
-        ></TextInput>
-        <TextInput
-          value={gameDescription}
-          placeholder="Enter a description for the game"
-          onChangeText={(text) => setGameDescription(text)}
-        ></TextInput>
-        <RNPickerSelect
-          value={gameLocation}
-          onValueChange={(value) => setLocation(value)}
-          placeholder={{ label: "Please select a location", value: null }}
-          items={locations}
-          style={customPickerStyles}
-        />
-        <RNPickerSelect
-          value={gameSkillLevel}
-          onValueChange={(value) => setSkillLevel(value)}
-          placeholder={{ label: "Please select a skill level", value: null }}
-          items={[
-            { label: "Beginner", value: SkillLevel.BEGINNER },
-            { label: "Intermediate", value: SkillLevel.INTERMEDIATE },
-            { label: "Experienced", value: SkillLevel.EXPERIENCED },
-            { label: "Any", value: SkillLevel.ANY },
-          ]}
-          style={customPickerStyles}
-        />
-        <MultiSelect
-          style={multiSelectStyles.dropdown}
-          placeholderStyle={multiSelectStyles.placeholderStyle}
-          selectedTextStyle={multiSelectStyles.selectedTextStyle}
-          inputSearchStyle={multiSelectStyles.inputSearchStyle}
-          iconStyle={multiSelectStyles.iconStyle}
-          search
-          data={toInvite}
-          labelField="label"
-          valueField="value"
-          placeholder="Invite more players"
-          searchPlaceholder="Search..."
-          value={selectedPlayers}
-          onChange={(item) => {
-            setSelected(item);
-          }}
-          selectedStyle={multiSelectStyles.selectedStyle}
-        />
-        <Text style={styles.otherText}>Enter date and time for the game</Text>
-        <RNDateTimePicker
-          mode="datetime"
-          style={styles.datetimepicker}
-          value={chosenDate}
-          onChange={changeSelectedDate}
-        />
-        <Button onPress={update}>Update Game</Button>
-        {showError && <ErrorPopup errorMessage={errorMessage} />}
-      </View>
-      <View style={{ flex: 1, backgroundColor: "lightgray" }}></View>
+      <ScrollView contentContainerStyle={styles.contentContainer}>
+        <View style={styles.container}>
+          <Text style={styles.text}>Update {gameName}</Text>
+          <TextInput
+            value={gameName}
+            placeholder="Enter a name for the game"
+            onChangeText={(text) => setGameName(text)}
+          ></TextInput>
+          <TextInput
+            value={gameDescription}
+            placeholder="Enter a description for the game"
+            onChangeText={(text) => setGameDescription(text)}
+          ></TextInput>
+          <RNPickerSelect
+            value={gameLocation}
+            onValueChange={(value) => setLocation(value)}
+            placeholder={{ label: "Please select a location", value: null }}
+            items={locations}
+            style={customPickerStyles}
+          />
+          <RNPickerSelect
+            value={gameSkillLevel}
+            onValueChange={(value) => setSkillLevel(value)}
+            placeholder={{ label: "Please select a skill level", value: null }}
+            items={[
+              { label: "Beginner", value: SkillLevel.BEGINNER },
+              { label: "Intermediate", value: SkillLevel.INTERMEDIATE },
+              { label: "Experienced", value: SkillLevel.EXPERIENCED },
+              { label: "Any", value: SkillLevel.ANY },
+            ]}
+            style={customPickerStyles}
+          />
+          <MultiSelect
+            style={multiSelectStyles.dropdown}
+            placeholderStyle={multiSelectStyles.placeholderStyle}
+            selectedTextStyle={multiSelectStyles.selectedTextStyle}
+            inputSearchStyle={multiSelectStyles.inputSearchStyle}
+            iconStyle={multiSelectStyles.iconStyle}
+            search
+            data={toInvite}
+            labelField="label"
+            valueField="value"
+            placeholder="Invite more players"
+            searchPlaceholder="Search..."
+            value={selectedPlayers}
+            onChange={(item) => {
+              setSelected(item);
+            }}
+            selectedStyle={multiSelectStyles.selectedStyle}
+          />
+          <Text style={styles.otherText}>Enter date and time for the game</Text>
+          <RNDateTimePicker
+            mode="datetime"
+            style={styles.datetimepicker}
+            value={chosenDate}
+            onChange={changeSelectedDate}
+          />
+          <Button onPress={update}>Update Game</Button>
+          {showError && <ErrorPopup errorMessage={errorMessage} />}
+        </View>
+        </ScrollView>
+        <View style={{ flex: 1, backgroundColor: "lightgray" }}></View>
       </SafeAreaView>
   );
 }
@@ -221,6 +223,10 @@ const styles = EStyleSheet.create({
     alignItems: "center",
     paddingTop: "2rem",
     justifyContent: "flex-end",
+  },
+  contentContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
   },
   text: {
     margin: ".2rem",
