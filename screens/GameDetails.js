@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Auth } from "aws-amplify";
 import EStyleSheet from "react-native-extended-stylesheet";
-import { View, Text, TouchableOpacity, FlatList } from "react-native";
-import Button from "../common/Button";
-import BackArrow from "../common/BackArrow";
+
+import { Auth } from "aws-amplify";
 import { DataStore } from "aws-amplify";
 import "@azure/core-asynciterator-polyfill";
+
+import rsvp from "../utils/rsvp";
+import { epochToLocalDate } from "../utils/TimeUtil";
+import { epochToLocalTime } from "../utils/TimeUtil";
+import LoadingScreen from "../common/LoadingScreen";
+import ErrorPopup from "../common/ErrorPopup";
+
 import {
   Player,
   Game,
@@ -14,80 +19,67 @@ import {
   Rsvp,
   SkillLevel,
 } from "../src/models";
+import { ScrollView, SafeAreaView, View } from "react-native";
+import {
+  Text,
+  TopNavigation,
+  TopNavigationAction,
+  Icon,
+  Card,
+  List,
+  Divider,
+  Button,
+  ButtonGroup,
+} from "@ui-kitten/components";
 
-import { epochToLocalDate } from "../utils/TimeUtil";
-import { epochToLocalTime } from "../utils/TimeUtil";
-import rsvp from "../utils/rsvp";
-import LoadingScreen from "../common/LoadingScreen";
-import ErrorPopup from "../common/ErrorPopup";
-
+const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 function GameDetails({ route, navigation }) {
   const details = route.params.item;
   const thisPlayer = details.player;
   const thisGame = details.game;
 
   const [loading, setLoading] = useState(false);
-  const [accepted, setAccepted] = useState([]);
-  const [declined, setDeclined] = useState([]);
+  const [statuses, setStatuses] = useState({ accepted: [], declined: [] });
   const [gameOrganizer, setGameOrganizer] = useState([]);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   async function getInvitedPlayers() {
     let playerids = thisGame.invited_players;
-    //console.log("player ids: ", playerids);
-
-    acceptedPlayers = [];
-    declinedPlayers = [];
+    playerStatuses = [];
 
     try {
       // let playerId = playerids[i];
       const gamePlayers = await DataStore.query(GamePlayer, (c) =>
         c.and((c) => [c.game_id.eq(thisGame.id)])
       );
-      //console.log("game player returned: ", gamePlayers);
 
       for (let i = 0; i < gamePlayers.length; i++) {
-        //console.log("gameplayer i", gamePlayers[i])
         const players = await DataStore.query(Player, (c) =>
           c.id.eq(gamePlayers[i].player_id)
         );
         const player = players[0];
-        if (thisGame.invited_players.includes(player.id)) {
-          if (gamePlayers[i].rsvp == Rsvp.ACCEPTED) {
-            acceptedPlayers.push({
-              id: player.id,
-              name: player.name,
-              status: "In",
-            });
-          } else {
-            declinedPlayers.push({
-              id: player.id,
-              name: player.name,
-              status: "Out",
-            });
-          }
+        if (gamePlayers[i].rsvp == Rsvp.ACCEPTED) {
+          playerStatuses.push({
+            id: player.id,
+            name: player.name,
+            status: "In",
+          });
         } else {
-          if (gamePlayers[i].rsvp == Rsvp.ACCEPTED) {
-            acceptedPlayers.push({
-              id: player.id,
-              name: player.name,
-              status: "In",
-            });
-          }
+          playerStatuses.push({
+            id: player.id,
+            name: player.name,
+            status: "Out",
+          });
         }
       }
     } catch (error) {
-      console.log("error occured in finding", i, "ith game player rsvp");
       setShowError(true);
       setErrorMessage(`error occured in finding a game player rsvp`);
       setLoading(false);
       return;
     }
-    return {
-      accepted: acceptedPlayers,
-      declined: declinedPlayers,
-    };
+    return playerStatuses;
   }
 
   async function getGameOrganizer() {
@@ -96,7 +88,6 @@ function GameDetails({ route, navigation }) {
     } else {
       try {
         const organizer = await DataStore.query(Player, thisGame.organizer);
-        console.log("organizer returned: ", organizer);
         return organizer.name;
       } catch (error) {
         console.log("error getting organizer");
@@ -119,9 +110,8 @@ function GameDetails({ route, navigation }) {
 
       const invitedPlayersRes = await getInvitedPlayers();
       if (typeof invitedPlayersRes === "undefined") return;
-      setAccepted(invitedPlayersRes.accepted);
-      setDeclined(invitedPlayersRes.declined);
-
+      console.log("invtedPlayers:", invitedPlayersRes);
+      setStatuses(invitedPlayersRes);
       setLoading(false);
     })();
   }, []);
@@ -172,144 +162,133 @@ function GameDetails({ route, navigation }) {
     }
   }
 
-  return (
-    <View style={styles.container}>
-      <BackArrow location="HomeScreen" />
-      {loading && <LoadingScreen />}
-      <View style={styles.infoContainer}>
-        <Text style={styles.topText}>{thisGame.name}</Text>
-        <Text style={styles.text}>
-          <Text style={styles.bold}>Date: </Text>
-          {epochToLocalDate(thisGame.datetime)}
-        </Text>
-        <Text style={styles.text}>
-          <Text style={styles.bold}>Location: </Text>
-          {thisGame.location}
-        </Text>
-        <Text style={styles.text}>
-          <Text style={styles.bold}>Time: </Text>
-          {epochToLocalTime(thisGame.datetime)}
-        </Text>
-        <Text style={styles.text}>
-          <Text style={styles.bold}>Organizer: </Text>
-          {loading ? "Loading..." : gameOrganizer}
-        </Text>
-        {showDescription() && (
-          <Text style={styles.text}>
-            <Text style={styles.bold}>Description: </Text>
-            {thisGame.description}
-          </Text>
-        )}
-      </View>
-      <View style={[styles.infoContainer, styles.acceptedContainer]}>
-        <FlatList
-          ListHeaderComponent={
-            <>
-              <Text style={[styles.text, styles.bold]}>Players Attending</Text>
-            </>
-          }
-          data={[...accepted, ...declined]}
-          renderItem={renderItem}
-        />
-      </View>
-      {!isGameOwner() ? (
-        <View style={styles.row}>
-          <Text style={[styles.text, styles.bold]}>RSVP:</Text>
-          <View style={styles.line} />
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-around",
-              flex: 1,
-            }}
-          >
-            <TouchableOpacity
-              style={[styles.button, { backgroundColor: "lightgreen" }]}
-              onPress={() => rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED)}
-            >
-              <Text style={styles.text}>Accept</Text>
-            </TouchableOpacity>
-            <View style={styles.line} />
-            <TouchableOpacity
-              style={[styles.button, styles.redButton]}
-              onPress={() => {
-                setLoading(true);
-                if (!rsvp(thisGame.id, thisPlayer.id, Rsvp.DECLINED)) {
-                  setErrorMessage("Error saving RSVP.");
-                  setShowError(true);
-                }
+  const navigateBack = () => {
+    navigation.navigate("HomeScreen");
+  };
 
-                setLoading(false);
-              }}
-            >
-              <Text style={styles.text}>Reject</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      ) : (
-        <View style={styles.buttonContainer}>
-          <Button title="Edit Game Details" onPress={handleEdit} />
-          <Button title="Delete Game" onPress={handleDelete} />
+  const renderBackAction = () => (
+    <TopNavigationAction icon={BackIcon} onPress={navigateBack} />
+  );
+
+  return (
+    <SafeAreaView style={{ flex: 1, justifyContent: "flex-start" }}>
+      <TopNavigation
+        alignment="center"
+        title="Game Details"
+        accessoryLeft={renderBackAction}
+      />
+      {loading && <LoadingScreen />}
+      <ScrollView style={styles.container}>
+        <Card>
+          <Text style={styles.topText} category="h3">
+            {thisGame.name}
+          </Text>
+          <Text style={styles.text}>
+            <Text style={styles.bold}>Date: </Text>
+            {epochToLocalDate(thisGame.datetime)}
+          </Text>
+          <Text style={styles.text}>
+            <Text style={styles.bold}>Location: </Text>
+            {thisGame.location}
+          </Text>
+          <Text style={styles.text}>
+            <Text style={styles.bold}>Time: </Text>
+            {epochToLocalTime(thisGame.datetime)}
+          </Text>
+          <Text style={styles.text}>
+            <Text style={styles.bold}>Organizer: </Text>
+            {loading ? "Loading..." : gameOrganizer}
+          </Text>
+          {showDescription() && (
+            <Text style={styles.text}>
+              <Text style={styles.bold}>Description: </Text>
+              {thisGame.description}
+            </Text>
+          )}
+        </Card>
+      </ScrollView>
+
+      <View style={{ maxHeight: "25%" }}>
+        <Text style={styles.topText} category="h6">
+          Attending Players
+        </Text>
+        <List
+          data={statuses}
+          ItemSeparatorComponent={Divider}
+          renderItem={renderItem}
+        ></List>
+      </View>
+
+      <ButtonGroup style={{ justifyContent: "center", marginTop: "5%" }}>
+        <Button
+          style={{ backgroundColor: "#3D9B2C", width: "40%" }}
+          onPress={async () => {
+            setLoading(true);
+            //let success = await rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED)
+            if ((await rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED))) {
+              const invitedPlayersRes = await getInvitedPlayers();
+              setStatuses(invitedPlayersRes);
+              
+            } else {
+              setErrorMessage("Error saving RSVP.");
+              setShowError(true);
+            }
+            setLoading(false);
+            setShowError(false);
+          }}
+        >
+          Accept
+        </Button>
+
+        <Button
+          style={{ backgroundColor: "#B74840", width: "40%" }}
+          onPress={async () => {
+            setLoading(true);
+            if (!(await rsvp(thisGame.id, thisPlayer.id, Rsvp.DECLINED))) {
+              setErrorMessage("Error saving RSVP.");
+              setShowError(true);
+            } else {
+              const invitedPlayersRes = await getInvitedPlayers();
+              setStatuses(invitedPlayersRes);
+            }
+            setShowError(false);
+            setLoading(false);
+          }}
+        >
+          Reject
+        </Button>
+      </ButtonGroup>
+
+      {isGameOwner() && (
+        <View>
+          <Button style={{ margin: "2%" }} onPress={handleEdit}>
+            Edit Game Details
+          </Button>
+          <Button style={{ margin: "2%" }} onPress={handleDelete}>
+            Delete Game
+          </Button>
         </View>
       )}
-      <ErrorPopup errorMessage={errorMessage} />
-    </View>
+      {showError && <ErrorPopup errorMessage={errorMessage} />}
+    </SafeAreaView>
   );
 }
 
 const styles = EStyleSheet.create({
-  topText: {
-    fontSize: 30,
-    textAlign: "center",
-    fontWeight: "bold",
+  text: {
     margin: "0.5rem",
-    marginBottom: "1rem",
-    textDecorationLine: "underline",
   },
-  button: {
-    flex: 1,
-    alignItems: "center",
-  },
-  row: {
-    width: "90%",
-    flexDirection: "row",
-    borderWidth: 1,
-    borderRadius: "1rem",
-    margin: "1rem",
-  },
-  redButton: {
-    backgroundColor: "#FAA0A0",
-    borderBottomRightRadius: "1rem",
-    borderTopRightRadius: "1rem",
+  topText: {
+    margin: "0.2rem",
+    textAlign: "center",
   },
   container: {
-    flex: 1,
-    alignItems: "center",
-    backgroundColor: "lightgray",
-    paddingTop: "6rem",
-  },
-  text: {
-    fontSize: 20,
-    margin: "0.5rem",
-    textAlign: "center",
+    margin: "1rem",
+    maxHeight: "40%",
+    flexGrow: "0",
   },
   bold: {
     fontWeight: "bold",
-  },
-  buttonContainer: {
-    alignItems: "center",
-    width: "100%",
-    position: "absolute",
-    bottom: "5%",
-  },
-  infoContainer: {
-    borderWidth: 1,
-    borderRadius: "1rem",
-    margin: "1rem",
-    width: "90%",
-  },
-  acceptedContainer: {
-    height: "10rem",
   },
   nameContainer: {
     borderBottomWidth: 1,

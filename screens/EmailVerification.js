@@ -1,11 +1,23 @@
 import { React, useState } from "react";
-import { View, Text, Alert } from "react-native";
-import Button from "../common/Button";
 import EStyleSheet from "react-native-extended-stylesheet";
+
 import { Auth } from "aws-amplify";
+
+import { View, Alert, SafeAreaView } from "react-native";
+import {
+  Text,
+  Button,
+  TopNavigation,
+  Icon,
+  TopNavigationAction,
+} from "@ui-kitten/components";
+
 import ErrorPopup from "../common/ErrorPopup";
 import TextInput from "../common/TextInput";
 import Container from "../common/Container";
+//import Button from "../common/Button";
+
+const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 
 function EmailVerification({ route, navigation }) {
   let startEmailValue = "";
@@ -40,6 +52,11 @@ function EmailVerification({ route, navigation }) {
   }
 
   async function resendCode() {
+    if (email == "") {
+      setShowError(true);
+      setErrorMessage("Please enter username to resend verification code");
+      return;
+    }
     try {
       setLoading(true);
       const response = await Auth.resendSignUp(email);
@@ -54,39 +71,60 @@ function EmailVerification({ route, navigation }) {
     Alert.alert("Success", "Code was resent to your email");
   }
 
+  const navigateGetStarted = () => {
+    navigation.navigate("SignUp");
+  };
+
+  const renderBackAction = () => (
+    <TopNavigationAction icon={BackIcon} onPress={navigateGetStarted} />
+  );
+
   return (
-    <Container goBackTo="SignUp" loadingState={loading}>
-      <View style={styles.container}>
-        <Text style={styles.text}>Verify your account</Text>
+    <SafeAreaView style={styles.container}>
+      <TopNavigation
+        alignment="center"
+        title="Verify Email"
+        accessoryLeft={renderBackAction}
+      />
+
+      <View style={{ alignItems: "center" }}>
+        <Text style={{ textAlign: "center", margin: "5%" }} category="h1">
+          Verify your account
+        </Text>
+
         <TextInput
           value={email}
           placeholder="Enter your email address"
           onChangeText={(text) => setEmail(text)}
         ></TextInput>
+
         <TextInput
           value={code}
           keyboardType="numeric"
           placeholder="Enter your verifaction code"
           onChangeText={(text) => setCode(text)}
         ></TextInput>
-        <Button title="Verify" onPress={() => verify()}></Button>
-        <Button title="Resend Code" onPress={() => resendCode()}></Button>
+
+        <Button
+          onPress={() => verify()}
+          style={{ margin: "2%", marginTop: "10%" }}
+        >
+          Verify
+        </Button>
+
+        <Button onPress={() => resendCode()} style={{ margin: "2%" }}>
+          Resend Code
+        </Button>
+
         {showError && <ErrorPopup errorMessage={errorMessage} />}
       </View>
-    </Container>
+    </SafeAreaView>
   );
 }
 
 const styles = EStyleSheet.create({
   container: {
-    alignItems: "center",
-    paddingTop: "7rem",
-  },
-  text: {
-    margin: "1rem",
-    fontSize: 30,
-    width: "80%",
-    textAlign: "center",
+    flex: 1,
   },
 });
 
