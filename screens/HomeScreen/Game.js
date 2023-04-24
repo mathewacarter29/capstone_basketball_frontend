@@ -15,7 +15,7 @@ import {
   SkillLevel,
 } from "../../src/models";
 
-function Game({ item }) {
+function Game({ item, setLoading }) {
   const navigation = useNavigation();
   const thisGame = item.game;
   const thisPlayer = item.player;
@@ -53,14 +53,22 @@ function Game({ item }) {
         >
           <Button
             style={{ backgroundColor: "#3D9B2C", width: "40%" }}
-            onPress={() => rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED)}
+            onPress={async () => {
+              setLoading(true)
+              await rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED)
+              setLoading(false)
+            }}
           >
             Accept
           </Button>
 
           <Button
             style={{ backgroundColor: "#B74840", width: "40%" }}
-            onPress={() => rsvp(thisGame.id, thisPlayer.id, Rsvp.DECLINED)}
+            onPress={async () => {
+              setLoading(true)
+              await rsvp(thisGame.id, thisPlayer.id, Rsvp.DECLINED)
+              setLoading(false)
+            }}
           >
             Reject
           </Button>

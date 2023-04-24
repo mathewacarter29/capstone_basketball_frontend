@@ -224,8 +224,8 @@ function GameDetails({ route, navigation }) {
           style={{ backgroundColor: "#3D9B2C", width: "40%" }}
           onPress={async () => {
             setLoading(true);
-            let success = await rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED)
-            if (success) {
+            //let success = await rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED)
+            if ((await rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED))) {
               const invitedPlayersRes = await getInvitedPlayers();
               setStatuses(invitedPlayersRes);
               
@@ -234,6 +234,7 @@ function GameDetails({ route, navigation }) {
               setShowError(true);
             }
             setLoading(false);
+            setShowError(false);
           }}
         >
           Accept

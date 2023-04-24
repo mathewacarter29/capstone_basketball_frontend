@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, SafeAreaView } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
-
+import Container from "../common/Container";
 import { Player, SkillLevel } from "../src/models";
 import { Auth } from "aws-amplify";
 import { DataStore } from "aws-amplify";
@@ -110,11 +110,12 @@ function SignIn({ navigation }) {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <Container>
       <TopNavigation
         alignment="center"
         title="Sign Up"
         accessoryLeft={renderBackAction}
+        style={styles.topNav}
       />
 
       <View style={{ alignItems: "center" }}>
@@ -168,7 +169,7 @@ function SignIn({ navigation }) {
 
         {showError && <ErrorPopup errorMessage={errorMessage} />}
       </View>
-    </SafeAreaView>
+    </Container>
   );
 }
 
@@ -180,6 +181,9 @@ const styles = EStyleSheet.create({
     color: "darkorange",
     fontSize: 15,
     textDecorationLine: "underline",
+  },
+  topNav: {
+    marginTop: "3rem",
   },
 });
 

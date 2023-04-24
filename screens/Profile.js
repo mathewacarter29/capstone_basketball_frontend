@@ -54,11 +54,12 @@ function Profile({ navigation }) {
   );
 
   return (
-    <SafeAreaView>
+    <Container loadingState={loading}>
       <TopNavigation
         alignment="center"
         title="Profile"
         accessoryLeft={renderBackAction}
+        style={styles.topNav}
       />
 
       <View style={styles.container}>
@@ -76,7 +77,7 @@ function Profile({ navigation }) {
 
         <Button onPress={() => logOut()}>Log Out</Button>
       </View>
-    </SafeAreaView>
+    </Container>
   );
 }
 
@@ -90,6 +91,9 @@ const styles = EStyleSheet.create({
     margin: "1rem",
     textAlign: "center",
   },
+  topNav: {
+    marginTop: "3rem"
+  }
 });
 
 export default Profile;

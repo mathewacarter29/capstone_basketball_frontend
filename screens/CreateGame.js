@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-
+import Container from "../common/Container";
 import EStyleSheet from "react-native-extended-stylesheet";
 import RNPickerSelect from "react-native-picker-select";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import { MultiSelect } from "react-native-element-dropdown";
 import { DataStore, Auth } from "aws-amplify";
-import { SafeAreaView, View } from "react-native";
+import { SafeAreaView, View, ScrollView } from "react-native";
 import {
   Player,
   Game,
@@ -212,14 +212,15 @@ function CreateGame({ route, navigation }) {
   );
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{flex: 1}}>
       <TopNavigation
+        style={styles.topBar}
         alignment="center"
         title="Create Game"
         accessoryLeft={renderBackAction}
       />
 
-      <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.text} category="h1">
           Let's create a game!
         </Text>
@@ -276,10 +277,10 @@ function CreateGame({ route, navigation }) {
         />
 
         <Text
-          style={{ margin: "5%", fontSize: 26, textAlign: "center" }}
+          style={{fontSize: 26, textAlign: "center" }}
           category="p1"
         >
-          Enter date and time for the game
+          Game Date and Time
         </Text>
 
         <RNDateTimePicker
@@ -290,15 +291,18 @@ function CreateGame({ route, navigation }) {
         />
         <Button onPress={create}>Create Game</Button>
         {showError && <ErrorPopup errorMessage={errorMessage} />}
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = EStyleSheet.create({
+  topBar: {
+    marginTop: "1rem"
+  },
   container: {
     alignItems: "center",
-    paddingTop: "2rem",
+    paddingTop: "1rem",
     justifyContent: "flex-end",
   },
   text: {

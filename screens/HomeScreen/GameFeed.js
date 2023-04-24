@@ -8,7 +8,7 @@ function GameFeed(props) {
     <View style={styles.container}>
       <FlatList
         data={props.data.games}
-        renderItem={({ item }) => <Game item={{game: item, player: props.data.thisPlayer}} />}
+        renderItem={({ item }) => <Game setLoading={props.setLoading} item={{game: item, player: props.data.thisPlayer}} />}
         keyExtractor={(item) => item.id}
       />
     </View>

@@ -3,7 +3,7 @@ import EStyleSheet from "react-native-extended-stylesheet";
 
 import { Auth } from "aws-amplify";
 import "@azure/core-asynciterator-polyfill";
-
+import Container from "../common/Container";
 import ErrorPopup from "../common/ErrorPopup";
 import TextInput from "../common/TextInput";
 
@@ -65,11 +65,12 @@ function LogIn({ navigation }) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <Container style={styles.container} loadingState={loading}>
       <TopNavigation
         alignment="center"
         title="Login"
         accessoryLeft={renderBackAction}
+        style={styles.topNav}
       />
 
       <View style={{ alignItems: "center" }}>
@@ -98,7 +99,7 @@ function LogIn({ navigation }) {
 
         {showError && <ErrorPopup errorMessage={errorMessage} />}
       </View>
-    </SafeAreaView>
+    </Container>
   );
 }
 
@@ -109,6 +110,9 @@ const styles = EStyleSheet.create({
   title: {
     margin: "1rem",
     textAlign: "center",
+  },
+  topNav: {
+    marginTop: "3rem",
   },
 });
 
