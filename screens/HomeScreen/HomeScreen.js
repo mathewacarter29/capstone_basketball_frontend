@@ -36,9 +36,13 @@ const ProfileIcon = (props) => <Icon {...props} name="person-outline" />;
 
 
 function HomeScreen({ navigation }) {
+
+  // all games
   const [games, setGames] = useState([]);
+
+  // games that user created, or rsvp'd
   const [userGames, setUserGames] = useState([]);
-  // const [playerGames, setPlayerGames] = useState([]);
+
   const [loading, setLoading] = useState(false);
   const [thisPlayer, setThisPlayer] = useState([]);
 
@@ -79,8 +83,6 @@ function HomeScreen({ navigation }) {
      * if another user makes a change to the game details,
      * we will get that change reflected here with our subscriber
      */
-    // TRY CATCH AROUND API CALLS
-
     setLoading(true);
     // LOAD WHILE PERFORMING API CALLS
     const subscriber = DataStore.observeQuery(
