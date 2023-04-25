@@ -73,7 +73,6 @@ function HomeScreen({ navigation }) {
       const userGames = allGames.filter((game) => {
         return userGameIds.includes(game.id);
       });
-      console.log("usergamesL ", userGames);
 
       setUserGames(userGames);
     } catch (error) {
