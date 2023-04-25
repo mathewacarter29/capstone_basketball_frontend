@@ -115,7 +115,7 @@ function GameDetails({ route, navigation }) {
 
       const invitedPlayersRes = await getInvitedPlayers();
       if (typeof invitedPlayersRes === "undefined") return;
-      console.log("invtedPlayers:", invitedPlayersRes);
+
       setStatuses(invitedPlayersRes);
       setLoading(false);
     })();

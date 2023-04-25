@@ -100,7 +100,7 @@ function HomeScreen({ navigation }) {
       }
     ).subscribe(({ items }) => {
       setGames(items);
-      setUserGames(getPlayerGames(items));
+      getPlayerGames(items);
     });
 
     setLoading(false);
