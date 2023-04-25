@@ -8,6 +8,7 @@ import ErrorPopup from "../common/ErrorPopup";
 import TextInput from "../common/TextInput";
 
 import { Keyboard, Image, SafeAreaView, ScrollView, View } from "react-native";
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
   Text,
   Button,
@@ -65,41 +66,45 @@ function LogIn({ navigation }) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <TopNavigation
-        alignment="center"
-        title="Login"
-        accessoryLeft={renderBackAction}
-      />
-      <ScrollView contentContainerStyle={styles.contentContainer}>
-        <View style={{ alignItems: "center" }}>
-          <Text style={[styles.text, styles.title]} category="h1">
-            Welcome Back!
-          </Text>
 
-          <Image source={require("../assets/basketballPlayerArms.png")} />
+      <SafeAreaView style={styles.container}>
+        <KeyboardAwareScrollView>
+        <TopNavigation
+          alignment="center"
+          title="Login"
+          accessoryLeft={renderBackAction}
+        />
+        <ScrollView contentContainerStyle={styles.contentContainer}>
+          <View style={{ alignItems: "center" }}>
+            <Text style={[styles.text, styles.title]} category="h1">
+              Welcome Back!
+            </Text>
 
-          <TextInput
-            value={username}
-            placeholder="Enter your email"
-            onChangeText={(text) => setUsername(text)}
-          ></TextInput>
+            <Image source={require("../assets/basketballPlayerArms.png")} />
 
-          <TextInput
-            value={password}
-            placeholder="Enter your password"
-            onChangeText={(text) => setPassword(text)}
-            secureTextEntry
-          ></TextInput>
+            <TextInput
+              value={username}
+              placeholder="Enter your email"
+              onChangeText={(text) => setUsername(text)}
+            ></TextInput>
 
-          <Button title="Log In" onPress={() => login()}>
-            Log In
-          </Button>
+            <TextInput
+              value={password}
+              placeholder="Enter your password"
+              onChangeText={(text) => setPassword(text)}
+              secureTextEntry
+            ></TextInput>
 
-          {showError && <ErrorPopup errorMessage={errorMessage} />}
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+            <Button title="Log In" onPress={() => login()}>
+              Log In
+            </Button>
+
+            {showError && <ErrorPopup errorMessage={errorMessage} />}
+          </View>
+        </ScrollView>
+        </KeyboardAwareScrollView>
+      </SafeAreaView>
+
   );
 }
 

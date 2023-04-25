@@ -14,7 +14,7 @@ import {
 
 import ErrorPopup from "../common/ErrorPopup";
 import TextInput from "../common/TextInput";
-import Container from "../common/Container";
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 //import Button from "../common/Button";
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
@@ -81,7 +81,8 @@ function EmailVerification({ route, navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.contentContainer}>
+
+      <KeyboardAwareScrollView>
       <TopNavigation
         alignment="center"
         title="Verify Email"
@@ -119,7 +120,7 @@ function EmailVerification({ route, navigation }) {
 
         {showError && <ErrorPopup errorMessage={errorMessage} />}
       </View>
-      </ScrollView>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }

@@ -57,9 +57,11 @@ function Game({ item, setLoading }) {
               setLoading(true)
               await rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED)
               setLoading(false)
+              const alertMessage = thisGame.name + " is happening at " + thisGame.location + " at " + epochToLocalDate(thisGame.datetime) + " " + epochToLocalTime(thisGame.datetime);
+
               Alert.alert(
                 thisGame.name + " accepted",
-                '',
+                alertMessage,
                 [
                   {
                     text: 'Cancel',
@@ -84,9 +86,10 @@ function Game({ item, setLoading }) {
               setLoading(true)
               await rsvp(thisGame.id, thisPlayer.id, Rsvp.DECLINED)
               setLoading(false)
+              const alertMessage = "You declined " + thisGame.name;
               Alert.alert(
                 thisGame.name + " declined",
-                '',
+                alertMessage,
                 [
                   {
                     text: 'Cancel',
