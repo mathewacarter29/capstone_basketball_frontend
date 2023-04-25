@@ -4,7 +4,7 @@ import { View, Text, Image, TouchableOpacity } from "react-native";
 import { Auth, Storage } from "aws-amplify";
 import { React, useState, useEffect } from "react";
 import Button from "../common/Button";
-
+import * as ImagePicker from 'expo-image-picker';
 
 
 function Profile({ navigation }) {
@@ -12,22 +12,23 @@ function Profile({ navigation }) {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState(null);
+  const [username, setUserName] = useState("");
 
   useEffect(() => {
-    const userId = 'your-user-id'; // Replace with the actual user ID
+
     const fetchProfilePicture = async () => {
-      const url = await getProfilePictureUrl(userId);
+      const url = await getProfilePictureUrl();
       setImageUrl(url);
     };
     getProfileData();
     fetchProfilePicture();
   }, []);
 
-  const uploadProfilePicture = async (uri, userId) => {
+  const uploadProfilePicture = async (uri) => {
     try {
       const response = await fetch(uri);
       const blob = await response.blob();
-      const key = `profile_pictures/${userId}/profile-picture.jpg`;
+      const key = `profile_pictures/${username}/profile-picture.jpg`;
       const result = await Storage.put(key, blob, { contentType: 'image/jpeg' });
       return result;
     } catch (error) {
@@ -42,16 +43,18 @@ function Profile({ navigation }) {
     });
 
     if (!result.canceled) {
-      console.log(result);
+      uploadProfilePicture(result.assets[0].uri);
+      console.log("result: ", result);
     } else {
       alert('You did not select any image.');
     }
   };
 
-  const getProfilePictureUrl = async (userId) => {
+  const getProfilePictureUrl = async () => {
     try {
-      const key = `profile_pictures/${userId}/profile-picture.jpg`;
+      const key = `profile_pictures/${username}/profile-picture.jpg`;
       const url = await Storage.get(key);
+      console.log("image url existing: ", url);
       return url;
     } catch (error) {
       console.error('Error getting profile picture:', error);
@@ -63,6 +66,7 @@ function Profile({ navigation }) {
     try {
       response = await Auth.currentUserInfo();
       setName(response.attributes.name);
+      setUserName(response.attributes.username);
       setEmail(response.attributes.email);
     } catch (e) {
       // we dont do anything with exceptions right now
@@ -79,7 +83,7 @@ function Profile({ navigation }) {
       setLoading(false);
     }
   }
-
+  console.log("image url: ", imageUrl)
   return (
     <Container goBackTo="HomeScreen" loadingState={loading}>
       <View style={styles.container}>
