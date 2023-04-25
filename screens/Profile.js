@@ -1,13 +1,10 @@
 import EStyleSheet from "react-native-extended-stylesheet";
 import Container from "../common/Container";
-import { View, Text, Image } from "react-native";
-import { Auth } from "aws-amplify";
+import { View, Text, Image, TouchableOpacity } from "react-native";
+import { Auth, Storage } from "aws-amplify";
 import { React, useState, useEffect } from "react";
 import Button from "../common/Button";
 
-import { Storage } from 'aws-amplify';
-import { TouchableOpacity, Image } from 'react-native';
-import ImagePicker from 'react-native-image-picker';
 
 
 function Profile({ navigation }) {
@@ -38,26 +35,17 @@ function Profile({ navigation }) {
     }
   };
 
-  const pickImage = () => {
-    const options = {
-      title: 'Select Profile Picture',
-      storageOptions: {
-        skipBackup: true,
-        path: 'images',
-      },
-    };
-  
-    ImagePicker.showImagePicker(options, async (response) => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else {
-        const userId = 'your-user-id'; // Replace with the actual user ID
-        const result = await uploadProfilePicture(response.uri, userId);
-        console.log('Image uploaded:', result);
-      }
+  const pickImageAsync = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      quality: 1,
     });
+
+    if (!result.canceled) {
+      console.log(result);
+    } else {
+      alert('You did not select any image.');
+    }
   };
 
   const getProfilePictureUrl = async (userId) => {
@@ -97,7 +85,7 @@ function Profile({ navigation }) {
       <View style={styles.container}>
         <Text style={styles.text}>Profile</Text>
         <TouchableOpacity
-        onPress={pickImage}
+        onPress={pickImageAsync}
         style={styles.profilePictureContainer}
       >
         {imageUrl ? (
