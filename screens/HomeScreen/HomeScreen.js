@@ -73,6 +73,7 @@ function HomeScreen({ navigation }) {
       const userGames = allGames.filter((game) => {
         return userGameIds.includes(game.id);
       });
+      console.log("usergamesL ", userGames);
 
       setUserGames(userGames);
     } catch (error) {
@@ -99,7 +100,7 @@ function HomeScreen({ navigation }) {
       }
     ).subscribe(({ items }) => {
       setGames(items);
-      setUserGames(getPlayerGames(items));
+      getPlayerGames(items);
     });
 
     setLoading(false);
