@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { View, Text } from "react-native";
+import { View, SafeAreaView } from "react-native";
 import EStyleSheet, { value } from "react-native-extended-stylesheet";
-import Button from "../common/Button";
+import { MultiSelect } from "react-native-element-dropdown";
+// import Button from "../common/Button";
 import LoadingScreen from "../common/LoadingScreen";
 import TextInput from "../common/TextInput";
-import Container from "../common/Container";
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import RNPickerSelect from "react-native-picker-select";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import { DataStore, Auth } from "aws-amplify";
@@ -16,20 +17,84 @@ import {
   Rsvp,
   SkillLevel,
 } from "../src/models";
+import {
+  Text,
+  Button,
+  TopNavigation,
+  TopNavigationAction,
+  Icon,
+} from "@ui-kitten/components";
 import ErrorPopup from "../common/ErrorPopup";
 import "@azure/core-asynciterator-polyfill";
+
+const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 
 function UpdateGame({ route, navigation }) {
   const game = route.params.game;
   const player = route.params.player;
+  const [toInvite, setToInvite] = useState([]);
   const [loading, setLoading] = useState(false);
   const [gameName, setGameName] = useState(game.name);
   const [gameDescription, setGameDescription] = useState(game.description);
-  const [gameLocation, setLocation] = useState("");
+  const [gameLocation, setLocation] = useState(game.location);
   const [gameSkillLevel, setSkillLevel] = useState(game.skill_level);
-  const [chosenDate, setChosenDate] = useState(new Date());
+  const [chosenDate, setChosenDate] = useState(new Date(game.datetime * 1000));
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [locations, setLocations] = useState([]);
+  const [selectedPlayers, setSelected] = useState([]);
+
+  useEffect(() => {
+    // This needs to be async so we can wait for results before rendering
+    (async () => {
+      setLoading(true);
+      await getPlayers();
+      await getLocations();
+
+      setLoading(false);
+    })();
+  }, []);
+
+  async function getPlayers() {
+    let toInvite = [];
+    try {
+      const allPlayers = await DataStore.query(Player, (p) =>
+        p.email.ne(player.email)
+      );
+      allPlayers.map((element) => {
+        toInvite.push({ label: element.name, value: element.id });
+      });
+      setToInvite(toInvite);
+      return true;
+    } catch (error) {
+      setLoading(false);
+      setErrorMessage("Invited invalid player");
+      setShowError(true);
+      console.log("Error occurred in getting all players: " + error.message);
+      return false;
+    }
+  }
+
+  //get all locations to populate the location picker
+  async function getLocations() {
+    try {
+      const allLocations = await DataStore.query(Location);
+      //map the name to an array
+      const formatLocations = allLocations.map(({ name: value }) => ({
+        value,
+        label: value,
+      }));
+      setLocations(formatLocations);
+      return true;
+    } catch (error) {
+      setErrorMessage("Error retrieving locations");
+      setShowError(true);
+      //if locations don't load for some reason then we should probably display an error message and route back
+      console.log(error.message);
+      setLoading(false);
+      return false;
+    }
+  }
 
   //on change function to set user selected date
   const changeSelectedDate = (event, selectedDate) => {
@@ -41,17 +106,27 @@ function UpdateGame({ route, navigation }) {
   async function update() {
     epochDate = Math.floor(chosenDate.getTime() / 1000);
     setLoading(true);
+    let invitedPlayers = [];
+    for (let i = 0; i < selectedPlayers.length; i++) {
+      if(game.invited_players.indexOf(selectedPlayers[i]) == -1) {
+        invitedPlayers.push(item);
+      }
+    }
+    
     try {
       const updatedGame = await DataStore.save(
         Game.copyOf(game, (updated) => {
           (updated.name = gameName),
             (updated.description = gameDescription),
             (updated.skill_level = gameSkillLevel),
+            (updated.invited_players = invitedPlayers),
+            (updated.location = gameLocation),
             (updated.datetime = epochDate);
         })
       );
       setLoading(false);
       // navigation.navigate("GameDetails", {game: item , player: player});
+      updateInvitedPlayers();
       let item = {
         game: updatedGame,
         player: player,
@@ -66,15 +141,61 @@ function UpdateGame({ route, navigation }) {
     }
   }
 
+  async function updateInvitedPlayers() {
+    for (let i = 0; i < selectedPlayers.length; i++) {
+      try {
+        const existing = await DataStore.query(GamePlayer, (c) =>
+        c.and((c) => [c.game_id.eq(game.id), c.player_id.eq(selectedPlayers[i].id)]));
+
+        if (existing == null || existing == undefined || existing.length == 0) {
+          const gamePlayer = await DataStore.save(
+            new GamePlayer({
+              player_id: selectedPlayers[i],
+              game_id: gameId,
+              rsvp: Rsvp.PENDING,
+              invited: true,
+            })
+          );
+        }
+      } catch (error) {
+        setLoading(false);
+        setShowError(true);
+        console.log(
+          "error: ",
+          error.message,
+          "storing player: ",
+          selectedPlayers[i]
+        );
+        setErrorMessage(`Error storing player: ${selectedPlayers[i]}`);
+        return false;
+      }
+    }
+  }
+
+  const navigateBack = () => {
+    let item = {
+      game: game,
+      player: player,
+    };
+
+    navigation.navigate("GameDetails", { item });
+  };
+
+  const renderBackAction = () => (
+    <TopNavigationAction icon={BackIcon} onPress={navigateBack} />
+  );
+
   return (
     // This is the create event form
-    <Container
-      loadingState={loading}
-      goBackTo="GameDetails"
-      routeParams={{ item: { game: game, player: player } }}
-    >
+    <SafeAreaView>
+      <KeyboardAwareScrollView>
+      <TopNavigation
+        alignment="center"
+        title="Update Game"
+        accessoryLeft={renderBackAction}
+      />
       <View style={styles.container}>
-        <Text style={styles.text}>Update Your Game</Text>
+        <Text style={styles.text}>Update {gameName}</Text>
         <TextInput
           value={gameName}
           placeholder="Enter a name for the game"
@@ -89,12 +210,7 @@ function UpdateGame({ route, navigation }) {
           value={gameLocation}
           onValueChange={(value) => setLocation(value)}
           placeholder={{ label: "Please select a location", value: null }}
-          items={[
-            { label: "McComas Hall", value: "McComas Hall" },
-            { label: "Lee Courts", value: "Lee Courts" },
-            { label: "Old Blacksburg HS", value: "Old Blacksburg HS" },
-            { label: "Cassell Colisuem", value: "Cassell Coliseum" },
-          ]}
+          items={locations}
           style={customPickerStyles}
         />
         <RNPickerSelect
@@ -109,6 +225,24 @@ function UpdateGame({ route, navigation }) {
           ]}
           style={customPickerStyles}
         />
+        <MultiSelect
+          style={multiSelectStyles.dropdown}
+          placeholderStyle={multiSelectStyles.placeholderStyle}
+          selectedTextStyle={multiSelectStyles.selectedTextStyle}
+          inputSearchStyle={multiSelectStyles.inputSearchStyle}
+          iconStyle={multiSelectStyles.iconStyle}
+          search
+          data={toInvite}
+          labelField="label"
+          valueField="value"
+          placeholder="Invite more players"
+          searchPlaceholder="Search..."
+          value={selectedPlayers}
+          onChange={(item) => {
+            setSelected(item);
+          }}
+          selectedStyle={multiSelectStyles.selectedStyle}
+        />
         <Text style={styles.otherText}>Enter date and time for the game</Text>
         <RNDateTimePicker
           mode="datetime"
@@ -116,37 +250,26 @@ function UpdateGame({ route, navigation }) {
           value={chosenDate}
           onChange={changeSelectedDate}
         />
-        <Button title="Update Game" onPress={() => update()} />
+        <Button onPress={update}>Update Game</Button>
         {showError && <ErrorPopup errorMessage={errorMessage} />}
       </View>
       <View style={{ flex: 1, backgroundColor: "lightgray" }}></View>
-    </Container>
+      </KeyboardAwareScrollView>
+      </SafeAreaView>
   );
 }
 
 const styles = EStyleSheet.create({
   container: {
     alignItems: "center",
-    paddingTop: "5rem",
+    paddingTop: "2rem",
     justifyContent: "flex-end",
   },
   text: {
-    margin: "1rem",
-    fontSize: 30,
-    width: "80%",
+    margin: ".2rem",
     textAlign: "center",
   },
-  otherText: {
-    margin: "1rem",
-    fontSize: 20,
-  },
-  clickableText: {
-    color: "darkorange",
-    fontSize: 15,
-    textDecorationLine: "underline",
-  },
   datetimepicker: {
-    flex: 1,
     margin: "1rem",
   },
 });
@@ -175,6 +298,43 @@ const customPickerStyles = EStyleSheet.create({
     borderRadius: 8,
     color: "black",
     paddingRight: 30, // to ensure the text is never behind the icon
+  },
+});
+
+const multiSelectStyles = EStyleSheet.create({
+  dropdown: {
+    height: "3rem",
+    width: "80%",
+    borderRadius: "1rem",
+    backgroundColor: "white",
+    margin: "1rem",
+    marginLeft: "1.25 rem",
+    color: "#333",
+    padding: "rem",
+    shadowColor: "#171717",
+    shadowRadius: 3,
+    shadowOpacity: 0.2,
+    shadowOffset: { width: -2, height: 4 },
+  },
+  placeholderStyle: {
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    fontSize: 14,
+  },
+  iconStyle: {
+    width: 20,
+    height: 20,
+  },
+  inputSearchStyle: {
+    height: 40,
+    fontSize: 16,
+  },
+  icon: {
+    marginRight: 5,
+  },
+  selectedStyle: {
+    borderRadius: 12,
   },
 });
 

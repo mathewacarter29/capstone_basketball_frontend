@@ -1,23 +1,54 @@
-import { React, useEffect, useState } from "react";
-import { Text, TouchableOpacity, Image, View, ScrollView } from "react-native";
-
+import { React, useState, useEffect } from "react";
 import EStyleSheet from "react-native-extended-stylesheet";
-import LoadingScreen from "../../common/LoadingScreen";
 
+import { 
+  View, 
+  SafeAreaView,
+  Switch
+} from "react-native";
+import {
+  Button,
+  ButtonGroup,
+  Divider,
+  TopNavigation,
+  Icon,
+  TopNavigationAction,
+  Text,
+} from "@ui-kitten/components";
+import { 
+  Player, 
+  Game, 
+  Location,
+  GamePlayer, 
+  Rsvp 
+} from "../../src/models";
+
+import LoadingScreen from "../../common/LoadingScreen";
 import GameFeed from "./GameFeed";
 import MapScreen from "./MapScreen";
 
-import { Auth } from "aws-amplify";
-import { DataStore } from "aws-amplify";
-import { Player, Game, Location, GamePlayer, Rsvp } from "../../src/models";
 import "@azure/core-asynciterator-polyfill";
 import { SortDirection } from "@aws-amplify/datastore";
+import { DataStore } from "aws-amplify";
+import { Auth } from "aws-amplify";
+
+const CreateIcon = (props) => <Icon {...props} name="plus-square-outline" />;
+const ProfileIcon = (props) => <Icon {...props} name="person-outline" />;
+
+
 function HomeScreen({ navigation }) {
   const [games, setGames] = useState([]);
   const [userGames, setUserGames] = useState([]);
-  const [playerGames, setPlayerGames] = useState([]);
+  // const [playerGames, setPlayerGames] = useState([]);
   const [loading, setLoading] = useState(false);
   const [thisPlayer, setThisPlayer] = useState([]);
+  const [middleView, setMiddleView] = useState("Game Feed");
+  const [switchVal, setSwitchVal] = useState(false);
+
+  const toggleSwitch = () => {
+    setSwitchVal(previousState => !previousState)
+    switchVal ? setMiddleView("Game Feed") : setMiddleView("Your Games")
+  }
 
   async function getPlayerGames(allGames) {
     // NEED TRY CATCH AROUND ALL API CALLS
@@ -37,13 +68,13 @@ function HomeScreen({ navigation }) {
         gp.player_id.eq(player.id)
       );
       const userGameIds = gamePlayers.map((gamePlayer) => {
-        return gamePlayer.id;
+        return gamePlayer.game_id;
       });
       const userGames = allGames.filter((game) => {
         return userGameIds.includes(game.id);
       });
 
-      setPlayerGames(userGames);
+      setUserGames(userGames);
     } catch (error) {
       setLoading(false);
       console.log(error.message);
@@ -78,159 +109,100 @@ function HomeScreen({ navigation }) {
     };
   }, []);
 
-  const [middleView, setMiddleView] = useState("GameFeed");
+  const navigateProfile = () => {
+    navigation.navigate("Profile");
+  };
+
+  const navigateCreateGame = () => {
+    navigation.navigate("CreateGame", {thisPlayer});
+  };
+
+  const renderCreateAction = () => (
+    <TopNavigationAction icon={CreateIcon} onPress={navigateCreateGame} />
+  );
+  const renderProfileAction = () => (
+    <TopNavigationAction icon={ProfileIcon} onPress={navigateProfile} />
+  );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={{ flex: 1 }}>
+      <TopNavigation
+        alignment="center"
+        title={middleView}
+        accessoryLeft={renderCreateAction}
+        accessoryRight={renderProfileAction}
+      />
+      {(middleView == "Game Feed" || middleView == "Your Games") && 
+      <View style={styles.switchHolder}>
+        <Text style={{marginTop:"3%", marginRight:"2%", fontWeight: "bold"}}>
+          Your Games
+        </Text>
+        <Switch 
+          trackColor={{false: '#767577', true: '#9A4924'}}
+          thumbColor={switchVal ? 'orange' : '#f4f3f4'}
+          style={{marginRight: "5%", marginTop: "2%"}}
+          onValueChange={toggleSwitch}
+          value={switchVal}
+          />
+      </View> }
+
+      <Divider />
+
       {loading && <LoadingScreen />}
 
-      {/*PROFILE ICON*/}
-      <TouchableOpacity
-        style={styles.profileButton}
-        onPress={() => navigation.navigate("Profile")}
-      >
-        <Image
-          style={styles.image}
-          source={require("../../assets/profile_icon.png")}
-        />
-        <Text style={styles.text}>Profile</Text>
-      </TouchableOpacity>
-
-      {/*CREATE GAME*/}
-      <TouchableOpacity
-        style={styles.createButton}
-        onPress={() => navigation.navigate("CreateGame", { thisPlayer })}
-      >
-        <Image
-          style={styles.image}
-          source={require("../../assets/plus_icon.png")}
-        />
-      </TouchableOpacity>
-
       {/* RENDER LOCATION / FEED*/}
-      <View style={styles.innerContainer}>
-        {middleView == "GameFeed" && (
-          <GameFeed data={{ games: games, thisPlayer: thisPlayer }} />
-        )}
-        {middleView == "MapScreen" && <MapScreen />}
+      <View style={[middleView == "Map View" ? styles.innerContainerMap : styles.innerContainerFeed]}>
+        {middleView == "Map View" && <MapScreen />}
+        {middleView == "Game Feed" && 
+          <GameFeed setLoading={setLoading} data={{ games: games, thisPlayer: thisPlayer }} /> 
+        }
+        {middleView == "Your Games" && 
+          <GameFeed setLoading={setLoading} data={{ games: userGames, thisPlayer: thisPlayer }} /> 
+        }
       </View>
 
-      {/* BOTTOM NAV BUTTONS */}
-      <View style={styles.row}>
-        <TouchableOpacity
-          style={[
-            middleView == "MapScreen"
-              ? styles.selectedNavButton
-              : styles.navButton,
-            styles.leftNavButton,
-          ]}
-          onPress={() => {
-            setMiddleView("MapScreen");
-          }}
+      <ButtonGroup style={{ justifyContent: "center", margin: "5%", height: "7%" }}>
+        <Button
+          onPress={() => setMiddleView("Map View")}
+          style={[middleView == "Map View" ? styles.selected : styles.nav]}
         >
-          <Text
-            style={[
-              styles.topText,
-              middleView == "MapScreen" ? { color: "lightgray" } : null,
-            ]}
-          >
-            Map View
-          </Text>
-        </TouchableOpacity>
-        <View style={styles.line} />
-
-        <TouchableOpacity
-          style={[
-            middleView == "GameFeed"
-              ? styles.selectedNavButton
-              : styles.navButton,
-            ,
-            styles.rightNavButton,
-          ]}
+          <Text>Map View</Text>
+        </Button>
+        <Button
           onPress={() => {
-            setMiddleView("GameFeed");
-          }}
+            setMiddleView("Game Feed")
+            setSwitchVal(false)}
+          }
+          style={[middleView == "Game Feed" ? styles.selected : styles.nav]}
         >
-          <Text
-            style={[
-              styles.topText,
-              middleView == "GameFeed" ? { color: "lightgray" } : null,
-            ]}
-          >
-            Game Feed
-          </Text>
-        </TouchableOpacity>
-        {/* <GameFeed data={{ games: games, thisPlayer: thisPlayer }} /> */}
-      </View>
-    </View>
+          <Text>Game Feed</Text>
+        </Button>
+      </ButtonGroup>
+    </SafeAreaView>
   );
-}
+};
 
 const styles = EStyleSheet.create({
-  container: {
-    flex: "1",
+  innerContainerFeed: {
+    height: "77%",
+    marginTop: ".5rem",
   },
-  line: {
-    width: 1,
-    height: "100%",
-    backgroundColor: "black",
-  },
-  profileButton: {
-    position: "absolute",
-    right: "4%",
-    top: "4%",
-    alignItems: "center",
-    zIndex: 1,
-  },
-  createButton: {
-    position: "absolute",
-    left: "4%",
-    top: "5%",
-    alignItems: "center",
-    zIndex: 1,
-  },
-  image: {
-    width: 50,
-    height: 52,
-  },
-  innerContainer: {
+  innerContainerMap: {
     height: "82%",
-    marginTop: "3.5rem",
+    marginTop: ".5rem",
   },
-  row: {
+  nav: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  selected: {
+    flex: 1,
+    justifyContent: "center",
+    backgroundColor: "#9A4924",
+  },
+  switchHolder: {
     flexDirection: "row",
-    borderRadius: "1rem",
-    justifyContent: "space-around",
-    marginTop: "1rem",
-    marginLeft: "2%",
-    marginRight: "2%",
-    height: "4rem",
-    borderWidth: 1,
-  },
-  topText: {
-    fontSize: 30,
-    fontWeight: "bold",
-    textAlign: "center",
-    paddingBottom: ".5rem",
-    paddingTop: ".5rem",
-  },
-  navButton: {
-    backgroundColor: "orange",
-    flex: 1,
-    justifyContent: "center",
-  },
-  leftNavButton: {
-    borderBottomLeftRadius: "1rem",
-    borderTopLeftRadius: "1rem",
-  },
-  rightNavButton: {
-    borderBottomRightRadius: "1rem",
-    borderTopRightRadius: "1rem",
-  },
-  selectedNavButton: {
-    backgroundColor: "#b06820",
-    flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-end",
   },
 });
 

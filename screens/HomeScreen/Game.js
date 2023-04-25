@@ -1,8 +1,9 @@
 import React from "react";
 import EStyleSheet from "react-native-extended-stylesheet";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import rsvp from "../../utils/rsvp";
+import { Text, Card, Button, ButtonGroup } from "@ui-kitten/components";
 import { epochToLocalDate } from "../../utils/TimeUtil";
 import { epochToLocalTime } from "../../utils/TimeUtil";
 
@@ -14,7 +15,7 @@ import {
   SkillLevel,
 } from "../../src/models";
 
-function Game({ item }) {
+function Game({ item, setLoading }) {
   const navigation = useNavigation();
   const thisGame = item.game;
   const thisPlayer = item.player;
@@ -24,8 +25,10 @@ function Game({ item }) {
   }
 
   return (
-    <TouchableOpacity style={styles.item} onPress={() => clickedGame()}>
-      <Text style={styles.title}>{thisGame.name}</Text>
+    <Card style={styles.card} onPress={() => clickedGame()}>
+      <Text style={styles.text} category="h4">
+        {thisGame.name}
+      </Text>
 
       <Text style={styles.text}>
         <Text style={{ fontWeight: "bold" }}>Location: </Text>
@@ -42,76 +45,78 @@ function Game({ item }) {
         {epochToLocalTime(thisGame.datetime)}
       </Text>
 
-      <View style={styles.row}>
-        <Text style={[styles.text, styles.bold]}>RSVP:</Text>
-        <View style={styles.line} />
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-around",
-            flex: 1,
-          }}
+      <View style={{ alignItems: "center", flexDirection: "row" }}>
+        <Text style={{ fontWeight: "bold" }}>RSVP:</Text>
+
+        <ButtonGroup
+          style={{ justifyContent: "center", margin: "5%", width: "90%" }}
         >
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: "lightgreen" }]}
-            onPress={() => rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED)}
+          <Button
+            style={{ backgroundColor: "#3D9B2C", width: "40%" }}
+            onPress={async () => {
+              setLoading(true)
+              await rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED)
+              setLoading(false)
+              const alertMessage = thisGame.name + " is happening at " + thisGame.location + " at " + epochToLocalDate(thisGame.datetime) + " " + epochToLocalTime(thisGame.datetime);
+
+              Alert.alert(
+                thisGame.name + " accepted",
+                alertMessage,
+                [
+                  {
+                    text: 'Cancel',
+                    onPress: null,
+                    style: 'cancel',
+                  },
+                ],
+                {
+                  cancelable: true,
+                  onDismiss: () =>
+                    console.log("dismissed"),
+                },
+              );
+            }}
           >
-            <Text style={styles.text}>Accept</Text>
-          </TouchableOpacity>
-          <View style={styles.line} />
-          <TouchableOpacity
-            style={[styles.button, styles.redButton]}
-            onPress={() => rsvp(thisGame.id, thisPlayer.id, Rsvp.DECLINED)}
+            Accept
+          </Button>
+
+          <Button
+            style={{ backgroundColor: "#B74840", width: "40%" }}
+            onPress={async () => {
+              setLoading(true)
+              await rsvp(thisGame.id, thisPlayer.id, Rsvp.DECLINED)
+              setLoading(false)
+              const alertMessage = "You declined " + thisGame.name;
+              Alert.alert(
+                thisGame.name + " declined",
+                alertMessage,
+                [
+                  {
+                    text: 'Cancel',
+                    onPress: null,
+                    style: 'cancel',
+                  },
+                ],
+                {
+                  cancelable: true,
+                  onDismiss: () =>
+                    console.log("dismissed"),
+                },
+              );
+            }}
           >
-            <Text style={styles.text}>Reject</Text>
-          </TouchableOpacity>
-        </View>
+            Reject
+          </Button>
+        </ButtonGroup>
       </View>
-    </TouchableOpacity>
+    </Card>
   );
 }
 
 const styles = EStyleSheet.create({
-  text: {
-    fontSize: 18,
-    margin: "0.25rem",
-  },
-  item: {
-    backgroundColor: "orange",
-    marginTop: "1rem",
-    padding: "0.5rem",
-    borderRadius: "1rem",
-    shadowColor: "#171717",
-    shadowRadius: 3,
-    shadowOpacity: 0.2,
-    shadowOffset: { width: -2, height: 4 },
-    width: "23rem",
-  },
-  title: {
-    fontSize: 32,
-    margin: "0.25rem",
-  },
-  row: {
-    flexDirection: "row",
-    borderWidth: 1,
-    borderRadius: "1rem",
-  },
-  bold: {
-    fontWeight: "bold",
-  },
-  line: {
-    width: 1,
-    height: "100%",
-    backgroundColor: "black",
-  },
-  button: {
+  card: {
     flex: 1,
-    alignItems: "center",
-  },
-  redButton: {
-    backgroundColor: "#FAA0A0",
-    borderBottomRightRadius: "1rem",
-    borderTopRightRadius: "1rem",
+    margin: 2,
   },
 });
 

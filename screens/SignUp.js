@@ -1,14 +1,25 @@
 import React, { useState } from "react";
-import { View, Text } from "react-native";
+import { View, SafeAreaView, KeyboardAvoidingView } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
-import Button from "../common/Button";
+import Container from "../common/Container";
+import { Player, SkillLevel } from "../src/models";
 import { Auth } from "aws-amplify";
+import { DataStore } from "aws-amplify";
+import "@azure/core-asynciterator-polyfill";
+
 import ErrorPopup from "../common/ErrorPopup";
 import TextInput from "../common/TextInput";
-import Container from "../common/Container";
-import "@azure/core-asynciterator-polyfill";
-import { Player, SkillLevel } from "../src/models";
-import { DataStore } from "aws-amplify";
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+
+import {
+  Text,
+  Button,
+  TopNavigation,
+  Icon,
+  TopNavigationAction,
+} from "@ui-kitten/components";
+
+const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 
 function SignIn({ navigation }) {
   const [name, setName] = useState("");
@@ -91,69 +102,93 @@ function SignIn({ navigation }) {
     navigation.navigate("EmailVerification", { email: email });
   }
 
+  const navigateGetStarted = () => {
+    navigation.navigate("GetStarted");
+  };
+
+  const renderBackAction = () => (
+    <TopNavigationAction icon={BackIcon} onPress={navigateGetStarted} />
+  );
+
   return (
-    // This is gonna be the sign up form
-    <Container goBackTo="GetStarted" loadingState={loading}>
-      <View style={styles.container}>
-        <Text style={styles.text}>Let's help you play some basketball!</Text>
+
+    <Container>
+      <KeyboardAwareScrollView>
+      <TopNavigation
+        alignment="center"
+        title="Sign Up"
+        accessoryLeft={renderBackAction}
+        style={styles.topNav}
+      />
+
+      <View style={{ alignItems: "center" }}>
+        <Text style={{ textAlign: "center", margin: "2%" }} category="h1">
+          Lets play some Basketball!
+        </Text>
+
         <TextInput
           value={name}
           placeholder="Enter your full name"
           onChangeText={(text) => setName(text)}
         ></TextInput>
+
         <TextInput
           value={email}
           placeholder="Enter your email"
           onChangeText={(text) => setEmail(text)}
         ></TextInput>
+
         <TextInput
           value={phone}
           keyboardType="numeric"
           placeholder="Enter your phone number"
           onChangeText={(text) => setPhone(text)}
         ></TextInput>
+
         <TextInput
           value={password}
           placeholder="Enter your password"
           onChangeText={(text) => setPassword(text)}
           secureTextEntry
         ></TextInput>
+
         <TextInput
           value={confirm}
           placeholder="Confirm your password"
           onChangeText={(text) => setConfirm(text)}
           secureTextEntry
         ></TextInput>
-        <Button onPress={() => signup()} title="Sign Up!" />
+
+        <Button onPress={() => signup()} style={{ margin: "2%" }}>
+          Sign Up!
+        </Button>
+
         <Text
           style={styles.clickableText}
           onPress={() => navigation.navigate("EmailVerification")}
         >
           I was sent a verification code - verify my account
         </Text>
+
         {showError && <ErrorPopup errorMessage={errorMessage} />}
       </View>
-      <View style={{ flex: 1, backgroundColor: "lightgray" }}></View>
+      </KeyboardAwareScrollView>
     </Container>
+
   );
 }
 
 const styles = EStyleSheet.create({
   container: {
-    alignItems: "center",
-    paddingTop: "7rem",
-    justifyContent: "flex-end",
-  },
-  text: {
-    margin: "1rem",
-    fontSize: 30,
-    width: "80%",
-    textAlign: "center",
+    flex: 1,
   },
   clickableText: {
     color: "darkorange",
     fontSize: 15,
     textDecorationLine: "underline",
+  },
+  topNav: {
+    marginTop: "3rem",
   },
 });
 

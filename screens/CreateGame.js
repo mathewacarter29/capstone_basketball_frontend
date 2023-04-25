@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, Text } from "react-native";
-import EStyleSheet from "react-native-extended-stylesheet";
-import Button from "../common/Button";
-import TextInput from "../common/TextInput";
 import Container from "../common/Container";
+import EStyleSheet from "react-native-extended-stylesheet";
 import RNPickerSelect from "react-native-picker-select";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import { MultiSelect } from "react-native-element-dropdown";
 import { DataStore, Auth } from "aws-amplify";
+import { SafeAreaView, View, ScrollView} from "react-native";
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
   Player,
   Game,
@@ -16,8 +15,20 @@ import {
   Rsvp,
   SkillLevel,
 } from "../src/models";
+import {
+  Text,
+  Button,
+  TopNavigation,
+  TopNavigationAction,
+  Icon,
+} from "@ui-kitten/components";
 import ErrorPopup from "../common/ErrorPopup";
+import TextInput from "../common/TextInput";
 import "@azure/core-asynciterator-polyfill";
+
+
+const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
+
 
 function CreateGame({ route, navigation }) {
   const thisPlayer = route.params.thisPlayer;
@@ -193,21 +204,41 @@ function CreateGame({ route, navigation }) {
     navigation.navigate("HomeScreen");
   }
 
+  const navigateBack = () => {
+    navigation.navigate("HomeScreen");
+  };
+
+  const renderBackAction = () => (
+    <TopNavigationAction icon={BackIcon} onPress={navigateBack} />
+  );
+
   return (
-    // This is the create event form
-    <Container goBackTo="HomeScreen" loadingState={loading}>
-      <View style={styles.container}>
-        <Text style={styles.text}>Let's create a game!</Text>
+    <SafeAreaView style={{flex: 1}}>
+      <KeyboardAwareScrollView>
+      <TopNavigation
+        style={styles.topBar}
+        alignment="center"
+        title="Create Game"
+        accessoryLeft={renderBackAction}
+      />
+
+      <ScrollView contentContainerStyle={styles.container}>
+        <Text style={styles.text} category="h1">
+          Let's create a game!
+        </Text>
+
         <TextInput
           value={gameName}
           placeholder="Enter a name for the game"
           onChangeText={(text) => setGameName(text)}
         ></TextInput>
+
         <TextInput
           value={gameDescription}
           placeholder="Enter a description for the game"
           onChangeText={(text) => setGameDescription(text)}
         ></TextInput>
+
         <RNPickerSelect
           value={gameLocation}
           onValueChange={(value) => setLocation(value)}
@@ -215,6 +246,7 @@ function CreateGame({ route, navigation }) {
           items={locations}
           style={customPickerStyles}
         />
+
         <RNPickerSelect
           value={gameSkillLevel}
           onValueChange={(value) => setSkillLevel(value)}
@@ -245,44 +277,42 @@ function CreateGame({ route, navigation }) {
           }}
           selectedStyle={multiSelectStyles.selectedStyle}
         />
-        <Text style={styles.otherText}>Enter date and time for the game</Text>
+
+        <Text
+          style={{fontSize: 26, textAlign: "center" }}
+          category="p1"
+        >
+          Game Date and Time
+        </Text>
+
         <RNDateTimePicker
           mode="datetime"
           style={styles.datetimepicker}
           value={chosenDate}
           onChange={changeSelectedDate}
         />
-        <Button title="Create Game" onPress={create} />
+        <Button onPress={create}>Create Game</Button>
         {showError && <ErrorPopup errorMessage={errorMessage} />}
-      </View>
-      <View style={{ flex: 1, backgroundColor: "lightgray" }}></View>
-    </Container>
+      </ScrollView>
+    </KeyboardAwareScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = EStyleSheet.create({
+  topBar: {
+    marginTop: "1rem"
+  },
   container: {
     alignItems: "center",
-    paddingTop: "5rem",
+    paddingTop: "1rem",
     justifyContent: "flex-end",
   },
   text: {
-    margin: "1rem",
-    fontSize: 30,
-    width: "80%",
+    margin: ".2rem",
     textAlign: "center",
   },
-  otherText: {
-    margin: "1rem",
-    fontSize: 20,
-  },
-  clickableText: {
-    color: "darkorange",
-    fontSize: 15,
-    textDecorationLine: "underline",
-  },
   datetimepicker: {
-    flex: 1,
     margin: "1rem",
   },
 });
