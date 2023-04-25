@@ -65,6 +65,7 @@ function Profile({ navigation }) {
     setLoading(true);
     try {
       response = await Auth.currentUserInfo();
+      console.log(response)
       setName(response.attributes.name);
       setUserName(response.attributes.username);
       setEmail(response.attributes.email);
@@ -83,7 +84,7 @@ function Profile({ navigation }) {
       setLoading(false);
     }
   }
-  console.log("image url: ", imageUrl)
+
   return (
     <Container goBackTo="HomeScreen" loadingState={loading}>
       <View style={styles.container}>
