@@ -28,7 +28,7 @@ function Profile({ navigation }) {
     try {
       const response = await fetch(uri);
       const blob = await response.blob();
-      const key = `profile_pictures/${username}/profile-picture.jpg`;
+      const key = `public/profile_pictures/${username}/profile-picture.jpg`;
       const result = await Storage.put(key, blob, { contentType: 'image/jpeg' });
       return result;
     } catch (error) {
@@ -67,7 +67,8 @@ function Profile({ navigation }) {
       response = await Auth.currentUserInfo();
       console.log(response)
       setName(response.attributes.name);
-      setUserName(response.attributes.username);
+      console.log("username", response.username);
+      setUserName(response.username);
       setEmail(response.attributes.email);
     } catch (e) {
       // we dont do anything with exceptions right now
