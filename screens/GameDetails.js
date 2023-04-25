@@ -58,7 +58,12 @@ function GameDetails({ route, navigation }) {
         const players = await DataStore.query(Player, (c) =>
           c.id.eq(gamePlayers[i].player_id)
         );
+
+        if (players == null || players == undefined || players.length == 0) {
+          continue;
+        }
         const player = players[0];
+        
         if (gamePlayers[i].rsvp == Rsvp.ACCEPTED) {
           playerStatuses.push({
             id: player.id,

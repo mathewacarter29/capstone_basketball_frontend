@@ -3,7 +3,7 @@ import EStyleSheet from "react-native-extended-stylesheet";
 
 import { Auth } from "aws-amplify";
 
-import { View, Alert, SafeAreaView } from "react-native";
+import { View, Alert, SafeAreaView, ScrollView } from "react-native";
 import {
   Text,
   Button,
@@ -14,7 +14,7 @@ import {
 
 import ErrorPopup from "../common/ErrorPopup";
 import TextInput from "../common/TextInput";
-import Container from "../common/Container";
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 //import Button from "../common/Button";
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
@@ -81,6 +81,8 @@ function EmailVerification({ route, navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
+
+      <KeyboardAwareScrollView>
       <TopNavigation
         alignment="center"
         title="Verify Email"
@@ -118,6 +120,7 @@ function EmailVerification({ route, navigation }) {
 
         {showError && <ErrorPopup errorMessage={errorMessage} />}
       </View>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }
@@ -126,6 +129,10 @@ const styles = EStyleSheet.create({
   container: {
     flex: 1,
   },
+  contentContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  }
 });
 
 export default EmailVerification;

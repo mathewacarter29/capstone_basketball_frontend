@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, SafeAreaView } from "react-native";
+import { View, SafeAreaView, KeyboardAvoidingView } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
 import Container from "../common/Container";
 import { Player, SkillLevel } from "../src/models";
@@ -9,6 +9,7 @@ import "@azure/core-asynciterator-polyfill";
 
 import ErrorPopup from "../common/ErrorPopup";
 import TextInput from "../common/TextInput";
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
@@ -146,7 +147,9 @@ function SignIn({ navigation }) {
   );
 
   return (
+
     <Container>
+      <KeyboardAwareScrollView>
       <TopNavigation
         alignment="center"
         title="Sign Up"
@@ -205,7 +208,9 @@ function SignIn({ navigation }) {
 
         {showError && <ErrorPopup errorMessage={errorMessage} />}
       </View>
+      </KeyboardAwareScrollView>
     </Container>
+
   );
 }
 

@@ -5,7 +5,8 @@ import RNPickerSelect from "react-native-picker-select";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import { MultiSelect } from "react-native-element-dropdown";
 import { DataStore, Auth } from "aws-amplify";
-import { SafeAreaView, View, ScrollView } from "react-native";
+import { SafeAreaView, View, ScrollView} from "react-native";
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
   Player,
   Game,
@@ -245,6 +246,7 @@ function CreateGame({ route, navigation }) {
 
   return (
     <SafeAreaView style={{flex: 1}}>
+      <KeyboardAwareScrollView>
       <TopNavigation
         style={styles.topBar}
         alignment="center"
@@ -324,6 +326,7 @@ function CreateGame({ route, navigation }) {
         <Button onPress={create}>Create Game</Button>
         {showError && <ErrorPopup errorMessage={errorMessage} />}
       </ScrollView>
+    </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }

@@ -3,11 +3,12 @@ import EStyleSheet from "react-native-extended-stylesheet";
 
 import { Auth } from "aws-amplify";
 import "@azure/core-asynciterator-polyfill";
-import Container from "../common/Container";
+
 import ErrorPopup from "../common/ErrorPopup";
 import TextInput from "../common/TextInput";
 
-import { Keyboard, Image, SafeAreaView, View } from "react-native";
+import { Keyboard, Image, SafeAreaView, ScrollView, View } from "react-native";
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
   Text,
   Button,
@@ -65,41 +66,45 @@ function LogIn({ navigation }) {
   }
 
   return (
-    <Container style={styles.container} loadingState={loading}>
-      <TopNavigation
-        alignment="center"
-        title="Login"
-        accessoryLeft={renderBackAction}
-        style={styles.topNav}
-      />
 
-      <View style={{ alignItems: "center" }}>
-        <Text style={[styles.text, styles.title]} category="h1">
-          Welcome Back!
-        </Text>
+      <SafeAreaView style={styles.container}>
+        <KeyboardAwareScrollView>
+        <TopNavigation
+          alignment="center"
+          title="Login"
+          accessoryLeft={renderBackAction}
+        />
+        <ScrollView contentContainerStyle={styles.contentContainer}>
+          <View style={{ alignItems: "center" }}>
+            <Text style={[styles.text, styles.title]} category="h1">
+              Welcome Back!
+            </Text>
 
-        <Image source={require("../assets/basketballPlayerArms.png")} />
+            <Image source={require("../assets/basketballPlayerArms.png")} />
 
-        <TextInput
-          value={username}
-          placeholder="Enter your email"
-          onChangeText={(text) => setUsername(text)}
-        ></TextInput>
+            <TextInput
+              value={username}
+              placeholder="Enter your email"
+              onChangeText={(text) => setUsername(text)}
+            ></TextInput>
 
-        <TextInput
-          value={password}
-          placeholder="Enter your password"
-          onChangeText={(text) => setPassword(text)}
-          secureTextEntry
-        ></TextInput>
+            <TextInput
+              value={password}
+              placeholder="Enter your password"
+              onChangeText={(text) => setPassword(text)}
+              secureTextEntry
+            ></TextInput>
 
-        <Button title="Log In" onPress={() => login()}>
-          Log In
-        </Button>
+            <Button title="Log In" onPress={() => login()}>
+              Log In
+            </Button>
 
-        {showError && <ErrorPopup errorMessage={errorMessage} />}
-      </View>
-    </Container>
+            {showError && <ErrorPopup errorMessage={errorMessage} />}
+          </View>
+        </ScrollView>
+        </KeyboardAwareScrollView>
+      </SafeAreaView>
+
   );
 }
 
@@ -107,12 +112,13 @@ const styles = EStyleSheet.create({
   container: {
     flex: 1,
   },
+  contentContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
   title: {
     margin: "1rem",
     textAlign: "center",
-  },
-  topNav: {
-    marginTop: "3rem",
   },
 });
 

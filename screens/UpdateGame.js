@@ -5,7 +5,7 @@ import { MultiSelect } from "react-native-element-dropdown";
 // import Button from "../common/Button";
 import LoadingScreen from "../common/LoadingScreen";
 import TextInput from "../common/TextInput";
-
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import RNPickerSelect from "react-native-picker-select";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import { DataStore, Auth } from "aws-amplify";
@@ -36,13 +36,13 @@ function UpdateGame({ route, navigation }) {
   const [loading, setLoading] = useState(false);
   const [gameName, setGameName] = useState(game.name);
   const [gameDescription, setGameDescription] = useState(game.description);
-  const [gameLocation, setLocation] = useState("");
+  const [gameLocation, setLocation] = useState(game.location);
   const [gameSkillLevel, setSkillLevel] = useState(game.skill_level);
   const [chosenDate, setChosenDate] = useState(new Date(game.datetime * 1000));
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [locations, setLocations] = useState([]);
-  const [selectedPlayers, setSelected] = useState();
+  const [selectedPlayers, setSelected] = useState([]);
 
   useEffect(() => {
     // This needs to be async so we can wait for results before rendering
@@ -106,17 +106,27 @@ function UpdateGame({ route, navigation }) {
   async function update() {
     epochDate = Math.floor(chosenDate.getTime() / 1000);
     setLoading(true);
+    let invitedPlayers = [];
+    for (let i = 0; i < selectedPlayers.length; i++) {
+      if(game.invited_players.indexOf(selectedPlayers[i]) == -1) {
+        invitedPlayers.push(item);
+      }
+    }
+    
     try {
       const updatedGame = await DataStore.save(
         Game.copyOf(game, (updated) => {
           (updated.name = gameName),
             (updated.description = gameDescription),
             (updated.skill_level = gameSkillLevel),
+            (updated.invited_players = invitedPlayers),
+            (updated.location = gameLocation),
             (updated.datetime = epochDate);
         })
       );
       setLoading(false);
       // navigation.navigate("GameDetails", {game: item , player: player});
+      updateInvitedPlayers();
       let item = {
         game: updatedGame,
         player: player,
@@ -128,6 +138,37 @@ function UpdateGame({ route, navigation }) {
       setShowError(true);
       setLoading(false);
       console.log("Error updating game details");
+    }
+  }
+
+  async function updateInvitedPlayers() {
+    for (let i = 0; i < selectedPlayers.length; i++) {
+      try {
+        const existing = await DataStore.query(GamePlayer, (c) =>
+        c.and((c) => [c.game_id.eq(game.id), c.player_id.eq(selectedPlayers[i].id)]));
+
+        if (existing == null || existing == undefined || existing.length == 0) {
+          const gamePlayer = await DataStore.save(
+            new GamePlayer({
+              player_id: selectedPlayers[i],
+              game_id: gameId,
+              rsvp: Rsvp.PENDING,
+              invited: true,
+            })
+          );
+        }
+      } catch (error) {
+        setLoading(false);
+        setShowError(true);
+        console.log(
+          "error: ",
+          error.message,
+          "storing player: ",
+          selectedPlayers[i]
+        );
+        setErrorMessage(`Error storing player: ${selectedPlayers[i]}`);
+        return false;
+      }
     }
   }
 
@@ -147,6 +188,7 @@ function UpdateGame({ route, navigation }) {
   return (
     // This is the create event form
     <SafeAreaView>
+      <KeyboardAwareScrollView>
       <TopNavigation
         alignment="center"
         title="Update Game"
@@ -212,6 +254,7 @@ function UpdateGame({ route, navigation }) {
         {showError && <ErrorPopup errorMessage={errorMessage} />}
       </View>
       <View style={{ flex: 1, backgroundColor: "lightgray" }}></View>
+      </KeyboardAwareScrollView>
       </SafeAreaView>
   );
 }

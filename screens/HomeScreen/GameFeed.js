@@ -18,7 +18,7 @@ function GameFeed(props) {
 const styles = EStyleSheet.create({
   container: {
     flex: "1",
-    alignItems: "center",
+    alignItems: "start",
     borderRadius: ".5rem",
     marginLeft: "1%",
     marginRight: "1%",

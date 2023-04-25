@@ -1,6 +1,6 @@
 import React from "react";
 import EStyleSheet from "react-native-extended-stylesheet";
-import { View } from "react-native";
+import { View, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import rsvp from "../../utils/rsvp";
 import { Text, Card, Button, ButtonGroup } from "@ui-kitten/components";
@@ -57,6 +57,24 @@ function Game({ item, setLoading }) {
               setLoading(true)
               await rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED)
               setLoading(false)
+              const alertMessage = thisGame.name + " is happening at " + thisGame.location + " at " + epochToLocalDate(thisGame.datetime) + " " + epochToLocalTime(thisGame.datetime);
+
+              Alert.alert(
+                thisGame.name + " accepted",
+                alertMessage,
+                [
+                  {
+                    text: 'Cancel',
+                    onPress: null,
+                    style: 'cancel',
+                  },
+                ],
+                {
+                  cancelable: true,
+                  onDismiss: () =>
+                    console.log("dismissed"),
+                },
+              );
             }}
           >
             Accept
@@ -68,6 +86,23 @@ function Game({ item, setLoading }) {
               setLoading(true)
               await rsvp(thisGame.id, thisPlayer.id, Rsvp.DECLINED)
               setLoading(false)
+              const alertMessage = "You declined " + thisGame.name;
+              Alert.alert(
+                thisGame.name + " declined",
+                alertMessage,
+                [
+                  {
+                    text: 'Cancel',
+                    onPress: null,
+                    style: 'cancel',
+                  },
+                ],
+                {
+                  cancelable: true,
+                  onDismiss: () =>
+                    console.log("dismissed"),
+                },
+              );
             }}
           >
             Reject
