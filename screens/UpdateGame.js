@@ -42,7 +42,7 @@ function UpdateGame({ route, navigation }) {
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [locations, setLocations] = useState([]);
-  const [selectedPlayers, setSelected] = useState();
+  const [selectedPlayers, setSelected] = useState([]);
 
   useEffect(() => {
     // This needs to be async so we can wait for results before rendering
