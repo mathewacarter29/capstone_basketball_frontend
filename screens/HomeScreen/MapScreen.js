@@ -38,9 +38,9 @@ function MapScreen(props) {
             longitude: location.longitude,
           }}
           onPress={() => showCourtFeed(location.name)}
-          key={location.index}
+          key={index}
         >
-          <View style={{ alignItems: "center" }} key={index}>
+          <View style={{ alignItems: "center" }}>
             <Image
               source={require("../../assets/pin.png")}
               style={{ width: 23, height: 40 }}
