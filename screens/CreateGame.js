@@ -5,8 +5,8 @@ import RNPickerSelect from "react-native-picker-select";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import { MultiSelect } from "react-native-element-dropdown";
 import { DataStore, Auth } from "aws-amplify";
-import { SafeAreaView, View, ScrollView} from "react-native";
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import { SafeAreaView, View, ScrollView } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import {
   Player,
   Game,
@@ -26,9 +26,7 @@ import ErrorPopup from "../common/ErrorPopup";
 import TextInput from "../common/TextInput";
 import "@azure/core-asynciterator-polyfill";
 
-
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
-
 
 function CreateGame({ route, navigation }) {
   const thisPlayer = route.params.thisPlayer;
@@ -90,7 +88,6 @@ function CreateGame({ route, navigation }) {
       setLoading(true);
       await getPlayers();
       await getLocations();
-
       setLoading(false);
     })();
   }, []);
@@ -213,95 +210,92 @@ function CreateGame({ route, navigation }) {
   );
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={{ flex: 1 }}>
       <KeyboardAwareScrollView>
-      <TopNavigation
-        style={styles.topBar}
-        alignment="center"
-        title="Create Game"
-        accessoryLeft={renderBackAction}
-      />
-
-      <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.text} category="h1">
-          Let's create a game!
-        </Text>
-
-        <TextInput
-          value={gameName}
-          placeholder="Enter a name for the game"
-          onChangeText={(text) => setGameName(text)}
-        ></TextInput>
-
-        <TextInput
-          value={gameDescription}
-          placeholder="Enter a description for the game"
-          onChangeText={(text) => setGameDescription(text)}
-        ></TextInput>
-
-        <RNPickerSelect
-          value={gameLocation}
-          onValueChange={(value) => setLocation(value)}
-          placeholder={{ label: "Please select a location", value: null }}
-          items={locations}
-          style={customPickerStyles}
+        <TopNavigation
+          style={styles.topBar}
+          alignment="center"
+          title="Create Game"
+          accessoryLeft={renderBackAction}
         />
 
-        <RNPickerSelect
-          value={gameSkillLevel}
-          onValueChange={(value) => setSkillLevel(value)}
-          placeholder={{ label: "Please select a skill level", value: null }}
-          items={[
-            { label: "Beginner", value: SkillLevel.BEGINNER },
-            { label: "Intermediate", value: SkillLevel.INTERMEDIATE },
-            { label: "Experienced", value: SkillLevel.EXPERIENCED },
-            { label: "Any", value: SkillLevel.ANY },
-          ]}
-          style={customPickerStyles}
-        />
-        <MultiSelect
-          style={multiSelectStyles.dropdown}
-          placeholderStyle={multiSelectStyles.placeholderStyle}
-          selectedTextStyle={multiSelectStyles.selectedTextStyle}
-          inputSearchStyle={multiSelectStyles.inputSearchStyle}
-          iconStyle={multiSelectStyles.iconStyle}
-          search
-          data={toInvite}
-          labelField="label"
-          valueField="value"
-          placeholder="Invite players"
-          searchPlaceholder="Search..."
-          value={selectedPlayers}
-          onChange={(item) => {
-            setSelected(item);
-          }}
-          selectedStyle={multiSelectStyles.selectedStyle}
-        />
+        <ScrollView contentContainerStyle={styles.container}>
+          <Text style={styles.text} category="h1">
+            Let's create a game!
+          </Text>
 
-        <Text
-          style={{fontSize: 26, textAlign: "center" }}
-          category="p1"
-        >
-          Game Date and Time
-        </Text>
+          <TextInput
+            value={gameName}
+            placeholder="Enter a name for the game"
+            onChangeText={(text) => setGameName(text)}
+          ></TextInput>
 
-        <RNDateTimePicker
-          mode="datetime"
-          style={styles.datetimepicker}
-          value={chosenDate}
-          onChange={changeSelectedDate}
-        />
-        <Button onPress={create}>Create Game</Button>
-        {showError && <ErrorPopup errorMessage={errorMessage} />}
-      </ScrollView>
-    </KeyboardAwareScrollView>
+          <TextInput
+            value={gameDescription}
+            placeholder="Enter a description for the game"
+            onChangeText={(text) => setGameDescription(text)}
+          ></TextInput>
+
+          <RNPickerSelect
+            value={gameLocation}
+            onValueChange={(value) => setLocation(value)}
+            placeholder={{ label: "Please select a location", value: null }}
+            items={locations}
+            style={customPickerStyles}
+          />
+
+          <RNPickerSelect
+            value={gameSkillLevel}
+            onValueChange={(value) => setSkillLevel(value)}
+            placeholder={{ label: "Please select a skill level", value: null }}
+            items={[
+              { label: "Beginner", value: SkillLevel.BEGINNER },
+              { label: "Intermediate", value: SkillLevel.INTERMEDIATE },
+              { label: "Experienced", value: SkillLevel.EXPERIENCED },
+              { label: "Any", value: SkillLevel.ANY },
+            ]}
+            style={customPickerStyles}
+          />
+          <MultiSelect
+            style={multiSelectStyles.dropdown}
+            placeholderStyle={multiSelectStyles.placeholderStyle}
+            selectedTextStyle={multiSelectStyles.selectedTextStyle}
+            inputSearchStyle={multiSelectStyles.inputSearchStyle}
+            iconStyle={multiSelectStyles.iconStyle}
+            search
+            data={toInvite}
+            labelField="label"
+            valueField="value"
+            placeholder="Invite players"
+            searchPlaceholder="Search..."
+            value={selectedPlayers}
+            onChange={(item) => {
+              setSelected(item);
+            }}
+            selectedStyle={multiSelectStyles.selectedStyle}
+          />
+
+          <Text style={{ fontSize: 26, textAlign: "center" }} category="p1">
+            Game Date and Time
+          </Text>
+
+          <RNDateTimePicker
+            mode="datetime"
+            style={styles.datetimepicker}
+            value={chosenDate}
+            onChange={changeSelectedDate}
+          />
+          <Button onPress={create}>Create Game</Button>
+          {showError && <ErrorPopup errorMessage={errorMessage} />}
+        </ScrollView>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = EStyleSheet.create({
   topBar: {
-    marginTop: "1rem"
+    marginTop: "1rem",
   },
   container: {
     alignItems: "center",
