@@ -1,18 +1,21 @@
 import React from "react";
 import EStyleSheet from "react-native-extended-stylesheet";
-import { View, Text } from "react-native";
+import { View } from "react-native";
+import { Text } from "@ui-kitten/components";
 
 function ErrorPopup(props) {
   return (
     <View style={styles.errorBackground}>
-      <Text style={styles.errorText}>{props.errorMessage}</Text>
+      <Text style={[styles.text, styles.errorText]} status="warning">
+        {props.errorMessage}
+      </Text>
     </View>
   );
 }
 
 const styles = EStyleSheet.create({
   errorBackground: {
-    backgroundColor: "#FAA0A0",
+    backgroundColor: "#DB6F5C",
     width: "80%",
     borderRadius: "1rem",
     textAlign: "center",
@@ -20,7 +23,8 @@ const styles = EStyleSheet.create({
     padding: ".5rem",
   },
   errorText: {
-    color: "red",
+    textAlign: "center",
+    color: "#7A181F",
   },
 });
 export default ErrorPopup;
