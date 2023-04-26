@@ -63,7 +63,7 @@ function GameDetails({ route, navigation }) {
           continue;
         }
         const player = players[0];
-        
+
         if (gamePlayers[i].rsvp == Rsvp.ACCEPTED) {
           playerStatuses.push({
             id: player.id,
@@ -168,7 +168,11 @@ function GameDetails({ route, navigation }) {
   }
 
   const navigateBack = () => {
-    navigation.navigate("HomeScreen");
+    if (typeof route.params.mapFeedRouteParams === "undefined") {
+      navigation.navigate("HomeScreen");
+    } else {
+      navigation.navigate("MapFeed", route.params.mapFeedRouteParams);
+    }
   };
 
   const renderBackAction = () => (
@@ -230,10 +234,9 @@ function GameDetails({ route, navigation }) {
           onPress={async () => {
             setLoading(true);
             //let success = await rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED)
-            if ((await rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED))) {
+            if (await rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED)) {
               const invitedPlayersRes = await getInvitedPlayers();
               setStatuses(invitedPlayersRes);
-              
             } else {
               setErrorMessage("Error saving RSVP.");
               setShowError(true);

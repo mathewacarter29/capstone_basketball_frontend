@@ -1,32 +1,22 @@
-import { React, useState, useEffect } from "react";
+import { React, useState } from "react";
 import EStyleSheet from "react-native-extended-stylesheet";
 
 import { View, SafeAreaView, Switch } from "react-native";
 import {
-  Button,
-  ButtonGroup,
   Divider,
   TopNavigation,
   Icon,
   TopNavigationAction,
-  Text,
 } from "@ui-kitten/components";
-import { Player, Game, Location, GamePlayer, Rsvp } from "../../src/models";
 
 import LoadingScreen from "../../common/LoadingScreen";
 import GameFeed from "./GameFeed";
-import MapScreen from "./MapScreen";
 
 import "@azure/core-asynciterator-polyfill";
-import { SortDirection } from "@aws-amplify/datastore";
-import { DataStore } from "aws-amplify";
-import { Auth } from "aws-amplify";
-import { render } from "react-dom";
-
-const CreateIcon = (props) => <Icon {...props} name="plus-square-outline" />;
-const ProfileIcon = (props) => <Icon {...props} name="person-outline" />;
 
 function MapFeed({ route, navigation }) {
+  const ProfileIcon = (props) => <Icon {...props} name="person-outline" />;
+
   const [loading, setLoading] = useState(false);
   const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 
@@ -58,13 +48,13 @@ function MapFeed({ route, navigation }) {
 
       {loading && <LoadingScreen />}
 
-      {/* RENDER LOCATION / FEED*/}
       <GameFeed
         setLoading={setLoading}
         data={{
           games: route.params.games,
           thisPlayer: route.params.thisPlayer,
         }}
+        mapFeedRouteParams={route.params}
       />
     </SafeAreaView>
   );

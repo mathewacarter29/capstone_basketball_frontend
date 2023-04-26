@@ -14,6 +14,7 @@ function GameFeed(props) {
             <Game
               setLoading={props.setLoading}
               item={{ game: item, player: props.data.thisPlayer }}
+              mapFeedRouteParams={props.mapFeedRouteParams}
             />
           )}
           keyExtractor={(item) => item.id}
