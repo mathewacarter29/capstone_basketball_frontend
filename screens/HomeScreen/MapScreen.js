@@ -1,16 +1,79 @@
-import React from "react";
-import { View } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Image } from "react-native";
 import MapView from "react-native-maps";
 import { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import EStyleSheet from "react-native-extended-stylesheet";
+import LoadingScreen from "../../common/LoadingScreen";
+import ErrorPopup from "../../common/ErrorPopup";
+import { DataStore } from "aws-amplify";
+import { Location } from "../../src/models";
+import { Text } from "@ui-kitten/components";
+import { useNavigation } from "@react-navigation/native";
 
-function showCourtFeed(props) {
-  console.log(props);
-}
+function MapScreen(props) {
+  const navigation = useNavigation();
 
-function MapScreen() {
+  function showCourtFeed(courtName) {
+    const params = {
+      games: props.games.filter((game) => game.location == courtName),
+      courtName,
+      thisPlayer: props.thisPlayer,
+    };
+    navigation.navigate("MapFeed", params);
+  }
+
+  const [locations, setLocations] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  async function getLocations() {
+    try {
+      const allLocations = await DataStore.query(Location);
+      //map the name to an array
+      const formatLocations = allLocations.map((location, index) => (
+        <Marker
+          coordinate={{
+            latitude: location.latitude,
+            longitude: location.longitude,
+          }}
+          onPress={() => showCourtFeed(location.name)}
+          key={index}
+        >
+          <View style={{ alignItems: "center" }}>
+            <Image
+              source={require("../../assets/pin.png")}
+              style={{ width: 23, height: 40 }}
+            />
+            <Text>{location.name}</Text>
+          </View>
+        </Marker>
+      ));
+      setLocations(formatLocations);
+      return true;
+    } catch (error) {
+      setErrorMessage("Error retrieving locations");
+      setShowError(true);
+      //if locations don't load for some reason then we should probably display an error message and route back
+      console.log(error.message);
+      setLoading(false);
+      return false;
+    }
+  }
+
+  useEffect(() => {
+    // This needs to be async so we can wait for results before rendering
+    (async () => {
+      setLoading(true);
+      if (!(await getLocations())) return;
+      setShowError(false);
+      setLoading(false);
+    })();
+  }, []);
+
   return (
     <View style={styles.container}>
+      {loading && <LoadingScreen />}
       <MapView
         style={styles.map}
         provider={PROVIDER_GOOGLE}
@@ -21,32 +84,9 @@ function MapScreen() {
           longitudeDelta: 0.035,
         }}
       >
-        {/* McComas */}
-        <Marker
-          coordinate={{ latitude: 37.220828, longitude: -80.422655 }}
-          onPress={() => showCourtFeed("McComas ")}
-        />
-        {/* Bubble */}
-        <Marker
-          coordinate={{ latitude: 37.215838, longitude: -80.418904 }}
-          onPress={() => showCourtFeed("Bubble")}
-        />
-        {/* Oak Lane Court */}
-        <Marker
-          coordinate={{ latitude: 37.227031, longitude: -80.437552 }}
-          onPress={() => showCourtFeed("pressed oaklane")}
-        />
-        {/* Blacksburg Rec Center */}
-        <Marker
-          coordinate={{ latitude: 37.243998, longitude: -80.411862 }}
-          onPress={() => showCourtFeed("bb rec center")}
-        />
-        {/* Pritchard Courts */}
-        <Marker
-          coordinate={{ latitude: 37.224828, longitude: -80.418849 }}
-          onPress={() => showCourtFeed("Pritchard Courts")}
-        />
+        {locations}
       </MapView>
+      {showError && <ErrorPopup errorMessage={errorMessage} />}
     </View>
   );
 }

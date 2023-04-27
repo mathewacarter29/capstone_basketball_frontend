@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import EStyleSheet from "react-native-extended-stylesheet";
 
-import { Auth } from "aws-amplify";
 import { DataStore } from "aws-amplify";
 import "@azure/core-asynciterator-polyfill";
 
@@ -10,6 +9,7 @@ import { epochToLocalDate } from "../utils/TimeUtil";
 import { epochToLocalTime } from "../utils/TimeUtil";
 import LoadingScreen from "../common/LoadingScreen";
 import ErrorPopup from "../common/ErrorPopup";
+import { useFocusEffect } from '@react-navigation/native';
 
 import {
   Player,
@@ -39,7 +39,8 @@ function GameDetails({ route, navigation }) {
   const thisGame = details.game;
 
   const [loading, setLoading] = useState(false);
-  const [statuses, setStatuses] = useState({ accepted: [], declined: [] });
+  // const [statuses, setStatuses] = useState({ accepted: [], declined: [] });
+  const [statuses, setStatuses] = useState([]);
   const [gameOrganizer, setGameOrganizer] = useState([]);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -50,9 +51,7 @@ function GameDetails({ route, navigation }) {
 
     try {
       // let playerId = playerids[i];
-      const gamePlayers = await DataStore.query(GamePlayer, (c) =>
-        c.and((c) => [c.game_id.eq(thisGame.id)])
-      );
+      const gamePlayers = await DataStore.query(GamePlayer, (c) => c.game_id.eq(thisGame.id));
 
       for (let i = 0; i < gamePlayers.length; i++) {
         const players = await DataStore.query(Player, (c) =>
@@ -63,7 +62,7 @@ function GameDetails({ route, navigation }) {
           continue;
         }
         const player = players[0];
-        
+
         if (gamePlayers[i].rsvp == Rsvp.ACCEPTED) {
           playerStatuses.push({
             id: player.id,
@@ -104,22 +103,30 @@ function GameDetails({ route, navigation }) {
     }
   }
 
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchData = async () => {
+        setLoading(true);
 
-      const organizerRes = await getGameOrganizer();
-      // Error check API call methods
-      if (typeof organizerRes === "undefined") return;
-      setGameOrganizer(organizerRes);
+        const organizerRes = await getGameOrganizer();
+        if (typeof organizerRes === "undefined") return;
+        setGameOrganizer(organizerRes);
 
-      const invitedPlayersRes = await getInvitedPlayers();
-      if (typeof invitedPlayersRes === "undefined") return;
+        const invitedPlayersRes = await getInvitedPlayers();
+        if (typeof invitedPlayersRes === "undefined") return;
 
-      setStatuses(invitedPlayersRes);
-      setLoading(false);
-    })();
-  }, []);
+        setStatuses(invitedPlayersRes);
+        setLoading(false);
+      };
+
+      fetchData();
+
+      return () => {
+        
+      };
+    }, []) // Empty array ensures the effect only re-runs when the screen is focused
+  );
+
 
   function isGameOwner() {
     // Use a dummy username until actual organizer names are used
@@ -168,7 +175,11 @@ function GameDetails({ route, navigation }) {
   }
 
   const navigateBack = () => {
-    navigation.navigate("HomeScreen");
+    if (typeof route.params.mapFeedRouteParams === "undefined") {
+      navigation.navigate("HomeScreen");
+    } else {
+      navigation.navigate("MapFeed", route.params.mapFeedRouteParams);
+    }
   };
 
   const renderBackAction = () => (
@@ -230,10 +241,9 @@ function GameDetails({ route, navigation }) {
           onPress={async () => {
             setLoading(true);
             //let success = await rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED)
-            if ((await rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED))) {
+            if (await rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED)) {
               const invitedPlayersRes = await getInvitedPlayers();
               setStatuses(invitedPlayersRes);
-              
             } else {
               setErrorMessage("Error saving RSVP.");
               setShowError(true);

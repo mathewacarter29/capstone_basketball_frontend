@@ -150,7 +150,9 @@ function HomeScreen({ navigation }) {
             : styles.innerContainerFeed,
         ]}
       >
-        {middleView == "Map View" && <MapScreen />}
+        {middleView == "Map View" && (
+          <MapScreen games={games} thisPlayer={thisPlayer} />
+        )}
         {middleView == "Game Feed" && (
           <GameFeed
             setLoading={setLoading}

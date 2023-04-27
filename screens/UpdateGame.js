@@ -42,7 +42,7 @@ function UpdateGame({ route, navigation }) {
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [locations, setLocations] = useState([]);
-  const [selectedPlayers, setSelected] = useState([]);
+  const [selectedPlayers, setSelected] = useState(game.invited_players);
 
   useEffect(() => {
     // This needs to be async so we can wait for results before rendering
@@ -106,12 +106,6 @@ function UpdateGame({ route, navigation }) {
   async function update() {
     epochDate = Math.floor(chosenDate.getTime() / 1000);
     setLoading(true);
-    let invitedPlayers = [];
-    for (let i = 0; i < selectedPlayers.length; i++) {
-      if(game.invited_players.indexOf(selectedPlayers[i]) == -1) {
-        invitedPlayers.push(item);
-      }
-    }
     
     try {
       const updatedGame = await DataStore.save(
@@ -119,14 +113,14 @@ function UpdateGame({ route, navigation }) {
           (updated.name = gameName),
             (updated.description = gameDescription),
             (updated.skill_level = gameSkillLevel),
-            (updated.invited_players = invitedPlayers),
+            (updated.invited_players = selectedPlayers),
             (updated.location = gameLocation),
             (updated.datetime = epochDate);
         })
       );
+      await updateInvitedPlayers();
       setLoading(false);
-      // navigation.navigate("GameDetails", {game: item , player: player});
-      updateInvitedPlayers();
+
       let item = {
         game: updatedGame,
         player: player,
@@ -144,18 +138,23 @@ function UpdateGame({ route, navigation }) {
   async function updateInvitedPlayers() {
     for (let i = 0; i < selectedPlayers.length; i++) {
       try {
-        const existing = await DataStore.query(GamePlayer, (c) =>
-        c.and((c) => [c.game_id.eq(game.id), c.player_id.eq(selectedPlayers[i].id)]));
-
-        if (existing == null || existing == undefined || existing.length == 0) {
+        const existing = await DataStore.query(GamePlayer, (c) => c.and(c => [
+          c.game_id.eq(game.id),
+          c.player_id.eq(selectedPlayers[i])
+        ]));
+        if (existing.length == 0) {
+          console.log("Inserting new GamePlayer");
           const gamePlayer = await DataStore.save(
             new GamePlayer({
               player_id: selectedPlayers[i],
-              game_id: gameId,
+              game_id: game.id,
               rsvp: Rsvp.PENDING,
               invited: true,
             })
           );
+        }
+        else {
+          console.log("Player is already invited");
         }
       } catch (error) {
         setLoading(false);
