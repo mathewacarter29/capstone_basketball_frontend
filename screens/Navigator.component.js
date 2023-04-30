@@ -13,6 +13,7 @@ import CreateGame from "./CreateGame";
 import SignUp from "./SignUp";
 import EmailVerification from "./EmailVerification";
 import UpdateGame from "./UpdateGame";
+import MapFeed from "./HomeScreen/MapFeed";
 
 const Stack = createNativeStackNavigator();
 
@@ -28,6 +29,7 @@ export const AppNavigator = () => (
       <Stack.Screen name="SignUp" component={SignUp} />
       <Stack.Screen name="EmailVerification" component={EmailVerification} />
       <Stack.Screen name="UpdateGame" component={UpdateGame} />
+      <Stack.Screen name="MapFeed" component={MapFeed} />
     </Stack.Navigator>
   </NavigationContainer>
 );

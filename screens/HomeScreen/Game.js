@@ -15,13 +15,16 @@ import {
   SkillLevel,
 } from "../../src/models";
 
-function Game({ item, setLoading }) {
+function Game(props) {
   const navigation = useNavigation();
-  const thisGame = item.game;
-  const thisPlayer = item.player;
+  const thisGame = props.item.game;
+  const thisPlayer = props.item.player;
 
   function clickedGame() {
-    navigation.navigate("GameDetails", { item });
+    navigation.navigate("GameDetails", {
+      item: props.item,
+      mapFeedRouteParams: props.mapFeedRouteParams,
+    });
   }
 
   return (
@@ -54,26 +57,32 @@ function Game({ item, setLoading }) {
           <Button
             style={{ backgroundColor: "#3D9B2C", width: "40%" }}
             onPress={async () => {
-              setLoading(true)
-              await rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED)
-              setLoading(false)
-              const alertMessage = thisGame.name + " is happening at " + thisGame.location + " at " + epochToLocalDate(thisGame.datetime) + " " + epochToLocalTime(thisGame.datetime);
+              props.setLoading(true);
+              await rsvp(thisGame.id, thisPlayer.id, Rsvp.ACCEPTED);
+              props.setLoading(false);
+              const alertMessage =
+                thisGame.name +
+                " is happening at " +
+                thisGame.location +
+                " at " +
+                epochToLocalDate(thisGame.datetime) +
+                " " +
+                epochToLocalTime(thisGame.datetime);
 
               Alert.alert(
                 thisGame.name + " accepted",
                 alertMessage,
                 [
                   {
-                    text: 'Cancel',
+                    text: "Cancel",
                     onPress: null,
-                    style: 'cancel',
+                    style: "cancel",
                   },
                 ],
                 {
                   cancelable: true,
-                  onDismiss: () =>
-                    console.log("dismissed"),
-                },
+                  onDismiss: () => console.log("dismissed"),
+                }
               );
             }}
           >
@@ -83,25 +92,24 @@ function Game({ item, setLoading }) {
           <Button
             style={{ backgroundColor: "#B74840", width: "40%" }}
             onPress={async () => {
-              setLoading(true)
-              await rsvp(thisGame.id, thisPlayer.id, Rsvp.DECLINED)
-              setLoading(false)
+              props.setLoading(true);
+              await rsvp(thisGame.id, thisPlayer.id, Rsvp.DECLINED);
+              props.setLoading(false);
               const alertMessage = "You declined " + thisGame.name;
               Alert.alert(
                 thisGame.name + " declined",
                 alertMessage,
                 [
                   {
-                    text: 'Cancel',
+                    text: "Cancel",
                     onPress: null,
-                    style: 'cancel',
+                    style: "cancel",
                   },
                 ],
                 {
                   cancelable: true,
-                  onDismiss: () =>
-                    console.log("dismissed"),
-                },
+                  onDismiss: () => console.log("dismissed"),
+                }
               );
             }}
           >
