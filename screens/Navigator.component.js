@@ -2,6 +2,7 @@ import React from "react";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { navigationRef } from "../utils/rootNavigation";
 
 // navigation screens
 import GetStarted from "./GetStarted";
@@ -18,7 +19,7 @@ import MapFeed from "./HomeScreen/MapFeed";
 const Stack = createNativeStackNavigator();
 
 export const AppNavigator = () => (
-  <NavigationContainer>
+  <NavigationContainer ref={navigationRef}>
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="GetStarted" component={GetStarted} />
       <Stack.Screen name="LogIn" component={LogIn} />

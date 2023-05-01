@@ -9,7 +9,7 @@ import { epochToLocalDate } from "../utils/TimeUtil";
 import { epochToLocalTime } from "../utils/TimeUtil";
 import LoadingScreen from "../common/LoadingScreen";
 import ErrorPopup from "../common/ErrorPopup";
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from "@react-navigation/native";
 
 import {
   Player,
@@ -51,7 +51,9 @@ function GameDetails({ route, navigation }) {
 
     try {
       // let playerId = playerids[i];
-      const gamePlayers = await DataStore.query(GamePlayer, (c) => c.game_id.eq(thisGame.id));
+      const gamePlayers = await DataStore.query(GamePlayer, (c) =>
+        c.game_id.eq(thisGame.id)
+      );
 
       for (let i = 0; i < gamePlayers.length; i++) {
         const players = await DataStore.query(Player, (c) =>
@@ -121,12 +123,9 @@ function GameDetails({ route, navigation }) {
 
       fetchData();
 
-      return () => {
-        
-      };
+      return () => {};
     }, []) // Empty array ensures the effect only re-runs when the screen is focused
   );
-
 
   function isGameOwner() {
     // Use a dummy username until actual organizer names are used
