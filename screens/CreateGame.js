@@ -66,9 +66,9 @@ function CreateGame({ route, navigation }) {
   async function getPlayers() {
     let toInvite = [];
     try {
-      const allPlayers = await DataStore.query(Player);
-      // const allPlayers = await DataStore.query(Player, (p) =>
-      //   p.email.ne(thisPlayer.email)
+      // const allPlayers = await DataStore.query(Player);
+      const allPlayers = await DataStore.query(Player, (p) =>
+        p.email.ne(thisPlayer.email));
       allPlayers.map((element) => {
         toInvite.push({ label: element.name, value: element.id });
       });

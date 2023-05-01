@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, SafeAreaView, KeyboardAvoidingView } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
 import Container from "../common/Container";
@@ -6,13 +6,21 @@ import { Player, SkillLevel } from "../src/models";
 import { Auth } from "aws-amplify";
 import { DataStore } from "aws-amplify";
 import "@azure/core-asynciterator-polyfill";
-
+import {
+  Text,
+  Button,
+  TopNavigation,
+  TopNavigationAction,
+  Icon,
+} from "@ui-kitten/components";
 import ErrorPopup from "../common/ErrorPopup";
 import TextInput from "../common/TextInput";
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
+
+const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
 
 async function registerForPushNotificationsAsync() {
   let token;
@@ -58,11 +66,11 @@ function SignIn({ navigation }) {
   const [expoPushToken, setExpoPushToken] = useState("");
 
   //generate and set expo token for the newly created user
-  useEffect(() => {
-    registerForPushNotificationsAsync().then((token) =>
-      setExpoPushToken(token)
-    );
-  }, []);
+  // useEffect(() => {
+  //   registerForPushNotificationsAsync().then((token) =>
+  //     setExpoPushToken(token)
+  //   );
+  // }, []);
 
   async function signup() {
     // make sure no fields are empty
@@ -148,13 +156,12 @@ function SignIn({ navigation }) {
 
   return (
 
-    <Container>
+    <SafeAreaView>
       <KeyboardAwareScrollView>
       <TopNavigation
         alignment="center"
         title="Sign Up"
         accessoryLeft={renderBackAction}
-        style={styles.topNav}
       />
 
       <View style={{ alignItems: "center" }}>
@@ -209,23 +216,17 @@ function SignIn({ navigation }) {
         {showError && <ErrorPopup errorMessage={errorMessage} />}
       </View>
       </KeyboardAwareScrollView>
-    </Container>
+    </SafeAreaView>
 
   );
 }
 
 const styles = EStyleSheet.create({
-  container: {
-    flex: 1,
-  },
   clickableText: {
     color: "darkorange",
     fontSize: 15,
     textDecorationLine: "underline",
-  },
-  topNav: {
-    marginTop: "3rem",
-  },
+  }
 });
 
 export default SignIn;
