@@ -48,7 +48,6 @@ export default function App() {
         //check what the notification is for
         if (title === "Game Invitation") {
           item = response.notification.request.content.data.item;
-          console.log(item);
           //navigate to game
           rootNavigation.navigate("GameDetails", {
             item,
