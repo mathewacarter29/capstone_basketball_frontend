@@ -44,12 +44,13 @@ function HomeScreen({ navigation }) {
     try {
       const authObj = await Auth.currentUserInfo();
       const userEmail = authObj.attributes.email;
-
       // get Player object from email
       const players = await DataStore.query(Player, (p) =>
         p.email.eq(userEmail)
       );
+      //console.log(players);
       const player = players[0];
+      //console.log("player: ", player);
       setThisPlayer(player);
 
       // query GamePlayer to find games player is invited to or created

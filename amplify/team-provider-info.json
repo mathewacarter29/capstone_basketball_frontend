@@ -1,0 +1,20 @@
+{
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-campuscourts-staging-202913-authRole",
+      "UnauthRoleArn": "arn:aws:iam::651527096033:role/amplify-campuscourts-staging-202913-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::651527096033:role/amplify-campuscourts-staging-202913-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-campuscourts-staging-202913-deployment",
+      "UnauthRoleName": "amplify-campuscourts-staging-202913-unauthRole",
+      "StackName": "amplify-campuscourts-staging-202913",
+      "StackId": "arn:aws:cloudformation:us-east-1:651527096033:stack/amplify-campuscourts-staging-202913/db224280-da39-11ed-9af2-0ef8b4eaea33",
+      "AmplifyAppId": "dlncrybi9phz"
+    },
+    "categories": {
+      "auth": {
+        "CampusCourts": {}
+      }
+    }
+  }
+}

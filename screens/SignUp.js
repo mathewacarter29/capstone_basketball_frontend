@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, SafeAreaView, KeyboardAvoidingView } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
 import Container from "../common/Container";
@@ -6,20 +6,53 @@ import { Player, SkillLevel } from "../src/models";
 import { Auth } from "aws-amplify";
 import { DataStore } from "aws-amplify";
 import "@azure/core-asynciterator-polyfill";
-
-import ErrorPopup from "../common/ErrorPopup";
-import TextInput from "../common/TextInput";
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-
 import {
   Text,
   Button,
   TopNavigation,
-  Icon,
   TopNavigationAction,
+  Icon,
 } from "@ui-kitten/components";
+import ErrorPopup from "../common/ErrorPopup";
+import TextInput from "../common/TextInput";
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+
+import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
 
 const BackIcon = (props) => <Icon {...props} name="arrow-back" />;
+
+async function registerForPushNotificationsAsync() {
+  let token;
+  if (Device.isDevice) {
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== "granted") {
+      alert("Failed to get push token for push notification!");
+      return;
+    }
+    token = (await Notifications.getExpoPushTokenAsync()).data;
+    console.log(token);
+  } else {
+    alert("Must use physical device for Push Notifications");
+  }
+
+  if (Platform.OS === "android") {
+    Notifications.setNotificationChannelAsync("default", {
+      name: "default",
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: "#FF231F7C",
+    });
+  }
+
+  return token;
+}
 
 function SignIn({ navigation }) {
   const [name, setName] = useState("");
@@ -30,6 +63,14 @@ function SignIn({ navigation }) {
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [expoPushToken, setExpoPushToken] = useState("");
+
+  //generate and set expo token for the newly created user
+  // useEffect(() => {
+  //   registerForPushNotificationsAsync().then((token) =>
+  //     setExpoPushToken(token)
+  //   );
+  // }, []);
 
   async function signup() {
     // make sure no fields are empty
@@ -63,6 +104,8 @@ function SignIn({ navigation }) {
       setErrorMessage("Passwords do not match - please re-enter");
       return;
     }
+
+    //check if expo notification token was generated
     try {
       setLoading(true);
       const player = await DataStore.save(
@@ -74,6 +117,7 @@ function SignIn({ navigation }) {
           instagram: "String",
           twitter: "String",
           bio: "String",
+          expo_notification_token: expoPushToken,
         })
       );
       console.log("Player saved successfully!", player);
@@ -112,13 +156,12 @@ function SignIn({ navigation }) {
 
   return (
 
-    <Container>
+    <SafeAreaView>
       <KeyboardAwareScrollView>
       <TopNavigation
         alignment="center"
         title="Sign Up"
         accessoryLeft={renderBackAction}
-        style={styles.topNav}
       />
 
       <View style={{ alignItems: "center" }}>
@@ -173,23 +216,17 @@ function SignIn({ navigation }) {
         {showError && <ErrorPopup errorMessage={errorMessage} />}
       </View>
       </KeyboardAwareScrollView>
-    </Container>
+    </SafeAreaView>
 
   );
 }
 
 const styles = EStyleSheet.create({
-  container: {
-    flex: 1,
-  },
   clickableText: {
     color: "darkorange",
     fontSize: 15,
     textDecorationLine: "underline",
-  },
-  topNav: {
-    marginTop: "3rem",
-  },
+  }
 });
 
 export default SignIn;

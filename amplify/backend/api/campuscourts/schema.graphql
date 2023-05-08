@@ -1,0 +1,53 @@
+enum RSVP {
+  ACCEPTED
+  DECLINED
+  PENDING
+}
+
+type GamePlayer @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  player_id: String!
+  game_id: String!
+  rsvp: RSVP!
+  invited: Boolean
+}
+
+type Location @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String!
+  address: String!
+  latitude: Float!
+  longitude: Float!
+}
+
+type Player @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String!
+  email: String!
+  skill_level: SkillLevel
+  phone_number: String
+  bio: String
+  instagram: String
+  twitter: String
+  friends: [String]
+  expo_notification_token: String
+}
+
+enum SkillLevel {
+  ANY
+  BEGINNER
+  INTERMEDIATE
+  EXPERIENCED
+}
+
+type Game @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String!
+  description: String
+  datetime: AWSTimestamp!
+  skill_level: SkillLevel!
+  organizer: String!
+  location: String!
+  invited_players: [String]
+}
+ 

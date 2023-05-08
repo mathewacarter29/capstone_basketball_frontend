@@ -66,9 +66,9 @@ function CreateGame({ route, navigation }) {
   async function getPlayers() {
     let toInvite = [];
     try {
+      // const allPlayers = await DataStore.query(Player);
       const allPlayers = await DataStore.query(Player, (p) =>
-        p.email.ne(thisPlayer.email)
-      );
+        p.email.ne(thisPlayer.email));
       allPlayers.map((element) => {
         toInvite.push({ label: element.name, value: element.id });
       });
@@ -82,6 +82,7 @@ function CreateGame({ route, navigation }) {
       return false;
     }
   }
+
   useEffect(() => {
     // This needs to be async so we can wait for results before rendering
     (async () => {
@@ -123,6 +124,27 @@ function CreateGame({ route, navigation }) {
     }
   }
 
+  //method to send push notificatons for   game invitations
+  async function sendGameInvitationNotification(expoPushToken, invitedGame) {
+    const message = {
+      to: expoPushToken,
+      sound: "default",
+      title: "Game Invitation",
+      body: "You have been invited to a game!",
+      data: { item: { game: invitedGame, player: thisPlayer } },
+    };
+    //console.log(message);
+    await fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Accept-encoding": "gzip, deflate",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(message),
+    });
+  }
+
   //saves game player that represents each and every game and player association
   async function storeGamePlayers(gameId) {
     try {
@@ -151,6 +173,15 @@ function CreateGame({ route, navigation }) {
             invited: true,
           })
         );
+        //send invitation notifications now
+        //query player table to get the invited player and grab their expo token
+        const recepient = await DataStore.query(Player, selectedPlayers[i]);
+        //also send game information for routing
+        const invitedGame = await DataStore.query(Game, gameId);
+        sendGameInvitationNotification(
+          recepient.expo_notification_token,
+          invitedGame
+        );
       } catch (error) {
         setLoading(false);
         setShowError(true);
@@ -169,6 +200,7 @@ function CreateGame({ route, navigation }) {
 
   //function to create the game
   async function create() {
+    //console.log(thisPlayer);
     // do input validation BEFORE API calls
     //if no location is selected display error message
     if (gameLocation == "") {
